@@ -1,6 +1,6 @@
 // Browser-independent smoke checks against the generated HTML and real scripts.
 // This small DOM adapter checks behaviour; it does not verify browser layout.
-import { readFileSync } from 'node:fs';
+import { readFileSync, existsSync } from 'node:fs';
 import vm from 'node:vm';
 import assert from 'node:assert/strict';
 const downloadLinks = JSON.parse(readFileSync('src/app-downloads.json','utf8'));
@@ -227,12 +227,17 @@ for (const reduced of [false,true]) {
     collect.click('.page-hero-copy [data-pickup]');
     assert.equal(collect.q('input[value="Used transfer oil"]').checked,true);
 
-    const how = load('how-it-works.html',reduced,browserLanguage);
-    how.click('[data-route-step="2"]'); how.flush();
-    assert.equal(how.q('[data-route-step="2"]').getAttribute('aria-pressed'),'true');
-    assert.equal(how.q('.route-caption-title').textContent,how.q('.step-card.is-current h3').textContent);
-
     const app = load('seller-app.html',reduced,browserLanguage);
+    assert.ok(app.q('.page-hero .install-preview'),'The seller-app hero shows the search-and-install sequence');
+    assert.equal(app.q('.page-hero .phone'),null,'The app screens leave the hero');
+    assert.ok(app.q('#app-features .phone'),'The app screens sit beside the feature cards');
+    assert.match(app.q('.install-graphic .concept-label').textContent,/illustrative/i,'The install animation is labelled as a preview');
+    if (reduced) {
+      app.advance(15000);
+      assert.equal(app.q('.install-preview').dataset.stage,'3','Reduced motion shows the finished install');
+      assert.equal(app.q('.install-query').textContent,'Black Gold Seller');
+      assert.equal(app.q('.install-steps li[aria-current]').textContent,'Open');
+    }
     app.click('[data-app-screen="2"]');
     assert.ok(app.q('.screen.s3').classList.contains('is-active'));
     app.advance(5000);
@@ -246,6 +251,13 @@ for (const reduced of [false,true]) {
     assert.equal(faq.q('.faq-no-results').hidden,true);
   }
 }
+
+assert.equal(existsSync('dist/how-it-works.html'),false,'The How it works page has been removed');
+for (const file of ['index.html','about.html','collect.html','seller-app.html','faq.html']) {
+  assert.equal(load(file).q('a[href^="how-it-works"]'),null,file+' must not link to the removed How it works page');
+}
+assert.equal(load('collect.html').q('.page-hero-copy .text-link').getAttribute('href'),'index.html#pickup-process');
+assert.ok(load('index.html').q('#pickup-process'),'The homepage keeps the pickup process section');
 
 const pickupJourney = load('index.html');
 pickupJourney.advance(4200);
@@ -339,6 +351,38 @@ autoplay.click('[data-motion]'); autoplay.advance(4700); assert.ok(autoplay.q('.
 autoplay.doc.hidden = true; autoplay.doc.fire('visibilitychange'); autoplay.advance(10000);
 assert.ok(autoplay.q('.screen.s3').classList.contains('is-active'));
 
+const installLoop = load('seller-app.html');
+const installer = installLoop.q('.install-preview');
+const typedQuery = () => installLoop.q('.install-query').textContent;
+const installStep = () => installLoop.q('.install-steps li[aria-current]').textContent;
+const installPercent = () => installLoop.q('.install-percent').textContent;
+assert.equal(installer.dataset.stage,'0'); assert.equal(typedQuery(),''); assert.ok(installer.classList.contains('is-empty'));
+installLoop.advance(1300);
+assert.ok(typedQuery().length > 0 && typedQuery().length < 17 && 'Black Gold Seller'.startsWith(typedQuery()),'The search is typed letter by letter');
+assert.equal(installer.dataset.stage,'0'); assert.equal(installStep(),'Search');
+installLoop.advance(1300);
+assert.equal(installer.dataset.stage,'1'); assert.equal(typedQuery(),'Black Gold Seller'); assert.equal(installStep(),'Find the app');
+installLoop.advance(3000);
+assert.equal(installer.dataset.stage,'2'); assert.equal(installStep(),'Install');
+const midInstall = parseInt(installPercent(),10);
+assert.ok(midInstall > 0 && midInstall < 100,'Installation shows its progress');
+installLoop.click('[data-motion]'); installLoop.advance(10000);
+assert.equal(installer.dataset.stage,'2'); assert.equal(installPercent(),midInstall + '%','Pause freezes the installation');
+installLoop.click('[data-motion]'); installLoop.advance(2000);
+assert.equal(installer.dataset.stage,'3'); assert.equal(installPercent(),'100%'); assert.equal(installStep(),'Open');
+assert.equal(installLoop.qa('.install-steps li.is-done').length,3);
+installLoop.doc.hidden = true; installLoop.doc.fire('visibilitychange'); installLoop.advance(10000);
+assert.equal(installer.dataset.stage,'3'); assert.equal(installer.classList.contains('is-fading'),false,'A hidden tab stops the sequence');
+installLoop.doc.hidden = false; installLoop.doc.fire('visibilitychange'); installLoop.advance(3100);
+assert.ok(installer.classList.contains('is-fading'));
+installLoop.advance(800);
+assert.equal(installer.dataset.stage,'0'); assert.ok(installer.classList.contains('is-fading'),'The finished screen clears out of sight before the loop restarts');
+installLoop.advance(400);
+assert.equal(installer.dataset.stage,'0','The sequence loops back to an empty search'); assert.equal(typedQuery(),'');
+assert.equal(installer.classList.contains('is-fading'),false); assert.equal(installLoop.qa('.install-steps li.is-done').length,0);
+installLoop.setReduced(true);
+assert.equal(installer.dataset.stage,'3'); assert.equal(typedQuery(),'Black Gold Seller');
+
 const refinery = load('about.html');
 refinery.advance(4500); assert.equal(refinery.q('.refinery').dataset.stage,'1');
 refinery.click('[data-motion]'); refinery.advance(10000); assert.equal(refinery.q('.refinery').dataset.stage,'1');
@@ -380,4 +424,4 @@ assert.equal(form.q('#enquiry-result').hidden,false);
 assert.match(form.q('#enquiry-text').textContent,/Test workshop/);
 assert.match(form.q('#enquiry-text').textContent,/no pickup has been booked/i);
 
-console.log('PASS: all six pages stay in English; pickup scroll/hover/focus tracking, truck travel and selection, anchor focus, app preview and downloads, promise journey, oil presets, FAQ search, pause, hidden tabs, reduced motion and enquiry validation.');
+console.log('PASS: all five pages stay in English; How it works removed with no links left; pickup scroll/hover/focus tracking, truck travel and selection, anchor focus, app install sequence, app preview and downloads, promise journey, oil presets, FAQ search, pause, hidden tabs, reduced motion and enquiry validation.');

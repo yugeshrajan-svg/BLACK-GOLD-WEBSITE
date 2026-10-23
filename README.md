@@ -1,4 +1,4 @@
-# Black Gold website — client review edition (v4.0)
+# Black Gold website — client review edition (v4.1)
 
 Open `dist/index.html` in a modern browser to review the website, or upload everything inside `dist` to a static host. The site has no dependencies.
 
@@ -9,23 +9,29 @@ Open `dist/index.html` in a modern browser to review the website, or upload ever
 | Home | `index.html` | An app-focused hero links to the seller-app section. A moving-truck journey illustrates registration, rates, pickup and payment with four selectable steps; collection details follow |
 | About | `about.html` | A stepped refinery pipeline, plus a second animated journey linking measurement, rates, payment and a digital receipt to the four selectable promises |
 | What we collect | `collect.html` | A changing sample jar with oil selection controls. Choosing a sample keeps it selected and carries that oil into the enquiry |
-| How it works | `how-it-works.html` | A moving pickup route with selectable steps, explanations and matching cards |
-| Seller app | `seller-app.html` | A phone preview that cycles through rates, pickup and receipt screens, with buttons to try each screen |
+| Seller app | `seller-app.html` | The hero shows the app being found and installed: “Black Gold Seller” is typed into a search, the app appears, an install progress bar fills and a green screen says it is ready to open. Below, the phone preview cycles through rates, pickup and receipt screens beside the feature cards, with buttons to try each screen |
 | FAQs | `faq.html` | An animated answers chat and a search field that filters the questions and answers |
 
-Every page shares the header, a still closing call to action, the footer and the pickup enquiry form. The live visuals run only while they are on screen, stop with the Pause motion button, and show a still, complete version with reduced motion. Cards below each visual light up in step with it (About and How it works).
+Every page shares the header, a still closing call to action, the footer and the pickup enquiry form. The live visuals run only while they are on screen, stop with the Pause motion button, and show a still, complete version with reduced motion. Cards below each visual light up in step with it (About).
 
 ## Editing the pages
 
-The six HTML files in `dist/` are generated. Edit the sources, then rebuild:
+The five HTML files in `dist/` are generated. Edit the sources, then rebuild:
 
 - `src/layout.html`: everything the pages share (head, header, closing section, footer, dialogs).
 - `src/pages/*.html`: each page's own content. The comment at the top gives the page's title and description.
-- `src/partials/*.html`: shared app preview, feature cards and download options.
+- `src/partials/*.html`: shared app preview, feature cards and download options, plus the Seller app hero's install preview (`seller-install-preview.html`).
 - `src/app-downloads.json`: add the official `googlePlay` URL and the HTTPS `apk` URL (or a local `assets/filename.apk` path), then rebuild. Empty values show “coming soon” without a fake download link.
 - Run `node build.mjs` (Node.js, no packages needed) to write the pages into `dist/`.
 
 `style.css`, `app.js` and `oil-surface.js` in `dist/` are edited directly. The website uses English throughout.
+
+## What changed in v4.1
+
+- **Finding and installing the app, on the Seller app page.** The hero now loops through four steps: “Black Gold Seller” is typed into a store search, the app appears with an Install button, a progress bar fills, and a green screen confirms it is ready to open. Numbered steps below the phone (Search, Find the app, Install, Open) follow along. The headline and actions stay beside the animation, which is labelled “Illustrative install preview” and shows no ratings or download counts.
+- **App screens move to “In the app”.** The rates / pickup / receipt phone preview now sits beside the three feature cards, as on the homepage, with its own Pause motion control.
+- **Motion settings.** Pause motion and hidden tabs freeze the sequence; it also stops offscreen. Reduced motion, a saved pause and pages without scripting show the finished, ready-to-open screen.
+- **How it works page removed.** The site now has five pages. The header menu and footer no longer list it. The homepage section “From your phone to your pickup” covers the process, and the What we collect hero now links there (“How pickup works”). The page's “Who we serve” cards (car and bike service centres, factories) were removed with it.
 
 ## What changed in v4.0
 

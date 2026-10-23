@@ -55,7 +55,6 @@
 /* Each page has a colour of its own, alongside the Black Gold identity. */
 body[data-page='about'] { --accent: #176e59; --accent-rgb: 30, 132, 105; --accent-bright: #8de1c4; --accent-soft: #e5f4ed; }
 body[data-page='collect'] { --accent: #a6532c; --accent-rgb: 182, 94, 48; --accent-bright: #f0b78f; --accent-soft: #fbede2; }
-body[data-page='how'] { --accent: #355eb5; --accent-rgb: 62, 105, 194; --accent-bright: #a1c2ff; --accent-soft: #eaf0fc; }
 body[data-page='app'] { --accent: #7448a4; --accent-rgb: 126, 83, 179; --accent-bright: #cfb0ff; --accent-soft: #f1ebfa; }
 body[data-page='faq'] { --accent: #147182; --accent-rgb: 28, 131, 151; --accent-bright: #8ddce8; --accent-soft: #e5f3f5; }
 
@@ -711,7 +710,7 @@ html:not(.js) .visual-tools { display: none; }
 .oil-dots i { width: 22px; height: 3px; border-radius: 2px; background: var(--line-strong); transition: background .6s var(--ease); }
 .oil-dots i.is-on { background: var(--gold-grad); }
 
-/* ---------- How it works: a drop travels the four steps ---------- */
+/* ---------- Pickup route: the base the homepage journey builds on ---------- */
 
 .route { width: min(100%, 580px); display: grid; gap: 36px; }
 .route-board { position: relative; }
@@ -833,6 +832,83 @@ html:not(.js) .route-icon, .route.is-static .route-icon { background: var(--gold
 .chip-2 { top: 47%; left: -2%; }
 .chip-3 { bottom: 13%; right: -2%; }
 .concept-label { position: absolute; bottom: -30px; font-size: 10px; font-weight: 600; letter-spacing: .18em; text-transform: uppercase; color: var(--muted); }
+
+/* ---------- Seller app hero: search for the app, install it, open it ----------
+   data-stage: 0 typing the search, 1 app found, 2 installing, 3 ready to open.
+   The markup starts on the finished stage, which is also the still version. */
+
+.install-graphic { position: relative; width: 100%; height: 580px; display: grid; place-items: center; }
+.install-graphic::before { content: ''; position: absolute; width: 70%; aspect-ratio: 1; border-radius: 50%; background: radial-gradient(circle, rgba(var(--accent-rgb), .2) 0%, transparent 65%); }
+.install-preview {
+  position: relative; z-index: 1;
+  display: flex; flex-direction: column;
+  width: 272px; height: 556px;
+  padding: 46px 16px 18px;
+  border: 9px solid #17150f; border-radius: 46px;
+  background: #0c0b09;
+  box-shadow: 0 60px 90px -30px rgba(0, 0, 0, .8), 0 0 0 1px rgba(201, 164, 92, .4), inset 0 0 0 1px rgba(255, 255, 255, .04);
+  color: var(--head);
+  transform: rotate(-4deg);
+  transition: box-shadow .6s var(--ease);
+}
+.install-preview[data-stage='3'] { box-shadow: 0 60px 90px -30px rgba(0, 0, 0, .8), 0 0 0 1px rgba(141, 225, 196, .55), 0 0 70px -20px rgba(141, 225, 196, .6), inset 0 0 0 1px rgba(255, 255, 255, .04); }
+
+.install-search { display: flex; align-items: center; height: 42px; padding: 0 14px; border: 1px solid rgba(var(--accent-rgb), .5); border-radius: 999px; background: #1a1813; font-size: 13px; white-space: nowrap; overflow: hidden; }
+.install-search svg { width: 16px; height: 16px; margin-right: 9px; flex: none; fill: none; stroke: var(--muted); stroke-width: 2; stroke-linecap: round; }
+.install-query { color: var(--head); transition: opacity .4s; }
+.install-caret { width: 1.5px; height: 16px; margin: 0 2px 0 1px; flex: none; background: var(--accent-bright); animation: caret-blink 1s steps(1) infinite; }
+.install-placeholder { display: none; color: var(--muted); }
+.install-preview.is-empty .install-placeholder { display: inline; }
+.install-preview:not([data-stage='0']) .install-caret { display: none; }
+
+.install-body { position: relative; flex: 1; margin-top: 16px; transition: opacity .4s; }
+.install-keys, .install-result, .install-ready { position: absolute; opacity: 0; visibility: hidden; transition: opacity .4s, transform .5s var(--ease), visibility .4s; }
+.install-keys { left: -6px; right: -6px; bottom: -8px; height: 140px; border-top: 1px solid var(--line); border-radius: 12px 12px 26px 26px; background: #15130f; transform: translateY(24px); }
+/* Three rows of ten keys: columns drawn by the background, rows cut out by the mask. */
+.install-keys::before { content: ''; position: absolute; inset: 12px 10px 26px; background: repeating-linear-gradient(90deg, #2c2922 0 calc(10% - 4px), transparent calc(10% - 4px) 10%); -webkit-mask: repeating-linear-gradient(180deg, #000 0 24px, transparent 24px 34px); mask: repeating-linear-gradient(180deg, #000 0 24px, transparent 24px 34px); }
+
+.install-result { inset: 0 0 auto; transform: translateY(14px); }
+.install-app { display: flex; align-items: center; gap: 14px; }
+.install-icon { display: grid; place-items: center; width: 58px; height: 58px; flex: none; border: 1px solid rgba(201, 164, 92, .45); border-radius: 16px; background: #0a0a09; box-shadow: 0 12px 26px -14px rgba(201, 164, 92, .7); }
+.install-icon svg { width: 26px; height: 32px; }
+.install-name { min-width: 0; }
+.install-name b { display: block; font: 500 17px/1.2 var(--serif); color: var(--head); }
+.install-name small { display: block; margin-top: 5px; font-size: 10.5px; color: var(--muted); }
+.install-action { position: relative; height: 40px; margin-top: 18px; }
+.install-button { position: absolute; inset: 0; display: grid; place-items: center; border-radius: 999px; background: var(--accent-bright); color: #1c1426; font-size: 11px; font-weight: 700; letter-spacing: .14em; text-transform: uppercase; transition: opacity .3s, transform .2s var(--ease); }
+.install-preview.is-pressing .install-button { transform: scale(.94); }
+.install-bar, .install-status { position: absolute; left: 0; right: 0; opacity: 0; transition: opacity .3s; }
+.install-bar { top: 4px; height: 6px; border-radius: 999px; background: #2a2720; overflow: hidden; }
+.install-bar i { display: block; height: 100%; border-radius: inherit; background: linear-gradient(90deg, var(--accent-bright), #8de1c4); transform: scaleX(var(--install-progress, 1)); transform-origin: left; }
+.install-status { bottom: 2px; display: flex; justify-content: space-between; font-size: 10.5px; color: var(--text); font-variant-numeric: tabular-nums; }
+.install-shots { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 8px; margin-top: 22px; }
+.install-shots i { position: relative; height: 190px; border: 1px solid rgba(201, 164, 92, .14); border-radius: 10px; background: linear-gradient(#1a1813, #121110); }
+.install-shots i::before { content: ''; position: absolute; left: 10px; right: 14px; top: 14px; height: 5px; border-radius: 3px; background: rgba(201, 164, 92, .55); box-shadow: 0 12px 0 -1px rgba(236, 226, 204, .12), 0 22px 0 -1px rgba(236, 226, 204, .12); }
+.install-shots i::after { content: ''; position: absolute; left: 10px; right: 10px; bottom: 12px; height: 16px; border-radius: 4px; background: rgba(var(--accent-rgb), .55); }
+
+/* Ready to open: the payment-and-receipt green used across the site. */
+.install-ready { inset: 0; display: flex; flex-direction: column; align-items: center; justify-content: center; padding: 24px 18px; border: 1px solid rgba(141, 225, 196, .35); border-radius: 22px; background: radial-gradient(120% 80% at 50% 20%, #1d6b54 0%, #0f3b2f 55%, #0b241d 100%); text-align: center; transform: scale(.94); }
+.install-tick { position: relative; width: 70px; height: 70px; display: grid; place-items: center; border-radius: 50%; background: #8de1c4; color: #0b241d; font-size: 28px; font-weight: 700; }
+.install-tick::after { content: ''; position: absolute; inset: -1px; border: 2px solid #8de1c4; border-radius: 50%; animation: halo 1.8s var(--ease) infinite; }
+.install-ready-label { margin-top: 22px; font-size: 9.5px; font-weight: 700; letter-spacing: .2em; text-transform: uppercase; color: #8de1c4; }
+.install-ready b { margin-top: 8px; font: 500 30px/1.05 var(--serif); letter-spacing: -.02em; color: #f2fff9; }
+.install-open { align-self: stretch; margin-top: 30px; padding: 13px; border-radius: 999px; background: #8de1c4; color: #0b241d; font-size: 11px; font-weight: 700; letter-spacing: .16em; text-transform: uppercase; }
+
+.install-preview[data-stage='0'] .install-keys,
+.install-preview[data-stage='1'] .install-result, .install-preview[data-stage='2'] .install-result,
+.install-preview[data-stage='3'] .install-ready { opacity: 1; visibility: visible; transform: none; }
+.install-preview[data-stage='2'] .install-button { opacity: 0; }
+.install-preview[data-stage='2'] .install-bar, .install-preview[data-stage='2'] .install-status { opacity: 1; }
+.install-preview.is-fading .install-body, .install-preview.is-fading .install-query { opacity: 0; }
+/* Out of sight, the screens swap at once, so nothing carries over into the next loop. */
+.install-preview.is-fading :is(.install-keys, .install-result, .install-ready) { transition: none; }
+
+.install-steps { width: min(100%, 460px); margin-top: 12px; padding: 0; list-style: none; display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 8px; counter-reset: install; }
+.install-steps li { counter-increment: install; padding-top: 12px; border-top: 2px solid var(--line-strong); font-size: 12.5px; font-weight: 500; line-height: 1.35; color: var(--muted); transition: color .3s, border-color .3s; }
+.install-steps li::before { content: '0' counter(install); display: block; margin-bottom: 5px; font: 600 10px/1 var(--sans); letter-spacing: .16em; }
+.install-steps li.is-done { border-color: rgba(var(--accent-rgb), .8); color: var(--text); }
+.install-steps li[aria-current] { border-color: var(--accent-bright); color: var(--accent-bright); }
+.install-steps li:last-child[aria-current] { border-color: #8de1c4; color: #8de1c4; }
 
 /* ---------- FAQs: a quick-answers chat that types itself ---------- */
 
@@ -1001,6 +1077,7 @@ pre { margin: 20px 0; padding: 22px; white-space: pre-wrap; font: 13px/1.85 var(
 @keyframes typing { 0%, 60%, 100% { transform: none; opacity: .5; } 30% { transform: translateY(-4px); opacity: 1; } }
 @keyframes mj-wave { to { transform: translateX(-60px); } }
 @keyframes bubble-in { from { opacity: 0; transform: translateY(12px) scale(.96); } to { opacity: 1; transform: none; } }
+@keyframes caret-blink { 50% { opacity: 0; } }
 
 /* The pause control stops every looping animation, not just the oil. */
 .motion-paused .orbit-2,
@@ -1019,7 +1096,7 @@ pre { margin: 20px 0; padding: 22px; white-space: pre-wrap; font: 13px/1.85 var(
   .nav a, .nav-group-toggle { font-size: 12.5px; }
 }
 
-/* Below 1180 px the six menu links no longer fit beside the logo, so the menu
+/* Below 1180 px the menu links no longer fit beside the logo, so the menu
    becomes the full-screen one behind the menu button. */
 @media (max-width: 1180px) {
   .cards--4 { grid-template-columns: repeat(2, minmax(0, 1fr)); }
@@ -1160,6 +1237,9 @@ pre { margin: 20px 0; padding: 22px; white-space: pre-wrap; font: 13px/1.85 var(
   .chip-1 { right: 4%; top: 6%; }
   .chip-2 { display: none; }
   .chip-3 { right: 5%; bottom: 10%; }
+  .install-graphic { height: 500px; }
+  /* Scaled to 478 px; the negative margins keep it centred above the label. */
+  .install-preview { margin-block: -39px; transform: rotate(-4deg) scale(.86); }
 
   .chat-body { height: 360px; padding: 16px; }
   .bubble { font-size: 14.5px; }

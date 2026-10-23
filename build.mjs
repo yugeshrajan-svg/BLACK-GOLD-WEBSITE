@@ -1,4 +1,4 @@
-// Builds the six pages in dist/ from src/layout.html and src/pages/*.html.
+// Builds the pages in dist/ from src/layout.html and src/pages/*.html.
 // The header, footer, closing section and dialogs live once, in the layout.
 // Run after editing anything in src/:  node build.mjs   (no dependencies)
 import { readFileSync, writeFileSync, readdirSync } from 'node:fs';

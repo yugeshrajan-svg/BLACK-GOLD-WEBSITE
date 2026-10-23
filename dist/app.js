@@ -577,6 +577,51 @@
     }
   })();
 
+  /* ---------- Seller app hero: search for the app, install it, open it ---------- */
+
+  var install = $('.install-preview');
+  if (install) (function () {
+    var QUERY = 'Black Gold Seller';
+    // Milestones in ms: the last screen clears, typing starts, the app is found,
+    // Install is pressed, installing, ready to open, fade out, start again.
+    var SETTLE = 450, TYPE_AT = 600, KEY = 85, FOUND = 2400, PRESS = 3700, INSTALL = 4000, READY = 7200, FADE = 10400, END = 11000;
+    var STILL = READY + 1000;
+    var query = $('.install-query', install);
+    var percent = $('.install-percent', install);
+    var steps = $$('.install-steps li');
+    var time = 0, stage = -1;
+
+    function render() {
+      var typed = Math.max(0, Math.min(QUERY.length, Math.floor((time - TYPE_AT) / KEY)));
+      var progress = easeInOut(Math.max(0, Math.min(1, (time - INSTALL) / (READY - INSTALL - 300))));
+      var next = time >= READY ? 3 : time >= INSTALL ? 2 : time >= FOUND ? 1 : 0;
+      query.textContent = QUERY.slice(0, typed);
+      install.classList.toggle('is-empty', !typed);
+      install.classList.toggle('is-pressing', time >= PRESS && time < INSTALL);
+      install.classList.toggle('is-fading', time >= FADE || time < SETTLE);
+      install.style.setProperty('--install-progress', progress.toFixed(3));
+      percent.textContent = Math.round(progress * 100) + '%';
+      if (next === stage) return;
+      stage = next;
+      install.dataset.stage = String(next);
+      steps.forEach(function (step, i) {
+        step.classList.toggle('is-done', i < next);
+        if (i === next) step.setAttribute('aria-current', 'step');
+        else step.removeAttribute('aria-current');
+      });
+    }
+
+    // Reduced or paused motion starts on the finished, installed screen.
+    time = reduce.matches || doc.classList.contains('motion-paused') ? STILL : 0;
+    render();
+    reduce.addEventListener('change', function () { if (reduce.matches) { time = STILL; render(); } });
+    live(install, function (dt) {
+      time += dt;
+      if (time >= END) time = 0;
+      render();
+    });
+  })();
+
   /* ---------- Seller app: switch real preview screens, without a fake booking ---------- */
 
   var phone = $('.phone');

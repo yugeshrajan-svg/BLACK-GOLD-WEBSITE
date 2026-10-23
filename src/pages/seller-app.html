@@ -19,18 +19,28 @@ description: The Black Gold seller app: check today's rate, request a pickup fro
       </div>
     </div>
     <div class="page-hero-visual">
-      {{> app-preview}}
+      {{> seller-install-preview}}
     </div>
   </div>
   <button class="motion-toggle page-motion" data-motion><span class="motion-icon" aria-hidden="true"></span><span class="motion-label">Pause motion</span></button>
 </section>
 
-<section class="section" aria-labelledby="features-title">
-  <div class="section-head">
-    <p class="eyebrow">In the app</p>
-    <h2 id="features-title">Everything for your <em>oil sales.</em></h2>
+<section class="section" id="app-features" aria-labelledby="features-title">
+  <div class="home-section-head">
+    <div>
+      <p class="eyebrow">In the app</p>
+      <h2 id="features-title">Everything for your <em>oil sales.</em></h2>
+    </div>
+    <button class="motion-toggle" data-motion><span class="motion-icon" aria-hidden="true"></span><span class="motion-label">Pause motion</span></button>
   </div>
-  {{> app-features}}
+  <div class="home-app-overview">
+    <div class="page-hero-visual home-app-visual">
+      {{> app-preview}}
+    </div>
+    <div class="home-app-summary">
+      {{> app-features}}
+    </div>
+  </div>
 </section>
 
 <section class="section app-download-section" id="get-app" aria-labelledby="download-title">
