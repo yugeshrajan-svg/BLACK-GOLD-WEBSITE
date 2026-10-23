@@ -1,0 +1,281 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Seller app — Black Gold</title>
+<meta name="description" content="The Black Gold seller app: check today's rate, request a pickup from your phone and keep a digital receipt for every collection.">
+<meta name="theme-color" content="#0a0a09">
+<meta property="og:type" content="website">
+<meta property="og:site_name" content="Black Gold">
+<meta property="og:locale" content="en_IN">
+<meta property="og:title" content="Seller app — Black Gold">
+<meta property="og:description" content="The Black Gold seller app: check today's rate, request a pickup from your phone and keep a digital receipt for every collection.">
+<meta property="og:image" content="og-image.jpg">
+<meta property="og:image:type" content="image/jpeg">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta property="og:image:alt" content="Black Gold — Used oil. New value. A thin stream of golden oil pouring into a black pool.">
+<meta name="twitter:card" content="summary_large_image">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 36 44'%3E%3Cpath d='M18 1C14 10 2 20 2 28a16 16 0 0 0 32 0C34 20 22 10 18 1Z' fill='%23d4af62'/%3E%3C/svg%3E">
+<link rel="preload" href="fonts/fraunces-latin.woff2" as="font" type="font/woff2" crossorigin>
+<link rel="preload" href="fonts/inter-latin.woff2" as="font" type="font/woff2" crossorigin>
+<link rel="stylesheet" href="style.css">
+<script>document.documentElement.classList.add("js");</script>
+</head>
+<body data-page="app">
+<a class="skip" href="#main">Skip to content</a>
+<div class="progress" aria-hidden="true"><span></span></div>
+
+<header class="header">
+  <a href="index.html" class="brand" aria-label="Black Gold home">
+    <svg class="brand-mark" viewBox="0 0 36 44" aria-hidden="true"><defs><linearGradient id="drop-gold" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#f3dc9e"/><stop offset=".5" stop-color="#d4af62"/><stop offset="1" stop-color="#a27632"/></linearGradient></defs><path d="M18 1C14 10 2 20 2 28a16 16 0 0 0 32 0C34 20 22 10 18 1Z" fill="url(#drop-gold)"/><path d="M18 15v23a10 10 0 0 0 10-10c0-4-6-10-10-13Z" fill="#0a0a09"/></svg>
+    <span class="brand-text">BLACK GOLD<small>WASTE OIL REFINING</small></span>
+  </a>
+  <nav id="navigation" class="nav" aria-label="Main navigation">
+    <a href="index.html" data-page="home">Home</a>
+    <a href="seller-app.html" data-page="app" aria-current="page">Seller app</a>
+    <a href="about.html" data-page="about">About</a>
+    <a href="collect.html" data-page="collect">What we collect</a>
+    <a href="how-it-works.html" data-page="how">How it works</a>
+    <a href="faq.html" data-page="faq">FAQs</a>
+    <button class="button button--gold nav-mobile-cta" data-app>Get the seller app <span class="arrow" aria-hidden="true">↗</span></button>
+  </nav>
+  <button class="button button--gold nav-action" data-app>Get seller app <span class="arrow" aria-hidden="true">↗</span></button>
+  <button class="menu" aria-expanded="false" aria-controls="navigation"><span class="menu-label">Menu</span><span class="menu-icon" aria-hidden="true"><i></i><i></i></span></button>
+</header>
+
+<main id="main">
+<section class="page-hero" id="top" aria-labelledby="page-title">
+  <div class="page-hero-inner">
+    <div class="page-hero-copy">
+      <p class="eyebrow">Seller app</p>
+      <h1 id="page-title">Your next pickup. <em>In your pocket.</em></h1>
+      <ul class="points points--hero">
+        <li>Check today’s rate</li>
+        <li>Request a pickup</li>
+        <li>Keep every receipt</li>
+      </ul>
+      <div class="hero-actions">
+        <button class="button button--gold" data-app>Get the seller app <span class="arrow" aria-hidden="true">↗</span></button>
+        <a class="text-link" href="faq.html">FAQs <span aria-hidden="true">→</span></a>
+      </div>
+    </div>
+    <div class="page-hero-visual">
+      <div class="app-graphic" aria-hidden="true">
+  <div class="orbit orbit-1"></div>
+  <div class="orbit orbit-2"><i></i></div>
+  <div class="chip chip-1"><b>✓</b> Rate shown before you sell</div>
+  <div class="chip chip-2"><b>✓</b> Measured on site</div>
+  <div class="chip chip-3"><b>✓</b> Receipt saved</div>
+  <div class="phone">
+    <div class="phone-notch"></div>
+    <div class="phone-top"><span>BLACK GOLD</span><span class="phone-status"><i></i><i></i><i></i></span></div>
+    <div class="screens">
+      <div class="screen s1">
+        <span class="phone-greeting">Your oil. Your next pickup.</span>
+        <h3>Today’s<br>rates.</h3>
+        <ul class="rate-list">
+          <li><span>Engine oil</span><b>₹ ••.•• <small>/ L</small></b></li>
+          <li><span>Hydraulic oil</span><b>₹ ••.•• <small>/ L</small></b></li>
+          <li><span>Transfer oil</span><b>₹ ••.•• <small>/ L</small></b></li>
+        </ul>
+        <div class="phone-button">Request pickup ↗</div>
+      </div>
+      <div class="screen s2">
+        <span class="phone-greeting">New pickup</span>
+        <h3>Ready when<br>you are.</h3>
+        <div class="phone-card">
+          <span>OIL TYPE</span><b>Used engine oil</b>
+          <hr>
+          <span>QUANTITY</span><b class="qty">— 50 L +</b>
+        </div>
+        <div class="phone-button">Confirm request ↗</div>
+      </div>
+      <div class="screen s3">
+        <div class="receipt-tick">✓</div>
+        <h3>Collection<br>recorded.</h3>
+        <ul class="receipt">
+          <li><span>Measured on site</span><b>✓</b></li>
+          <li><span>Paid on pickup</span><b>✓</b></li>
+          <li><span>Digital receipt</span><b>✓</b></li>
+        </ul>
+      </div>
+    </div>
+    <div class="phone-nav"><span class="on">Home</span><span>Pickups</span><span>Account</span></div>
+  </div>
+  <span class="concept-label">Illustrative app preview</span>
+</div>
+<div class="visual-tools visual-tools--app">
+  <p class="visual-hint">Try the app preview</p>
+  <div class="preview-controls" role="group" aria-label="App preview screens">
+    <button type="button" data-app-screen="0" aria-pressed="true">Rates</button>
+    <button type="button" data-app-screen="1" aria-pressed="false">Pickup</button>
+    <button type="button" data-app-screen="2" aria-pressed="false">Receipt</button>
+  </div>
+  <p class="preview-description" data-app-description>Rate per litre for each oil</p>
+</div>
+    </div>
+  </div>
+  <button class="motion-toggle page-motion" data-motion><span class="motion-icon" aria-hidden="true"></span><span class="motion-label">Pause motion</span></button>
+</section>
+
+<section class="section" aria-labelledby="features-title">
+  <div class="section-head">
+    <p class="eyebrow">In the app</p>
+    <h2 id="features-title">Everything for your <em>oil sales.</em></h2>
+  </div>
+  <div class="cards cards--3">
+  <article class="card" data-app-feature>
+    <span class="card-icon" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M3 12V4h8l10 10-8 8L3 12z"/><circle cx="7.5" cy="7.5" r="1.3"/></svg></span>
+    <h3>Rates</h3>
+    <ul class="points"><li>Rate per litre for each oil</li><li>Check before you sell</li></ul>
+  </article>
+  <article class="card" data-app-feature>
+    <span class="card-icon" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M2 6.5h11v10H2zM13 9.5h4.2l3.3 3.4v3.6H13"/><circle cx="6" cy="17.5" r="1.9"/><circle cx="17" cy="17.5" r="1.9"/></svg></span>
+    <h3>Pickups</h3>
+    <ul class="points"><li>Enter your quantity</li><li>Request from your phone</li></ul>
+  </article>
+  <article class="card" data-app-feature>
+    <span class="card-icon" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M6 3h12v18l-2-1.4-2 1.4-2-1.4-2 1.4-2-1.4L6 21zM9 8h6M9 11.5h6M9 15h3.5"/></svg></span>
+    <h3>Records</h3>
+    <ul class="points"><li>Digital receipt for every pickup</li><li>All your sales in one place</li></ul>
+  </article>
+</div>
+</section>
+
+<section class="section app-download-section" id="get-app" aria-labelledby="download-title">
+  <div>
+    <p class="eyebrow">Get the Black Gold seller app</p>
+    <h2 id="download-title">Your oil sales.<br><em>One app.</em></h2>
+    <p class="download-description">Choose Google Play or a direct APK download for your Android phone.</p>
+    <p class="download-returning">Already installed? Open the app to check rates and request your next pickup.</p>
+  </div>
+  <div class="app-download-options">
+  <div class="store-links">
+    <a class="store-link" data-app-download="googlePlay" aria-disabled="true" tabindex="-1">
+      <svg viewBox="0 0 28 32" aria-hidden="true"><path d="M4 3v26l21-13Z"/><path d="m4 3 13 13L4 29"/></svg>
+      <span><small>Get it on</small><strong>Google Play</strong></span>
+      <span class="store-link-arrow" aria-hidden="true">↗</span>
+    </a>
+    <a class="store-link store-link--apk" data-app-download="apk" aria-disabled="true" tabindex="-1">
+      <svg viewBox="0 0 28 32" aria-hidden="true"><path d="M14 3v17m-6-6 6 6 6-6M4 22v6h20v-6"/></svg>
+      <span><small>Install directly</small><strong>Download APK</strong></span>
+      <span class="store-link-arrow" aria-hidden="true">↓</span>
+    </a>
+  </div>
+  <p class="download-status">Download links are coming soon.</p>
+</div>
+</section>
+<section class="closing" aria-labelledby="closing-title">
+  <div class="closing-inner">
+    <p class="eyebrow">Black Gold seller app</p>
+    <h2 id="closing-title">Your next pickup<br class="br-wide"> starts with <em>the app.</em></h2>
+    <div class="closing-cta">
+      <p>Check your rate. Request a pickup.<br>Keep your receipts in one place.</p>
+      <div class="closing-actions">
+        <button class="button button--gold" data-app>Get the seller app <span class="arrow" aria-hidden="true">↗</span></button>
+        <button class="text-link" data-pickup>Prepare pickup enquiry</button>
+      </div>
+    </div>
+  </div>
+</section>
+</main>
+
+<footer class="footer">
+  <div class="footer-top">
+    <div class="footer-brand">
+      <a class="brand" href="index.html"><svg class="brand-mark" viewBox="0 0 36 44" aria-hidden="true"><path d="M18 1C14 10 2 20 2 28a16 16 0 0 0 32 0C34 20 22 10 18 1Z" fill="url(#drop-gold)"/><path d="M18 15v23a10 10 0 0 0 10-10c0-4-6-10-10-13Z" fill="#0f0e0c"/></svg><span class="brand-text">BLACK GOLD<small>WASTE OIL REFINING</small></span></a>
+      <p>Used oil. New value.<br>Chennai, Tamil Nadu, India.</p>
+    </div>
+    <nav class="footer-col" aria-label="Footer">
+      <span class="eyebrow">Explore</span>
+      <a href="index.html" data-page="home">Home</a>
+      <a href="about.html" data-page="about">About</a>
+      <a href="collect.html" data-page="collect">What we collect</a>
+      <a href="how-it-works.html" data-page="how">How it works</a>
+      <a href="seller-app.html" data-page="app" aria-current="page">Seller app</a>
+      <a href="faq.html" data-page="faq">FAQs</a>
+    </nav>
+    <div class="footer-col">
+      <span class="eyebrow">Get started</span>
+      <button data-pickup>Prepare pickup enquiry</button>
+      <button data-app>Get the seller app</button>
+    </div>
+  </div>
+  <div class="footer-bottom">
+    <span>© <span id="year">2026</span> Black Gold</span>
+    <span>Client review edition · Contact &amp; app links pending</span>
+    <a href="#top">Back to top ↑</a>
+  </div>
+</footer>
+
+<dialog id="pickup-dialog" aria-labelledby="pickup-title">
+  <button class="close" aria-label="Close dialog"><span aria-hidden="true">×</span></button>
+  <p class="eyebrow">Your next collection</p>
+  <h2 id="pickup-title">Prepare a pickup enquiry.</h2>
+  <p class="dialog-intro">Add your details to create a summary, then choose how to share it with Black Gold. Nothing is sent automatically and no pickup is booked here.</p>
+  <form id="pickup-form" novalidate>
+    <fieldset class="oil-choice">
+      <legend>Oil type</legend>
+      <div class="choice-grid">
+        <label><input type="radio" name="oil" value="Used engine oil" checked><span><i class="swatch engine" aria-hidden="true"></i>Engine oil<small>Car &amp; bike servicing</small></span></label>
+        <label><input type="radio" name="oil" value="Used hydraulic oil"><span><i class="swatch hydraulic" aria-hidden="true"></i>Hydraulic oil<small>Industrial machinery</small></span></label>
+        <label><input type="radio" name="oil" value="Used transfer oil"><span><i class="swatch transfer" aria-hidden="true"></i>Transfer oil<small>Industrial operations</small></span></label>
+      </div>
+    </fieldset>
+    <label class="field"><span>Business name</span><input name="business" required maxlength="100" autocomplete="organization" placeholder="Your workshop or company"><span class="field-error">Add your business name.</span></label>
+    <label class="field"><span>Chennai locality</span><input name="area" required maxlength="100" placeholder="e.g. Ambattur"><span class="field-error">Add your locality.</span></label>
+    <div class="form-row">
+      <label class="field"><span>Approximate quantity</span><input name="quantity" type="number" inputmode="numeric" min="1" max="100000" required placeholder="Enter quantity"><span class="field-error">Enter a quantity from 1 to 100,000.</span></label>
+      <fieldset class="segmented">
+        <legend>Unit</legend>
+        <div class="seg-track">
+          <label><input type="radio" name="unit" value="Litres" checked><span>Litres</span></label>
+          <label><input type="radio" name="unit" value="Barrels"><span>Barrels</span></label>
+        </div>
+      </fieldset>
+    </div>
+    <p class="form-note">Confirm the rate, minimum volume and collection availability with Black Gold before booking. Nothing is sent or saved by this form unless you choose to share the summary.</p>
+    <button class="button button--ink" type="submit">Create enquiry summary <span class="arrow" aria-hidden="true">↗</span></button>
+  </form>
+  <div id="enquiry-result" hidden>
+    <div class="result-head"><span class="result-tick" aria-hidden="true">✓</span><h3 tabindex="-1">Your enquiry is ready.</h3></div>
+    <pre id="enquiry-text"></pre>
+    <p>Share this summary with your Black Gold contact. A pickup has not been booked.</p>
+    <div class="result-actions">
+      <button class="button button--ink" id="download-enquiry">Download <span class="arrow" aria-hidden="true">↓</span></button>
+      <button class="button button--outline" id="copy-enquiry">Copy text</button>
+      <a class="button button--outline" id="whatsapp-enquiry" href="#" target="_blank" rel="noopener">Share on WhatsApp</a>
+    </div>
+    <p class="copy-status" role="status" aria-live="polite"></p>
+    <button class="text-link" id="edit-enquiry">Edit details <span aria-hidden="true">←</span></button>
+  </div>
+</dialog>
+
+<dialog id="app-dialog" aria-labelledby="app-dialog-title">
+  <button class="close" aria-label="Close dialog"><span aria-hidden="true">×</span></button>
+  <p class="eyebrow">Black Gold seller app</p>
+  <h2 id="app-dialog-title">Your oil sales.<br><em>One app.</em></h2>
+  <p>Choose Google Play or a direct APK download for your Android phone.</p>
+  <div class="app-download-options">
+  <div class="store-links">
+    <a class="store-link" data-app-download="googlePlay" aria-disabled="true" tabindex="-1">
+      <svg viewBox="0 0 28 32" aria-hidden="true"><path d="M4 3v26l21-13Z"/><path d="m4 3 13 13L4 29"/></svg>
+      <span><small>Get it on</small><strong>Google Play</strong></span>
+      <span class="store-link-arrow" aria-hidden="true">↗</span>
+    </a>
+    <a class="store-link store-link--apk" data-app-download="apk" aria-disabled="true" tabindex="-1">
+      <svg viewBox="0 0 28 32" aria-hidden="true"><path d="M14 3v17m-6-6 6 6 6-6M4 22v6h20v-6"/></svg>
+      <span><small>Install directly</small><strong>Download APK</strong></span>
+      <span class="store-link-arrow" aria-hidden="true">↓</span>
+    </a>
+  </div>
+  <p class="download-status">Download links are coming soon.</p>
+</div>
+  <button class="text-link" data-close>Back to the website <span aria-hidden="true">→</span></button>
+</dialog>
+
+<script src="app.js"></script>
+</body>
+</html>

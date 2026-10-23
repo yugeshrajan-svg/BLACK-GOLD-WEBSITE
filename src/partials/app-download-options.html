@@ -1,0 +1,15 @@
+<div class="app-download-options">
+  <div class="store-links">
+    <a class="store-link" data-app-download="googlePlay" {{googlePlayAttrs}}>
+      <svg viewBox="0 0 28 32" aria-hidden="true"><path d="M4 3v26l21-13Z"/><path d="m4 3 13 13L4 29"/></svg>
+      <span><small>Get it on</small><strong>Google Play</strong></span>
+      <span class="store-link-arrow" aria-hidden="true">↗</span>
+    </a>
+    <a class="store-link store-link--apk" data-app-download="apk" {{apkAttrs}}>
+      <svg viewBox="0 0 28 32" aria-hidden="true"><path d="M14 3v17m-6-6 6 6 6-6M4 22v6h20v-6"/></svg>
+      <span><small>Install directly</small><strong>Download APK</strong></span>
+      <span class="store-link-arrow" aria-hidden="true">↓</span>
+    </a>
+  </div>
+  {{downloadStatus}}
+</div>
