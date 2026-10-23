@@ -1,0 +1,17 @@
+# Local deployment snapshots and generated packages
+.sites-publish/
+.openai/deployment-status.json
+Black-Gold-Website-upload.zip
+
+# Dependencies, local configuration and credentials
+node_modules/
+.env
+.env.*
+!.env.example
+*.log
+
+# Operating system and editor files
+.DS_Store
+Thumbs.db
+.vscode/
+.idea/
