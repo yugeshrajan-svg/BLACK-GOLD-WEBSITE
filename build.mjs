@@ -9,7 +9,15 @@ const root = dirname(fileURLToPath(import.meta.url));
 const layout = readFileSync(join(root, 'src/layout.html'), 'utf8');
 const downloads = JSON.parse(readFileSync(join(root, 'src/app-downloads.json'), 'utf8'));
 const contact = JSON.parse(readFileSync(join(root, 'src/contact.json'), 'utf8'));
+const areas = JSON.parse(readFileSync(join(root, 'src/areas.json'), 'utf8'));
 const escape = (s) => s.replace(/&/g, '&amp;').replace(/"/g, '&quot;').replace(/</g, '&lt;');
+if (!Array.isArray(areas) || !areas.length || !areas.every((a) => typeof a === 'string' && a.trim() && a.trim() !== 'Other')) {
+  throw new Error('src/areas.json must be a list of area names (the form adds "Other area" itself)');
+}
+// One option per area in the enquiry form's area list; "Other area" follows in the layout.
+const areaTokens = {
+  areaOptions: areas.map((a) => `<option value="${escape(a.trim())}">${escape(a.trim())}</option>`).join('')
+};
 if (!/^\+[1-9]\d{7,14}$/.test(contact.phone)) throw new Error('Contact phone must include its country code, with digits only after +');
 if (!/^[a-z0-9._+-]+@[a-z0-9.-]+\.[a-z]{2,}$/i.test(contact.email)) throw new Error('Contact email must be a plain email address');
 const contactTokens = {
@@ -63,7 +71,7 @@ for (const file of readdirSync(join(root, 'src/pages')).filter((f) => f.endsWith
   }
   const content = expand(source.slice(header[0].length).trim());
   let html = expand(layout).replace('{{content}}', () => content);
-  html = html.replace(/\{\{(\w+)\}\}/g, (_, key) => downloadTokens[key] ?? contactTokens[key] ?? escape(meta[key] || ''));
+  html = html.replace(/\{\{(\w+)\}\}/g, (_, key) => downloadTokens[key] ?? contactTokens[key] ?? areaTokens[key] ?? escape(meta[key] || ''));
   // Mark this page's links in the menu and footer.
   html = html.split(`data-page="${meta.page}"`).join(`data-page="${meta.page}" aria-current="page"`);
   // The <body> tag carries data-page too; it is not a link, so take the marker off again.

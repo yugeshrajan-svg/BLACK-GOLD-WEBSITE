@@ -1,4 +1,4 @@
-# Black Gold website — client review edition (v4.6)
+# Black Gold website — client review edition (v4.7)
 
 Open `dist/index.html` in a modern browser to review the website, or upload everything inside `dist` to a static host. The site has no dependencies.
 
@@ -28,7 +28,7 @@ node .qa/verify-interactions.mjs
 | About | `about.html` | Full-width oil-industry hero; a stepped refinery pipeline below it, plus a second animated journey linking measurement, rates, payment and a digital receipt to the four selectable promises |
 | What we collect | `collect.html` | One interactive sample jar, oil category descriptions and the businesses eligible to sell; selected oil carries into the enquiry |
 | Seller app | `seller-app.html` | Search-to-install hero animation; eight-scene scroll journey with a travelling truck and green receipt ending; working-app preview in Features, plus setup, account help and installation |
-| FAQs | `faq.html` | “Ask Black Gold” chat box in the hero that answers typed questions from the FAQ list. Eleven searchable policy answers, including the 50-litre minimum, pickup-code timing, payment and listing changes |
+| FAQs | `faq.html` | “Ask Black Gold” chat box in the hero that answers typed questions from the FAQ list. Twelve searchable policy answers, including the 50-litre minimum, pickup-code timing, payment, listing changes and how to contact support |
 
 Every page shares the header, closing layout, footer and pickup enquiry form. Closing messages are specific to each page. The live visuals run only while they are on screen, stop with the Pause motion button, and show a still, complete version with reduced motion. Cards below each visual light up in step with it (About).
 
@@ -41,11 +41,28 @@ The five HTML files in `dist/` are generated. Edit the sources, then rebuild:
 - `src/partials/*.html`: the home app introduction and pickup journey, shared promise animation, full seller-app demo and feature cards, and shared download options.
 - `src/app-downloads.json`: add the official `googlePlay` URL and the HTTPS `apk` URL (or a local `assets/filename.apk` path), then rebuild. Empty values show “coming soon” without a fake download link.
 - `src/contact.json`: the business telephone, its displayed format, enquiry email, and the office street address and city line. Rebuilding updates the footer address on every page, call, email and WhatsApp links, enquiry recipients and homepage structured data together.
+- `src/areas.json`: the Chennai areas shown as tappable choices in the pickup enquiry, in the order listed. “Other area” is added after them automatically and lets visitors type any other area. Add, remove or rename areas here, then rebuild.
 - Run `node build.mjs` (Node.js, no packages needed) to write the pages into `dist/`.
 
 `style.css`, `app.js` and `oil-surface.js` in `dist/` are edited directly. The website uses English throughout.
 
 The About hero image, `dist/assets/about-refinery.webp`, is a generated illustration of an oil-refining setting, not a photograph of a specific Black Gold facility. It is labelled illustrative on the page and encoded as a 193 KB WebP. Replace this asset with an approved facility photograph when one is available.
+
+## What changed in v4.7
+
+- **New Black Gold Refining logo and app icon.** The supplied website logo (oil barrel, gold ring and drop, “Black Gold Refining · We buy used oil”) replaces the flask icon and “Black Gold / Waste oil refining” text in the header and footer. Over light sections the scrolled header places it on a charcoal plate, because the artwork is drawn for dark backgrounds. The supplied app icon replaces the old icon in the browser tab, the Play Store animation, its launch screen, the app preview and the “Ask Black Gold” chat. The old `black-gold-logo.png` and `black-gold-app-icon.png` have been removed.
+- **Prepared from the supplied artwork.** `assets/black-gold-logo.webp` (840 × 309) is the website logo with its black background turned into transparency, keeping the glow; the supplied PNG's own transparency was patchy and is not used. `assets/black-gold-app-icon.webp` (288 × 288) is the app icon cropped to its gold rounded square with transparent corners. `favicon-32.png`, `favicon-192.png` and `apple-touch-icon.png` (180 × 180) are made from the same icon.
+- **New link preview.** `og-image.jpg` (1200 × 630) now shows the new logo on black, replacing the earlier oil-drop mark.
+- **Enquiries and support go to one email.** support@myblackgold.app (from `src/contact.json`) is now named wherever the site previously said “contact the Black Gold office”: Seller App account help (submitted orders, sign-in, listing changes, temporary passwords) and the FAQ answers on booking and listing changes. A new FAQ, “How do I contact Black Gold support?”, gives the email and phone number, and the “Ask Black Gold” chat finds it for questions such as “what is your email address”. Email enquiries still open a draft in the visitor's own email app, addressed to the same mailbox.
+- **Phone number in every pickup enquiry.** The enquiry form now requires a mobile number. Ten digits are accepted with or without +91, 91 or a leading 0, so landlines with their STD code work too. The number appears in the summary as “Phone: +91 98765 43210”, so it reaches Black Gold in the WhatsApp message and the email.
+- **Send on WhatsApp and Send by email lead the result.** Once the summary is ready, two large buttons sit directly under “Your enquiry is ready.”: a green WhatsApp button showing the business number and a charcoal email button showing support@myblackgold.app. They sit side by side on desktop and stack on phones. Download and Copy text move below the summary as smaller outline buttons.
+- **Choose your area from a list.** The free-text “Chennai locality” field is replaced by “Your area”: a box that opens the phone's own scrolling list of twenty main Chennai areas, from Ambattur to Velachery. “Other area (type it)” at the end opens a box to type any other area. One choice is required, and the enquiry shows it as “Area: Ambattur”. The list lives in `src/areas.json`.
+- **First screen fits the monitor.** On laptops and monitors (1025 px wide and up), every page's opening section is at least the full window height, with its content centred, so nothing from the next section shows on arrival. The home hero's Pause motion, enquiry button and scroll arrow sit along the bottom of the screen. Taller content (for example Seller App on a 768 px-tall laptop) still grows the section. Phones and tablets keep the compact height.
+- **Large monitors scale the first screen up.** From 1600 px wide, the page content widens from 1280 px to up to 1520 px. Each page's opening content, and the header with it, is enlarged in steps chosen by window height: about 1.15× from 860 px tall, 1.3× from 940 px tall (a 27-inch 1080p monitor at 100% zoom), and 1.7× from 1180 px tall (1440p). This uses CSS `zoom` on those blocks only, not the whole page, so the scroll animations are unaffected. Browsers without `zoom` show the unscaled layout.
+- **FAQ chat messages show while motion is paused.** Pausing motion used to freeze each message before its fade-in, leaving the “Ask Black Gold” welcome and replies invisible. Messages now appear at once when motion is paused.
+- **Pickup enquiry from the home hero.** A gold “Prepare pickup enquiry” button sits in the bottom-right corner of the home hero, with the scroll arrow to its left, and opens the enquiry form. On phones it spans the full width above Pause motion and the arrow.
+- **Header and home hero reach the window edges.** On every page the header uses a slim edge margin (`--edge-x`, 20–60 px), so the logo sits at the left of the window and the menu ends at the right. The home hero uses the same margin: its content starts at the left edge and the enquiry button sits in the bottom-right corner. Other sections keep the centred content column.
+- **Oil jars and bolder type in the enquiry.** Each oil choice shows a small sample jar in the same colours as the home page jars, in place of the coloured dot. The selected jar lifts slightly. The form's headings, oil names, labels, typed text and summary use heavier weights, and typed text uses Inter instead of light Fraunces.
 
 ## What changed in v4.6
 

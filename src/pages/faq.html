@@ -24,7 +24,7 @@ closingDescription: Prepare an enquiry with your business details so you can sha
     <div class="page-hero-visual">
       <section class="faq-chat" aria-labelledby="faq-chat-title" data-faq-chat hidden>
         <header class="faq-chat-head">
-          <img src="assets/black-gold-app-icon.png" alt="" width="44" height="44">
+          <img src="assets/black-gold-app-icon.webp" alt="" width="44" height="44">
           <div><h2 id="faq-chat-title">Ask Black Gold</h2><p>Instant answers from the FAQs on this page</p></div>
         </header>
         <div class="faq-chat-log" role="log" aria-live="polite" aria-label="Conversation" tabindex="0" data-chat-log>
@@ -85,7 +85,7 @@ closingDescription: Prepare an enquiry with your business details so you can sha
     </details>
     <details id="faq-booking" data-keywords="book booking schedule appointment website online form submit whatsapp enquiry confirm">
       <summary>Does this website book my pickup?<span class="faq-icon" aria-hidden="true"></span></summary>
-      <div class="faq-body"><p>The website creates an enquiry summary for you to download, copy or share on WhatsApp. Nothing is sent automatically. A pickup is confirmed separately with Black Gold.</p></div>
+      <div class="faq-body"><p>The website creates an enquiry summary that you can download, copy, or send yourself on WhatsApp or by email to <a class="enquiry-contact" href="{{contactMailto}}">{{contactEmail}}</a>. Nothing is sent automatically. A pickup is confirmed separately with Black Gold.</p></div>
     </details>
     <details id="faq-pickup-code" data-keywords="code otp pin digit four security driver share">
       <summary>When should I share my pickup code?<span class="faq-icon" aria-hidden="true"></span></summary>
@@ -101,7 +101,11 @@ closingDescription: Prepare an enquiry with your business details so you can sha
     </details>
     <details id="faq-listing" data-keywords="change cancel cancellation edit modify update delete remove listing">
       <summary>Can I change or cancel a submitted listing?<span class="faq-icon" aria-hidden="true"></span></summary>
-      <div class="faq-body"><p>Contact the Black Gold office for help with a submitted listing. Changes and cancellations are handled by the office rather than inside the app.</p></div>
+      <div class="faq-body"><p>Email <a class="enquiry-contact" href="{{contactMailto}}">{{contactEmail}}</a> for help with a submitted listing. Changes and cancellations are handled by the office rather than inside the app.</p></div>
+    </details>
+    <details id="faq-support" data-keywords="support help contact email mail e-mail address phone call number office problem issue reach talk speak customer care">
+      <summary>How do I contact Black Gold support?<span class="faq-icon" aria-hidden="true"></span></summary>
+      <div class="faq-body"><p>Email <a class="enquiry-contact" href="{{contactMailto}}">{{contactEmail}}</a> for enquiries and support, or call <a class="enquiry-contact" href="{{contactTel}}">{{contactDisplay}}</a>. Include your business name and, for an existing order, your listing details.</p></div>
     </details>
   </div>
   <div class="faq-no-results" hidden><p>No matching answers. Try another word or view all questions.</p><button type="button" class="text-link" data-clear-search>Clear search <span aria-hidden="true">→</span></button></div>

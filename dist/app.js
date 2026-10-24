@@ -1061,16 +1061,41 @@
   $$('input[name="unit"]', form).forEach(function (input) { input.addEventListener('change', quantityRules); });
   quantityRules();
 
+  // Ten digits, typed with or without +91, 91 or a leading 0 (mobile or landline with its STD code).
+  function phoneDigits(value) {
+    var digits = value.replace(/[\s().-]/g, '').replace(/^(\+91|91(?=\d{10}$)|0(?=\d{10}$))/, '');
+    return /^\d{10}$/.test(digits) ? digits : null;
+  }
+
+  // The area is picked from a scrolling list; "Other area" opens a box to type it in.
+  var areaSelect = $('select[name="area"]', form);
+  var areaOther = $('.area-other', form);
+  areaSelect.addEventListener('change', function () {
+    if (areaSelect.value) {
+      areaSelect.closest('.field').classList.remove('invalid');
+      areaSelect.removeAttribute('aria-invalid');
+    }
+    areaOther.hidden = areaSelect.value !== 'Other';
+    if (areaOther.hidden) {
+      areaOther.classList.remove('invalid');
+      $('input', areaOther).removeAttribute('aria-invalid');
+    } else {
+      $('input', areaOther).focus();
+    }
+  });
+
   function validate() {
     var firstBad = null;
     $$('.field', form).forEach(function (field) {
-      var input = $('input', field);
+      if (field.hidden) return;
+      var input = $('input, select', field);
       var value = input.value.trim();
       var ok = value.length > 0;
       if (ok && input.type === 'number') {
         var n = Number(value);
         ok = isFinite(n) && n >= Number(input.getAttribute('min')) && n <= 100000;
       }
+      if (ok && input.type === 'tel') ok = phoneDigits(value) !== null;
       field.classList.toggle('invalid', !ok);
       input.setAttribute('aria-invalid', String(!ok));
       if (!ok && !firstBad) firstBad = input;
@@ -1092,9 +1117,12 @@
   function writeSummary() {
     var f = new FormData(form);
     var key = OIL_KEYS.filter(function (k) { return OILS[k].value === f.get('oil'); })[0];
+    var phone = phoneDigits(f.get('phone'));
+    var area = f.get('area') === 'Other' ? f.get('areaOther').trim() : f.get('area');
     summary = 'BLACK GOLD — PICKUP ENQUIRY\n\n' +
       'Business: ' + f.get('business').trim() + '\n' +
-      'Locality: ' + f.get('area').trim() + ', Chennai\n' +
+      'Phone: +91 ' + phone.slice(0, 5) + ' ' + phone.slice(5) + '\n' +
+      'Area: ' + area + '\n' +
       'Oil type: ' + (key ? oilText(key, 'title') : f.get('oil')) + '\n' +
       'Approximate quantity: ' + Number(f.get('quantity')) + ' ' + f.get('unit') + '\n\n' +
       'Minimum collection: 50 litres. For barrels, please confirm the total volume.\n' +

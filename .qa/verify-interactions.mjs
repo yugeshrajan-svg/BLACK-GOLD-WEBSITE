@@ -5,6 +5,7 @@ import vm from 'node:vm';
 import assert from 'node:assert/strict';
 const downloadLinks = JSON.parse(readFileSync('src/app-downloads.json','utf8'));
 const contactDetails = JSON.parse(readFileSync('src/contact.json','utf8'));
+const areaList = JSON.parse(readFileSync('src/areas.json','utf8'));
 
 const decode = s => s.replace(/&(?:amp|lt|gt|quot|#39|#\d+);/g, x => ({'&amp;':'&','&lt;':'<','&gt;':'>','&quot;':'"','&#39;':"'"}[x] ?? String.fromCodePoint(+x.slice(2,-1))));
 const escape = s => s.replaceAll('&','&amp;').replaceAll('"','&quot;').replaceAll('<','&lt;');
@@ -88,8 +89,16 @@ class Element {
   get id() { return this.attrs.id || ''; }
   get lang() { return this.attrs.lang || ''; }
   set lang(v) { this.attrs.lang = v; }
-  get value() { return this.attrs.value || ''; }
-  set value(v) { this.attrs.value = String(v); }
+  // A <select> reads and sets its value through its options, as in a browser.
+  get value() {
+    if (this.tag === 'option') return this.attrs.value ?? this.textContent;
+    if (this.tag === 'select') { const options = this.querySelectorAll('option'); return (options.find(o => o.hasAttribute('selected')) || options[0])?.value ?? ''; }
+    return this.attrs.value || '';
+  }
+  set value(v) {
+    if (this.tag === 'select') { for (const o of this.querySelectorAll('option')) o.toggleAttribute('selected', o.value === String(v)); return; }
+    this.attrs.value = String(v);
+  }
   get type() { return this.attrs.type || 'text'; }
   get hidden() { return this.hasAttribute('hidden'); }
   set hidden(v) { this.toggleAttribute('hidden',v); }
@@ -165,7 +174,7 @@ function load(file, reduced = false, browserLanguage = 'en', oilFactory) {
     URL, Blob, Date, console,
     requestAnimationFrame:fn=>{frames.set(++seq,fn);return seq;}, cancelAnimationFrame:id=>frames.delete(id),
     setTimeout:fn=>{timers.set(++seq,fn);return seq;}, clearTimeout:id=>timers.delete(id),
-    FormData:class extends Map { constructor(form) { super(); for (const n of form.querySelectorAll('input')) if (n.attrs.name && (n.type !== 'radio' || n.checked)) this.set(n.attrs.name,n.value); } }
+    FormData:class extends Map { constructor(form) { super(); for (const n of form.querySelectorAll('input, select')) if (n.attrs.name && (n.type !== 'radio' || n.checked)) this.set(n.attrs.name,n.value); } }
   };
   const context = vm.createContext(sandbox);
   vm.runInContext(readFileSync('dist/app.js','utf8'),context,{filename:'app.js'});
@@ -196,6 +205,10 @@ for (const reduced of [false,true]) {
     home.click('.header [data-app]');
     assert.equal(home.q('#app-dialog').open,true,'The header opens the app download panel');
     assert.equal(home.q('#pickup-dialog').open,false,'Getting the app must not open the enquiry form');
+    home.q('#app-dialog').close();
+    home.click('.hero-bottom .hero-enquiry');
+    assert.equal(home.q('#pickup-dialog').open,true,'The hero corner button opens the pickup enquiry');
+    home.q('#pickup-dialog').close();
     for (const [platform,url] of Object.entries(downloadLinks)) {
       const options = home.qa('[data-app-download="'+platform+'"]');
       assert.equal(options.length,3,'Downloads show in the hero, app introduction and shared dialog');
@@ -301,7 +314,7 @@ for (const reduced of [false,true]) {
     faq.search('Chennai');
     assert.equal(faq.qa('#faq-answers details').filter(n=>!n.hidden).length,1);
     faq.search('no-such-answer-4729'); assert.equal(faq.q('.faq-no-results').hidden,false);
-    faq.click('[data-clear-search]'); assert.equal(faq.qa('#faq-answers details').filter(n=>!n.hidden).length,11);
+    faq.click('[data-clear-search]'); assert.equal(faq.qa('#faq-answers details').filter(n=>!n.hidden).length,12);
     assert.equal(faq.q('.faq-no-results').hidden,true);
     faq.search('Does this website book');
     assert.equal(faq.qa('#faq-answers details').filter(n=>!n.hidden).length,1);
@@ -311,6 +324,7 @@ for (const reduced of [false,true]) {
     assert.equal(faq.q('#faq-pickup-code').hidden,false);
     faq.search('UPI');
     assert.equal(faq.q('#faq-payment').hidden,false);
+    assert.equal(new URL(faq.q('#faq-support a').getAttribute('href')).pathname,contactDetails.email,'Support questions go to the configured email');
   }
 }
 
@@ -333,7 +347,9 @@ for (const reduced of [false,true]) {
     ['I want to cancel my listing','Can I change or cancel a submitted listing?'],
     ['do you take hydraulic oil','What oils can I sell?'],
     ['the driver measured less than I had','What if the measured quantity is different?'],
-    ['can I book a pickup on this website','Does this website book my pickup?']
+    ['can I book a pickup on this website','Does this website book my pickup?'],
+    ['what is your email address','How do I contact Black Gold support?'],
+    ['I need help from customer care','How do I contact Black Gold support?']
   ]) {
     const before = bots().length;
     askChat(question);
@@ -567,19 +583,39 @@ for (const file of ['about.html','index.html']) {
   assert.equal(hover.q('[data-promise-scene].is-active').style.getPropertyValue('--promise-action'),'1','Reduced-motion hover shows a complete, still illustration');
 }
 
+// Picking from the area list: set the choice and announce the change, as a browser does.
+const chooseArea = (page, value) => {
+  page.q('select[name="area"]').value = value;
+  page.q('select[name="area"]').fire('change');
+};
 const form = load('index.html');
+assert.deepEqual(form.qa('select[name="area"] option').map(n => n.value),['',...areaList,'Other'],'The list prompts first, then every area in src/areas.json, then Other area');
+assert.equal(form.q('select[name="area"]').value,'','No area is chosen until the visitor picks one');
+assert.equal(form.qa('.choice-grid .enquiry-jar').length,3,'Each oil choice shows its sample jar');
+assert.equal(form.q('.area-other').hidden,true,'The typed area box waits for Other area');
 form.click('[data-home-enquire]'); form.q('#pickup-form').fire('submit');
-assert.equal(form.qa('.field.invalid').length,3);
+assert.equal(form.qa('.field.invalid').length,4);
+assert.equal(form.q('select[name="area"]').getAttribute('aria-invalid'),'true','An area must be chosen');
+assert.equal(form.q('input[name="phone"]').getAttribute('aria-invalid'),'true','The customer phone number is required');
 form.q('input[name="business"]').value = 'Test workshop';
-form.q('input[name="area"]').value = 'Ambattur';
+form.q('input[name="phone"]').value = '12345';
+chooseArea(form,'Other');
+assert.equal(form.q('.area-other').hidden,false,'Other area opens a box to type the area');
+assert.equal(form.q('.area-field').classList.contains('invalid'),false,'Choosing an area clears its error');
 form.q('input[name="quantity"]').value = '49';
 form.q('#pickup-form').fire('submit');
+assert.equal(form.q('input[name="areaOther"]').getAttribute('aria-invalid'),'true','Other area needs the area typed in');
+assert.equal(form.q('input[name="phone"]').getAttribute('aria-invalid'),'true','A phone number needs ten digits');
 assert.equal(form.q('input[name="quantity"]').getAttribute('aria-invalid'),'true','The minimum pickup is 50 litres');
 assert.equal(form.q('#enquiry-result').hidden,true);
+form.q('input[name="phone"]').value = '+91 98765-43210';
+form.q('input[name="areaOther"]').value = 'Kolathur';
 form.q('input[name="quantity"]').value = '50';
 form.q('#pickup-form').fire('submit');
 assert.equal(form.q('#enquiry-result').hidden,false);
 assert.match(form.q('#enquiry-text').textContent,/Test workshop/);
+assert.match(form.q('#enquiry-text').textContent,/Area: Kolathur/,'A typed area reaches the enquiry');
+assert.match(form.q('#enquiry-text').textContent,/Phone: \+91 98765 43210/,'The enquiry carries the customer phone number');
 assert.match(form.q('#enquiry-text').textContent,/no pickup has been booked/i);
 assert.match(form.q('#enquiry-text').textContent,/Minimum collection: 50 litres/);
 const enquiryShare = new URL(form.q('#whatsapp-enquiry').href);
@@ -592,18 +628,22 @@ assert.equal(enquiryEmail.pathname,contactDetails.email,'The email draft address
 assert.equal(enquiryEmail.searchParams.get('subject'),'Black Gold pickup enquiry');
 assert.equal(enquiryEmail.searchParams.get('body').replace(/\r\n/g,'\n'),form.q('#enquiry-text').textContent,'The full summary stays intact in the email draft');
 form.click('#edit-enquiry');
+chooseArea(form,'Ambattur');
+assert.equal(form.q('.area-other').hidden,true,'A listed area closes the Other box');
 form.q('input[name="quantity"]').value = '75';
 form.q('#pickup-form').fire('submit');
 const revisedShare = new URL(form.q('#whatsapp-enquiry').href);
 assert.equal(revisedShare.pathname,'/' + contactDetails.phone.slice(1),'Editing the enquiry preserves its recipient');
 assert.match(revisedShare.searchParams.get('text'),/75 Litres/);
+assert.match(revisedShare.searchParams.get('text'),/Area: Ambattur/,'A tapped area reaches the enquiry');
 const revisedEmail = new URL(form.q('#email-enquiry').href);
 assert.equal(revisedEmail.pathname,contactDetails.email,'Editing the enquiry preserves the email recipient');
 assert.equal(revisedEmail.searchParams.get('body').replace(/\r\n/g,'\n'),form.q('#enquiry-text').textContent,'The email draft updates after editing the enquiry');
 
 const barrels = load('index.html');
 barrels.q('input[name="business"]').value = 'Barrel workshop';
-barrels.q('input[name="area"]').value = 'Ambattur';
+barrels.q('input[name="phone"]').value = '044 2345 6789';
+chooseArea(barrels,'Guindy');
 barrels.q('input[name="unit"][value="Litres"]').checked = false;
 barrels.q('input[name="unit"][value="Barrels"]').checked = true;
 barrels.q('input[name="unit"][value="Barrels"]').fire('change');
