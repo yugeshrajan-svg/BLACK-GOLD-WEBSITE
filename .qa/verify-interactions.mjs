@@ -1,9 +1,10 @@
 // Browser-independent smoke checks against the generated HTML and real scripts.
 // This small DOM adapter checks behaviour; it does not verify browser layout.
-import { readFileSync } from 'node:fs';
+import { readFileSync, existsSync } from 'node:fs';
 import vm from 'node:vm';
 import assert from 'node:assert/strict';
 const downloadLinks = JSON.parse(readFileSync('src/app-downloads.json','utf8'));
+const contactDetails = JSON.parse(readFileSync('src/contact.json','utf8'));
 
 const decode = s => s.replace(/&(?:amp|lt|gt|quot|#39|#\d+);/g, x => ({'&amp;':'&','&lt;':'<','&gt;':'>','&quot;':'"','&#39;':"'"}[x] ?? String.fromCodePoint(+x.slice(2,-1))));
 const escape = s => s.replaceAll('&','&amp;').replaceAll('"','&quot;').replaceAll('<','&lt;');
@@ -13,6 +14,7 @@ function simple(node, selector) {
   if (!node || node.tag.startsWith('#')) return false;
   const attrs = [...selector.matchAll(/\[([^\]]+)\]/g)];
   const rest = selector.replace(/\[[^\]]+\]/g, '');
+  if (/:checked\b/.test(rest) && !node.checked) return false;
   const tag = rest.match(/^[\w-]+/)?.[0];
   if (tag && tag.toLowerCase() !== node.tag) return false;
   if ([...rest.matchAll(/#([\w-]+)/g)].some(m => node.id !== m[1])) return false;
@@ -131,16 +133,32 @@ function load(file, reduced = false, browserLanguage = 'en', oilFactory) {
   assert.equal(doc.querySelector('.lang-toggle'),null,'The language switch has been removed');
   doc.title = doc.querySelector('title').textContent; doc.hidden = false; doc.documentElement.scrollHeight = 3000;
   doc.getElementById = id => doc.querySelector('#'+id);
+  doc.createElement = tag => new Element(tag,{},doc);
   let seq = 0, now = 0; const frames = new Map(), timers = new Map(), memory = new Map(browserLanguage === 'ta' ? [['bg-lang','ta']] : []);
   const media = new Map();
   const windowEvents = {};
   const window = {
     document:doc, innerHeight:900, innerWidth:1440, scrollY:0,
     addEventListener(type,fn){(windowEvents[type] ||= []).push(fn);},
-    matchMedia(query) { if (!media.has(query)) media.set(query,{matches:query.includes('reduced-motion') && reduced,listeners:[],addEventListener(type,fn){this.listeners.push(fn);}}); return media.get(query); }
+    matchMedia(query) { if (!media.has(query)) media.set(query,{matches:matchesViewport(query),listeners:[],addEventListener(type,fn){this.listeners.push(fn);}}); return media.get(query); }
   };
+  function matchesViewport(query) {
+    if (query.includes('reduced-motion')) return reduced;
+    const ranges = [...query.matchAll(/\((min|max)-(width|height):\s*(\d+)px\)/g)];
+    return ranges.length > 0 && ranges.every(([,bound,axis,value]) => bound === 'min'
+      ? window[axis === 'width' ? 'innerWidth' : 'innerHeight'] >= +value
+      : window[axis === 'width' ? 'innerWidth' : 'innerHeight'] <= +value);
+  }
   const journey = doc.querySelector('.route--pickup');
   if (journey) journey.getBoundingClientRect = () => ({left:0, top:1800-window.scrollY, bottom:2400-window.scrollY, right:1000, width:1000, height:600});
+  const sellerJourney = doc.querySelector('.seller-journey');
+  if (sellerJourney) {
+    sellerJourney.getBoundingClientRect = () => ({left:0, top:1800-window.scrollY, bottom:5200-window.scrollY, right:1200, width:1200, height:3400});
+    sellerJourney.querySelector('.sj-panel').getBoundingClientRect = () => ({left:0, top:100, bottom:680, right:560, width:560, height:580});
+    sellerJourney.querySelectorAll('.seller-journey-step').forEach((step,i) => {
+      step.getBoundingClientRect = () => ({left:650, top:1800+i*420-window.scrollY, bottom:2160+i*420-window.scrollY, right:1200, width:550, height:360});
+    });
+  }
   if (oilFactory) window.OilSurface = oilFactory;
   const sandbox = {window, document:doc, navigator:{language:browserLanguage, languages:[browserLanguage]}, location:{href:'https://example.test/'+file+(browserLanguage === 'ta' ? '?lang=ta' : '')}, history:{state:null,replaceState(){}},
     localStorage:{getItem:k=>memory.get(k) ?? null,setItem:(k,v)=>memory.set(k,v)},
@@ -154,7 +172,15 @@ function load(file, reduced = false, browserLanguage = 'en', oilFactory) {
   const q = s => doc.querySelector(s), qa = s => doc.querySelectorAll(s);
   return {doc,q,qa,
     scroll(y) { window.scrollY = y; (windowEvents.scroll || []).forEach(fn=>fn()); },
-    setReduced(value) { const pref = window.matchMedia('(prefers-reduced-motion: reduce)'); pref.matches = value; pref.listeners.forEach(fn=>fn(pref)); },
+    setReduced(value) { reduced = value; const pref = window.matchMedia('(prefers-reduced-motion: reduce)'); pref.matches = value; pref.listeners.forEach(fn=>fn(pref)); },
+    resize(width,height) {
+      window.innerWidth = width; window.innerHeight = height;
+      for (const [query,pref] of media) {
+        const next = matchesViewport(query);
+        if (next !== pref.matches) { pref.matches = next; pref.listeners.forEach(fn=>fn(pref)); }
+      }
+      (windowEvents.resize || []).forEach(fn=>fn());
+    },
     flush() { while(timers.size) { const jobs=[...timers.values()]; timers.clear(); jobs.forEach(fn=>fn()); } },
     advance(ms) { for (let elapsed=0; elapsed<ms; elapsed+=100) { now+=100; const jobs=[...frames.values()]; frames.clear(); jobs.forEach(fn=>fn(now)); } },
     click:s=>{ const node=q(s); assert.ok(node,'Missing '+s); node.fire('click'); },
@@ -167,12 +193,13 @@ for (const reduced of [false,true]) {
     const home = load('index.html',reduced,browserLanguage);
     home.click('.hero .text-link');
     assert.equal(home.doc.activeElement,home.q('#seller-app'),'Section links retain keyboard focus at their destination');
-    home.click('.hero [data-app]');
-    assert.equal(home.q('#app-dialog').open,true,'The homepage promotes the app download panel');
+    home.click('.header [data-app]');
+    assert.equal(home.q('#app-dialog').open,true,'The header opens the app download panel');
     assert.equal(home.q('#pickup-dialog').open,false,'Getting the app must not open the enquiry form');
     for (const [platform,url] of Object.entries(downloadLinks)) {
       const options = home.qa('[data-app-download="'+platform+'"]');
-      assert.equal(options.length,2,'Show the download choice on the homepage and in the dialog');
+      assert.equal(options.length,3,'Downloads show in the hero, app introduction and shared dialog');
+      assert.ok(home.q('.hero [data-app-download="'+platform+'"]'),'The hero offers each download directly');
       options.forEach(option => {
         if (url) assert.equal(option.getAttribute('href'),url);
         else { assert.equal(option.getAttribute('aria-disabled'),'true'); assert.equal(option.hasAttribute('href'),false); }
@@ -184,10 +211,20 @@ for (const reduced of [false,true]) {
     assert.equal(home.q('#pickup-journey-caption .route-caption-title').textContent,'Request a pickup');
     home.advance(5000);
     assert.equal(home.q('#pickup-process [data-route-step="2"]').getAttribute('aria-pressed'),'true','Manual pickup stage should hold');
-    home.click('[data-app-screen="1"]');
-    assert.ok(home.q('.phone .screen.s2').classList.contains('is-active'));
-    assert.equal(home.qa('[data-app-feature].is-current').length,1);
-    assert.equal(home.q('[data-app-feature].is-current h3').textContent,'Pickups');
+    assert.equal(home.q('.phone'),null,'The full app demo belongs on the seller-app page');
+    assert.equal(home.qa('#seller-app [data-install-preview]').length,1,'Meet your seller app uses the shared Play Store animation');
+    assert.equal(home.q('.app-teaser-art'),null,'The old home phone illustration has been replaced');
+    assert.equal(home.q('.chennai-scene'),null,'The old Chennai install animation has been replaced');
+    assert.equal(home.qa('[data-app-feature]').length,0,'The homepage has a compact app introduction');
+    assert.equal(home.qa('.home-jar').length,3,'Keep the three homepage oil jars');
+    assert.equal(home.qa('.faq-list').length,0,'Full answers belong on the FAQ page');
+    assert.equal(home.q('#promise-title').textContent,'Our promise.');
+    assert.equal(home.qa('#our-promises [data-promise-stage]').length,4,'The home page presents all four promises');
+    const homeSections = home.q('#main').children.filter(node => node.tag === 'section').map(node => node.id);
+    assert.equal(homeSections.indexOf('our-promises'),homeSections.indexOf('seller-app') + 1,'Our promise follows Meet your seller app directly');
+    assert.ok(home.q('#get-app [data-app-download="googlePlay"] .store-icon-play'),'The introduction shows the Google Play button with its icon');
+    assert.ok(home.q('#get-app [data-app-download="apk"]'),'and the direct APK download');
+    assert.match(home.q('#get-app .home-app-ios').textContent,/iOS app coming soon/);
     home.click('[data-home-oil="hydraulic"]');
     assert.equal(home.q('#home-oil-panel').dataset.tone,'hydraulic');
     assert.equal(home.q('[data-home-oil="hydraulic"]').getAttribute('aria-selected'),'true');
@@ -211,14 +248,16 @@ for (const reduced of [false,true]) {
     about.click('[data-promise-stage="3"]');
     assert.equal(about.q('.promise-journey').dataset.stage,'3');
     assert.equal(about.q('[data-promise-stage="3"]').getAttribute('aria-pressed'),'true');
-    assert.equal(about.qa('.promise-station.is-current').length,1);
-    assert.equal(about.qa('.promise-station.is-done').length,3);
+    assert.equal(about.qa('[data-promise-scene].is-active').length,1);
+    assert.equal(about.qa('.promise-milestone.is-done').length,3);
     assert.equal(about.q('.refinery').dataset.stage,'2','Promise selection must not change the refinery');
     about.advance(5000); assert.equal(about.q('.promise-journey').dataset.stage,'3','Manual promise selection should hold');
     assert.equal(about.q('.promise-caption-title').textContent,about.q('[data-promise-stage="3"] .promise-choice-label').textContent);
     assert.ok(about.q('.promise-caption-detail').textContent.length > 15);
 
     const collect = load('collect.html',reduced,browserLanguage);
+    assert.ok(collect.q('#serve-title'),'Business eligibility belongs on What We Collect');
+    assert.equal(collect.qa('.mini-jar').length,0,'Use one interactive jar presentation on this page');
     collect.click('[data-oil-preview="transfer"]'); collect.flush();
     collect.advance(15000);
     assert.equal(collect.q('.oil-stage').dataset.tone,'transfer');
@@ -227,12 +266,32 @@ for (const reduced of [false,true]) {
     collect.click('.page-hero-copy [data-pickup]');
     assert.equal(collect.q('input[value="Used transfer oil"]').checked,true);
 
-    const how = load('how-it-works.html',reduced,browserLanguage);
-    how.click('[data-route-step="2"]'); how.flush();
-    assert.equal(how.q('[data-route-step="2"]').getAttribute('aria-pressed'),'true');
-    assert.equal(how.q('.route-caption-title').textContent,how.q('.step-card.is-current h3').textContent);
-
     const app = load('seller-app.html',reduced,browserLanguage);
+    assert.equal(app.qa('#app-workflow .seller-journey-step').length,8,'The Seller App journey keeps all eight readable steps');
+    assert.equal(app.qa('#app-setup .seller-checklist li').length,4,'Setup explains the business, proof, location and payment requirements');
+    assert.equal(app.qa('.seller-help-list details').length,4,'Account help covers language, listings, passwords and deletion');
+    app.click('[data-journey-go="4"]');
+    assert.equal(app.q('.seller-journey').dataset.step,'4');
+    assert.equal(app.qa('[data-journey-scene].is-active').length,1,'Only the selected scene should be visible');
+    assert.equal(app.q('[data-journey-scene="4"]').classList.contains('is-active'),true);
+    assert.match(app.q('[data-journey-description]').textContent,/live location/);
+    app.q('[data-journey-go="4"]').fire('keydown',{key:'End'});
+    assert.equal(app.q('.seller-journey').dataset.step,'7','Keyboard End selects payment');
+    assert.equal(app.doc.activeElement,app.q('[data-journey-go="7"]'));
+    assert.equal(app.q('.sj-truck').style.transform,'translateX(426.00px)');
+    assert.equal(app.qa('.seller-journey-step[aria-current="step"]').length,1);
+    assert.match(app.q('[data-journey-announcement]').textContent,/Step 8 of 8/);
+    app.advance(10000);
+    assert.equal(app.q('.seller-journey').dataset.step,'7','The journey must not autoplay away from a selected step');
+    app.q('[data-journey-go="7"]').fire('keydown',{key:'Home'});
+    assert.equal(app.q('.seller-journey').dataset.step,'0');
+    app.click('[data-app-screen="1"]');
+    assert.ok(app.q('.phone .screen.s2').classList.contains('is-active'));
+    assert.equal(app.qa('[data-app-feature].is-current').length,1);
+    assert.equal(app.q('[data-app-feature].is-current h3').textContent,'Track your pickup');
+    assert.equal(app.q('.phone-nav .on').textContent,'Orders','Tracking is part of Orders in the supplied app');
+    assert.match(app.q('.phone-code p').textContent,/measured and loaded/);
+    assert.equal(app.qa('.app-install-guide li').length,3);
     app.click('[data-app-screen="2"]');
     assert.ok(app.q('.screen.s3').classList.contains('is-active'));
     app.advance(5000);
@@ -242,10 +301,75 @@ for (const reduced of [false,true]) {
     faq.search('Chennai');
     assert.equal(faq.qa('#faq-answers details').filter(n=>!n.hidden).length,1);
     faq.search('no-such-answer-4729'); assert.equal(faq.q('.faq-no-results').hidden,false);
-    faq.click('[data-clear-search]'); assert.equal(faq.qa('#faq-answers details').filter(n=>!n.hidden).length,6);
+    faq.click('[data-clear-search]'); assert.equal(faq.qa('#faq-answers details').filter(n=>!n.hidden).length,11);
     assert.equal(faq.q('.faq-no-results').hidden,true);
+    faq.search('Does this website book');
+    assert.equal(faq.qa('#faq-answers details').filter(n=>!n.hidden).length,1);
+    assert.equal(faq.q('#faq-booking').hidden,false,'Keep the booking explanation when moving it from Home');
+    faq.search('pickup code');
+    assert.equal(faq.qa('#faq-answers details').filter(n=>!n.hidden).length,1);
+    assert.equal(faq.q('#faq-pickup-code').hidden,false);
+    faq.search('UPI');
+    assert.equal(faq.q('#faq-payment').hidden,false);
   }
 }
+
+// FAQ hero chat: everyday questions find the published answer; unknown ones offer an enquiry.
+for (const reduced of [false,true]) {
+  const chat = load('faq.html',reduced);
+  const bots = () => chat.qa('[data-chat-log] .faq-msg--bot');
+  const lastBot = () => bots().at(-1);
+  const answerTitle = () => lastBot().querySelector('.faq-msg-title')?.textContent;
+  const askChat = text => { chat.q('#faq-chat-input').value = text; chat.q('[data-chat-form]').fire('submit'); chat.flush(); };
+  assert.equal(chat.q('[data-faq-chat]').hidden,false,'The chat box appears once scripts run');
+  assert.equal(chat.qa('[data-chat-suggest] button').length,3,'Three suggested questions to start');
+  for (const [question,title] of [
+    ['how much do you pay per litre?','How is the price set?'],
+    ['smallest amount of oil you collect','Is there a minimum quantity?'],
+    ['can I get paid by UPI','How do I receive my payment?'],
+    ['Do you collect in Chennai?','Where do you collect?'],
+    ['OTP for the driver','When should I share my pickup code?'],
+    ['who can register','Who can register?'],
+    ['I want to cancel my listing','Can I change or cancel a submitted listing?'],
+    ['do you take hydraulic oil','What oils can I sell?'],
+    ['the driver measured less than I had','What if the measured quantity is different?'],
+    ['can I book a pickup on this website','Does this website book my pickup?']
+  ]) {
+    const before = bots().length;
+    askChat(question);
+    assert.equal(chat.qa('[data-chat-log] .faq-msg--user').at(-1).textContent,question,'The visitor sees their own question');
+    assert.equal(bots().length,before+1,'Each question gets one reply');
+    assert.equal(answerTitle(),title,'"'+question+'" should find '+title);
+    assert.equal(chat.q('#faq-chat-input').value,'','The field clears after sending');
+  }
+  const minimumAnswer = chat.qa('[data-chat-log] .faq-msg--bot').find(b => b.querySelector('.faq-msg-title')?.textContent === 'Is there a minimum quantity?');
+  assert.match(minimumAnswer.textContent,/50 litres/,'Replies repeat the published answer');
+  assert.ok(chat.qa('[data-chat-suggest] button').every(b => !['How is the price set?','Is there a minimum quantity?'].includes(b.textContent)),'Suggestions skip questions already answered');
+  const replies = bots().length;
+  askChat('   '); assert.equal(bots().length,replies,'An empty message sends nothing');
+  askChat('hello'); assert.match(lastBot().textContent,/Ask me about/);
+  askChat('what is the weather tomorrow');
+  assert.equal(answerTitle(),undefined,'No guessing when nothing matches');
+  chat.click('[data-chat-enquiry]'); assert.equal(chat.q('#pickup-dialog').open,true,'Unknown questions lead to the enquiry');
+  chat.q('#pickup-dialog').close();
+  const chip = chat.q('[data-chat-suggest] button');
+  const chipText = chip.textContent;
+  chip.fire('click'); chat.flush();
+  assert.equal(answerTitle(),chipText,'Tapping a suggestion asks it');
+  chat.search('Chennai');
+  askChat('minimum quantity');
+  chat.qa('[data-chat-open]').at(-1).fire('click');
+  assert.equal(chat.q('#faq-minimum').open,true,'The answer link opens the full answer');
+  assert.equal(chat.q('#faq-minimum').hidden,false,'and clears a search that was hiding it');
+  assert.equal(chat.q('#faq-search').value,'');
+}
+
+assert.equal(existsSync('dist/how-it-works.html'),false,'The How it works page has been removed');
+for (const file of ['index.html','about.html','collect.html','seller-app.html','faq.html']) {
+  assert.equal(load(file).q('a[href^="how-it-works"]'),null,file+' must not link to the removed How it works page');
+}
+assert.ok(load('seller-app.html').q('#app-workflow'),'Process links lead to the Seller App journey');
+assert.equal(load('collect.html').q('.page-hero-copy .text-link').getAttribute('href'),'seller-app.html#app-workflow');
 
 const pickupJourney = load('index.html');
 pickupJourney.advance(4200);
@@ -347,37 +471,267 @@ const stillRefinery = load('about.html',true);
 stillRefinery.advance(15000); assert.equal(stillRefinery.q('.refinery').dataset.stage,'0');
 assert.equal(stillRefinery.q('.promise-journey').dataset.stage,'0');
 
-const promises = load('about.html');
-promises.advance(3900);
-assert.equal(promises.q('.promise-journey').dataset.stage,'0');
-assert.notEqual(promises.q('.promise-drop').getAttribute('transform'),'translate(160.00 110.00)','Oil should travel between checkpoints');
-promises.advance(500); assert.equal(promises.q('.promise-journey').dataset.stage,'1');
-promises.click('.promise-heading [data-motion]');
-const frozenDrop = promises.q('.promise-drop').getAttribute('transform');
-promises.advance(10000); assert.equal(promises.q('.promise-journey').dataset.stage,'1');
-assert.equal(promises.q('.promise-drop').getAttribute('transform'),frozenDrop);
-assert.ok(promises.qa('[data-motion]').every(button => button.hasAttribute('data-paused')));
-promises.click('.promise-heading [data-motion]');
-promises.advance(3500);
-const routedDrop = promises.q('.promise-drop').getAttribute('transform').match(/translate\(([\d.]+) ([\d.]+)\)/);
-assert.equal(Number(routedDrop[1]),575,'The drop must follow the connector beside the stage labels');
-assert.ok(Number(routedDrop[2]) > 110 && Number(routedDrop[2]) < 350);
-promises.advance(800); assert.equal(promises.q('.promise-journey').dataset.stage,'2');
-promises.doc.hidden = true; promises.doc.fire('visibilitychange');
-promises.advance(10000); assert.equal(promises.q('.promise-journey').dataset.stage,'2');
-promises.doc.hidden = false; promises.doc.fire('visibilitychange');
-promises.advance(4300); assert.equal(promises.q('.promise-journey').dataset.stage,'3');
-promises.advance(4300); assert.equal(promises.q('.promise-journey').dataset.stage,'0');
+for (const file of ['about.html','index.html']) {
+  const promises = load(file);
+  const art = () => promises.q('[data-promise-scene].is-active');
+  assert.equal(promises.qa('[data-promise-scene]').length,4);
+  assert.equal(promises.qa('[data-promise-scene].is-active').length,1);
+  promises.advance(2000);
+  assert.equal(promises.q('.promise-journey').dataset.stage,'0');
+  assert.equal(art().dataset.promiseScene,'0');
+  assert.ok(Number(art().style.getPropertyValue('--promise-action')) > 0,'The measuring scene should fill gradually');
+  assert.ok(Number(art().style.getPropertyValue('--promise-action')) < 1);
+  promises.advance(3800);
+  assert.equal(promises.q('.promise-journey').dataset.stage,'1');
+  assert.equal(art().dataset.promiseScene,'1');
+  assert.equal(promises.qa('.promise-milestone.is-done').length,1);
+  promises.click('.promise-heading [data-motion]');
+  const frozenArtwork = art().style.getPropertyValue('--promise-action');
+  const frozenProgress = promises.q('.promise-journey').style.getPropertyValue('--promise-phase');
+  promises.advance(10000);
+  assert.equal(promises.q('.promise-journey').dataset.stage,'1');
+  assert.equal(art().style.getPropertyValue('--promise-action'),frozenArtwork,'Pause freezes the artwork');
+  assert.equal(promises.q('.promise-journey').style.getPropertyValue('--promise-phase'),frozenProgress,'Pause also freezes the timeline');
+  assert.ok(promises.qa('[data-motion]').every(button => button.hasAttribute('data-paused')));
+  promises.click('.promise-heading [data-motion]');
+  promises.advance(4300);
+  assert.equal(promises.q('.promise-journey').dataset.stage,'1');
+  assert.ok(Number(promises.q('.promise-journey').style.getPropertyValue('--promise-phase')) > .7,'The timeline resumes from its paused position');
+  promises.advance(1400);
+  assert.equal(promises.q('.promise-journey').dataset.stage,'2');
+  assert.equal(art().dataset.promiseScene,'2');
+  promises.doc.hidden = true;
+  promises.doc.fire('visibilitychange');
+  const hiddenArtwork = art().style.getPropertyValue('--promise-time');
+  promises.advance(10000);
+  assert.equal(promises.q('.promise-journey').dataset.stage,'2');
+  assert.equal(art().style.getPropertyValue('--promise-time'),hiddenArtwork,'A hidden tab stops the artwork clock');
+  promises.doc.hidden = false;
+  promises.doc.fire('visibilitychange');
+  promises.advance(5700);
+  assert.equal(promises.q('.promise-journey').dataset.stage,'3');
+  assert.equal(art().dataset.promiseScene,'3');
+  promises.advance(5700);
+  assert.equal(promises.q('.promise-journey').dataset.stage,'0');
+  assert.equal(promises.qa('[data-promise-scene].is-active').length,1,'Only one scene is selected after a complete loop');
+  assert.equal(promises.q('[data-promise-announcement]').textContent,'','Automatic scenes do not repeatedly announce changes');
+  promises.q('[data-promise-stage="0"]').fire('keydown',{key:'End'});
+  assert.equal(promises.q('.promise-journey').dataset.stage,'3','Keyboard End selects the receipt promise');
+  assert.equal(promises.doc.activeElement,promises.q('[data-promise-stage="3"]'));
+  assert.equal(promises.q('[data-promise-count]').textContent,'04');
+  assert.equal(promises.qa('.promise-milestone.is-done').length,3);
+  assert.match(promises.q('[data-promise-announcement]').textContent,/Promise 4 of 4/);
+  promises.advance(5000);
+  assert.equal(promises.q('.promise-journey').dataset.stage,'3','A manual promise choice holds while its explanation is read');
+  promises.q('[data-promise-stage="3"]').fire('keydown',{key:'Home'});
+  promises.setReduced(true);
+  promises.advance(12000);
+  assert.equal(promises.q('.promise-journey').dataset.stage,'0','Reduced motion keeps the selected promise still');
+  assert.equal(art().style.getPropertyValue('--promise-action'),'1','Reduced motion shows a complete illustration');
+  assert.equal(art().style.getPropertyValue('--promise-pour'),'0');
+  promises.click('[data-promise-stage="2"]');
+  assert.equal(promises.q('.promise-journey').dataset.stage,'2','Reduced-motion visitors can still choose a promise');
+  assert.equal(art().dataset.promiseScene,'2');
+  assert.equal(art().style.getPropertyValue('--promise-complete'),'1');
+  assert.equal(promises.q('[data-promise-count]').textContent,'03');
+  assert.equal(promises.q('.promise-caption-detail').textContent,promises.q('[data-promise-stage="2"] .promise-choice-detail').textContent);
+
+  const hover = load(file);
+  const focusBeforeHover = hover.doc.activeElement;
+  const paymentOption = hover.q('[data-promise-stage="2"]');
+  paymentOption.fire('pointerenter',{pointerType:'mouse'});
+  assert.equal(hover.q('.promise-journey').dataset.stage,'2','Mouse hover previews its promise without a click');
+  assert.equal(paymentOption.getAttribute('aria-pressed'),'true');
+  assert.equal(hover.q('[data-promise-scene].is-active').dataset.promiseScene,'2');
+  assert.equal(hover.q('.promise-caption-detail').textContent,hover.q('[data-promise-stage="2"] .promise-choice-detail').textContent);
+  assert.equal(hover.doc.activeElement,focusBeforeHover,'Hover does not move keyboard focus');
+  assert.equal(hover.q('[data-promise-announcement]').textContent,'','Mouse previews stay quiet for screen readers');
+  hover.advance(2000);
+  const hoverTime = hover.q('[data-promise-scene].is-active').style.getPropertyValue('--promise-time');
+  paymentOption.fire('pointerenter',{pointerType:'mouse'});
+  assert.equal(hover.q('[data-promise-scene].is-active').style.getPropertyValue('--promise-time'),hoverTime,'Hovering the current option does not restart its artwork');
+  hover.advance(12000);
+  assert.equal(hover.q('.promise-journey').dataset.stage,'2','Autoplay keeps the hovered promise selected');
+  paymentOption.fire('pointerleave',{pointerType:'mouse'});
+  hover.advance(1700);
+  assert.equal(hover.q('.promise-journey').dataset.stage,'2','Leaving a card gives a short reading delay');
+  hover.advance(600);
+  assert.equal(hover.q('.promise-journey').dataset.stage,'3','Autoplay resumes after the mouse leaves');
+  hover.q('[data-promise-stage="1"]').fire('pointerenter',{pointerType:'touch'});
+  assert.equal(hover.q('.promise-journey').dataset.stage,'3','Touch entry does not activate a mouse preview');
+  hover.click('[data-promise-stage="1"]');
+  assert.equal(hover.q('.promise-journey').dataset.stage,'1','Touch visitors can select with a tap');
+  hover.setReduced(true);
+  hover.q('[data-promise-stage="0"]').fire('pointerenter',{pointerType:'mouse'});
+  assert.equal(hover.q('.promise-journey').dataset.stage,'0');
+  assert.equal(hover.q('[data-promise-scene].is-active').style.getPropertyValue('--promise-action'),'1','Reduced-motion hover shows a complete, still illustration');
+}
 
 const form = load('index.html');
 form.click('[data-home-enquire]'); form.q('#pickup-form').fire('submit');
 assert.equal(form.qa('.field.invalid').length,3);
 form.q('input[name="business"]').value = 'Test workshop';
 form.q('input[name="area"]').value = 'Ambattur';
+form.q('input[name="quantity"]').value = '49';
+form.q('#pickup-form').fire('submit');
+assert.equal(form.q('input[name="quantity"]').getAttribute('aria-invalid'),'true','The minimum pickup is 50 litres');
+assert.equal(form.q('#enquiry-result').hidden,true);
 form.q('input[name="quantity"]').value = '50';
 form.q('#pickup-form').fire('submit');
 assert.equal(form.q('#enquiry-result').hidden,false);
 assert.match(form.q('#enquiry-text').textContent,/Test workshop/);
 assert.match(form.q('#enquiry-text').textContent,/no pickup has been booked/i);
+assert.match(form.q('#enquiry-text').textContent,/Minimum collection: 50 litres/);
+const enquiryShare = new URL(form.q('#whatsapp-enquiry').href);
+assert.equal(enquiryShare.origin,'https://wa.me');
+assert.equal(enquiryShare.pathname,'/' + contactDetails.phone.slice(1),'Pickup enquiries address the configured Black Gold contact');
+assert.equal(enquiryShare.searchParams.get('text'),form.q('#enquiry-text').textContent,'The full enquiry stays intact in the WhatsApp draft');
+const enquiryEmail = new URL(form.q('#email-enquiry').href);
+assert.equal(enquiryEmail.protocol,'mailto:');
+assert.equal(enquiryEmail.pathname,contactDetails.email,'The email draft addresses the configured enquiry email');
+assert.equal(enquiryEmail.searchParams.get('subject'),'Black Gold pickup enquiry');
+assert.equal(enquiryEmail.searchParams.get('body').replace(/\r\n/g,'\n'),form.q('#enquiry-text').textContent,'The full summary stays intact in the email draft');
+form.click('#edit-enquiry');
+form.q('input[name="quantity"]').value = '75';
+form.q('#pickup-form').fire('submit');
+const revisedShare = new URL(form.q('#whatsapp-enquiry').href);
+assert.equal(revisedShare.pathname,'/' + contactDetails.phone.slice(1),'Editing the enquiry preserves its recipient');
+assert.match(revisedShare.searchParams.get('text'),/75 Litres/);
+const revisedEmail = new URL(form.q('#email-enquiry').href);
+assert.equal(revisedEmail.pathname,contactDetails.email,'Editing the enquiry preserves the email recipient');
+assert.equal(revisedEmail.searchParams.get('body').replace(/\r\n/g,'\n'),form.q('#enquiry-text').textContent,'The email draft updates after editing the enquiry');
 
-console.log('PASS: all six pages stay in English; pickup scroll/hover/focus tracking, truck travel and selection, anchor focus, app preview and downloads, promise journey, oil presets, FAQ search, pause, hidden tabs, reduced motion and enquiry validation.');
+const barrels = load('index.html');
+barrels.q('input[name="business"]').value = 'Barrel workshop';
+barrels.q('input[name="area"]').value = 'Ambattur';
+barrels.q('input[name="unit"][value="Litres"]').checked = false;
+barrels.q('input[name="unit"][value="Barrels"]').checked = true;
+barrels.q('input[name="unit"][value="Barrels"]').fire('change');
+assert.equal(barrels.q('input[name="quantity"]').getAttribute('min'),'1','A barrel count must not use a litre minimum');
+barrels.q('input[name="quantity"]').value = '1';
+barrels.q('#pickup-form').fire('submit');
+assert.equal(barrels.q('#enquiry-result').hidden,false);
+assert.match(barrels.q('#enquiry-text').textContent,/1 Barrels/);
+barrels.click('#edit-enquiry');
+barrels.q('input[name="unit"][value="Barrels"]').checked = false;
+barrels.q('input[name="unit"][value="Litres"]').checked = true;
+barrels.q('input[name="unit"][value="Litres"]').fire('change');
+barrels.q('#pickup-form').fire('submit');
+assert.equal(barrels.q('input[name="quantity"]').getAttribute('min'),'50');
+assert.equal(barrels.q('#enquiry-result').hidden,true,'Switching back to litres restores the collection minimum');
+
+// Crossing into desktop navigation must release the mobile menu's scroll and focus locks.
+const navigation = load('index.html');
+navigation.resize(1024,900);
+navigation.click('.menu');
+assert.equal(navigation.q('.menu').getAttribute('aria-expanded'),'true');
+assert.equal(navigation.q('#main').inert,true);
+assert.equal(navigation.q('.footer').inert,true);
+navigation.resize(1025,900);
+assert.equal(navigation.q('.menu').getAttribute('aria-expanded'),'false','The compact desktop navigation closes an open tablet menu');
+assert.equal(navigation.doc.documentElement.classList.contains('menu-locked'),false);
+assert.equal(navigation.q('#main').inert,false,'Desktop content becomes interactive after resizing');
+assert.equal(navigation.q('.footer').inert,false);
+navigation.resize(760,844);
+navigation.click('.menu');
+navigation.doc.fire('keydown',{key:'Escape'});
+assert.equal(navigation.q('.menu').getAttribute('aria-expanded'),'false');
+assert.equal(navigation.doc.activeElement,navigation.q('.menu'),'Escape returns focus to Menu');
+
+const sellerScroll = load('seller-app.html');
+sellerScroll.scroll(3200); sellerScroll.advance(300);
+assert.equal(sellerScroll.q('.seller-journey').dataset.step,'4','Scrolling selects the step in view');
+assert.equal(sellerScroll.q('[data-journey-announcement]').textContent,'','Scrolling does not repeatedly announce scene changes');
+sellerScroll.scroll(1500); sellerScroll.advance(300);
+assert.equal(sellerScroll.q('.seller-journey').dataset.step,'0','Reverse scrolling returns to the earlier scene');
+sellerScroll.click('.sj-panel [data-motion]');
+sellerScroll.scroll(4100); sellerScroll.advance(300);
+assert.equal(sellerScroll.q('.seller-journey').dataset.step,'0','Pause motion freezes automatic journey changes');
+sellerScroll.click('[data-journey-go="6"]');
+assert.equal(sellerScroll.q('.seller-journey').dataset.step,'6','Manual selection still works while paused');
+sellerScroll.click('.sj-panel [data-motion]');
+sellerScroll.q('#app-step-3').fire('focusin');
+assert.equal(sellerScroll.q('.seller-journey').dataset.step,'2','Focusing a story card updates its illustration');
+sellerScroll.doc.hidden = true;
+sellerScroll.doc.fire('visibilitychange');
+sellerScroll.scroll(4600); sellerScroll.advance(300);
+assert.equal(sellerScroll.q('.seller-journey').dataset.step,'2','Hidden tabs do not change the journey');
+const sellerStill = load('seller-app.html',true);
+sellerStill.scroll(3200); sellerStill.advance(300);
+assert.equal(sellerStill.q('.seller-journey').dataset.step,'0','Reduced motion keeps the scroll illustration still');
+sellerStill.click('[data-journey-go="7"]');
+assert.equal(sellerStill.q('.seller-journey').dataset.step,'7','Reduced-motion visitors can explore every scene manually');
+
+const compactSeller = load('seller-app.html');
+compactSeller.resize(900,800);
+compactSeller.q('.sj-panel').getBoundingClientRect = () => ({left:0, top:80, bottom:420, right:800, width:800, height:340});
+compactSeller.scroll(2960); compactSeller.advance(300);
+assert.equal(compactSeller.q('.seller-journey').dataset.step,'4','A stacked sticky panel selects the story visible beneath it');
+assert.equal(compactSeller.q('.seller-journey').style.getPropertyValue('--sj-panel-height'),'340px','Anchor spacing follows the measured panel height');
+compactSeller.resize(900,740);
+compactSeller.scroll(2961); compactSeller.advance(300);
+assert.equal(compactSeller.q('.seller-journey').dataset.step,'3','Short screens use the normal viewport when the panel stops sticking');
+
+for (const [file,motionControl] of [
+  ['seller-app.html','.seller-app-hero [data-motion]'],
+  ['index.html','#seller-app [data-motion]']
+]) {
+  const installDemo = load(file);
+  assert.equal(installDemo.q('[data-install-preview]').dataset.phase,'0');
+  installDemo.advance(1600);
+  assert.ok(installDemo.q('[data-install-query]').textContent.length > 0 && installDemo.q('[data-install-query]').textContent.length < 'Black Gold Seller'.length,'The search query types in progressively');
+  installDemo.advance(2700);
+  assert.equal(installDemo.q('[data-install-preview]').dataset.phase,'1','Search reveals the app result');
+  assert.equal(installDemo.q('[data-install-query]').textContent,'Black Gold Seller');
+  assert.equal(installDemo.q('[data-install-suggestion]').textContent,'Black Gold Seller');
+  assert.equal(installDemo.q('[data-install-preview]').dataset.searchReady,'true');
+  assert.equal(installDemo.q('[data-install-action]').textContent,'Install');
+  assert.equal(installDemo.qa('[data-install-key].is-pressed').length,0,'The keyboard releases when the listing opens');
+  installDemo.advance(3200);
+  assert.equal(installDemo.q('[data-install-preview]').dataset.phase,'2');
+  assert.ok(parseInt(installDemo.q('[data-install-percent]').textContent) > 0 && parseInt(installDemo.q('[data-install-percent]').textContent) < 100,'The download percentage progresses');
+  assert.ok(+installDemo.q('[data-install-ring]').style.strokeDashoffset > 0 && +installDemo.q('[data-install-ring]').style.strokeDashoffset < 226.2,'The icon download ring fills with the percentage');
+  assert.equal(installDemo.q('[data-install-secondary]').textContent,'Cancel');
+  assert.equal(installDemo.q('[data-install-subtitle]').textContent,'Downloading…');
+  installDemo.click(motionControl);
+  const heldInstall = installDemo.q('[data-install-percent]').textContent;
+  const heldRing = installDemo.q('[data-install-ring]').style.strokeDashoffset;
+  installDemo.advance(6000);
+  assert.equal(installDemo.q('[data-install-percent]').textContent,heldInstall,'Pause freezes installation progress');
+  assert.equal(installDemo.q('[data-install-ring]').style.strokeDashoffset,heldRing,'Pause also freezes the icon ring');
+  installDemo.click(motionControl);
+  installDemo.doc.hidden = true;
+  installDemo.doc.fire('visibilitychange');
+  installDemo.advance(6000);
+  assert.equal(installDemo.q('[data-install-percent]').textContent,heldInstall,'The installation loop stops in hidden tabs');
+  installDemo.doc.hidden = false;
+  installDemo.doc.fire('visibilitychange');
+  installDemo.advance(5000);
+  assert.equal(installDemo.q('[data-install-preview]').dataset.phase,'3');
+  assert.equal(installDemo.q('[data-install-percent]').textContent,'100%');
+  assert.equal(installDemo.q('[data-install-action]').textContent,'Open');
+  assert.equal(installDemo.q('[data-install-secondary]').textContent,'Uninstall');
+  assert.equal(installDemo.q('[data-install-preview]').dataset.launched,'false','Open stays visible before the simulated launch');
+  installDemo.advance(2300);
+  assert.equal(installDemo.q('[data-install-preview]').dataset.launched,'true','The Open tap reveals the Black Gold splash screen');
+  installDemo.advance(1900);
+  assert.equal(installDemo.q('[data-install-preview]').dataset.phase,'0','The installation preview loops back to search');
+  assert.equal(installDemo.q('[data-install-preview]').dataset.launched,'false','The launched app resets before the next search');
+  assert.equal(installDemo.qa('.seller-install-backdrop button, .seller-install-backdrop a, .seller-install-backdrop input').length,0,'The decorative install animation cannot trigger real downloads or searches');
+  installDemo.setReduced(true);
+  installDemo.advance(20000);
+  assert.equal(installDemo.q('[data-install-preview]').dataset.phase,'3','Reduced motion shows a still, complete app preview');
+  assert.equal(installDemo.q('[data-install-query]').textContent,'Black Gold Seller');
+  assert.equal(installDemo.q('[data-install-preview]').dataset.launched,'false','Reduced motion keeps the completed store screen still');
+  if (file === 'seller-app.html') assert.equal(installDemo.q('.seller-feature-layout .phone') !== null,true,'The working-app preview now belongs in the feature section');
+
+  const finishingInstall = load(file);
+  finishingInstall.advance(11200);
+  assert.equal(finishingInstall.q('[data-install-preview]').dataset.phase,'2');
+  assert.equal(finishingInstall.q('[data-install-preview]').dataset.installing,'true','Downloading finishes before the installation step');
+  assert.equal(finishingInstall.q('[data-install-subtitle]').textContent,'Installing…');
+  assert.equal(finishingInstall.q('[data-install-percent]').textContent,'100%');
+  assert.equal(finishingInstall.q('[data-install-ring]').style.strokeDashoffset,'0.00');
+}
+
+console.log('PASS: Menu resize and keyboard recovery; compact and desktop Seller App journey; search/install hero loop, typing, progress, pause, hidden tabs and reduced motion; English pages, removed-page links, app preview, FAQ search and chat, quantity minimums, home truck, downloads, promises and enquiry validation.');

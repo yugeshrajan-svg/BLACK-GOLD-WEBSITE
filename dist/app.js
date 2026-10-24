@@ -12,7 +12,7 @@
   }
 
   function describeCard(card, target) {
-    if (card && target) target.textContent = $$('.points li', card).map(function (point) { return point.textContent; }).join(' · ');
+    if (card && target) target.textContent = card.dataset.previewDescription || $$('.points li', card).map(function (point) { return point.textContent; }).join(' · ');
   }
 
   function store(key, value) {
@@ -88,7 +88,7 @@
   document.addEventListener('keydown', function (e) {
     if (e.key === 'Escape' && nav.classList.contains('open')) { setMenu(false); menu.focus(); }
   });
-  window.matchMedia('(min-width: 1181px)').addEventListener('change', function (e) { if (e.matches) setMenu(false); });
+  window.matchMedia('(min-width: 1025px)').addEventListener('change', function (e) { if (e.matches) setMenu(false); });
 
   /* ---------- Live visuals: one switch for every page's motion ---------- */
 
@@ -132,7 +132,7 @@
     var visualObserver = new IntersectionObserver(function (entries) {
       entries.forEach(function (entry) { entry.target.classList.toggle('is-offscreen', !entry.isIntersecting); });
     });
-    $$('.hero, .page-hero-visual, .promise-journey, .route--pickup').forEach(function (visual) { visualObserver.observe(visual); });
+    $$('.hero, .page-hero-visual, .promise-journey, .route--pickup, #what-we-collect, .sj-panel, [data-install-preview]').forEach(function (visual) { visualObserver.observe(visual); });
   }
 
   var motionButtons = $$('[data-motion]');
@@ -243,7 +243,7 @@
         arrivals.unobserve(entry.target);
       });
     }, { threshold: .1 });
-    $$('.home-section-head, .home-oil, .home-checks > div, .card, .promises li, .section-head, .faq-list').forEach(function (element) { arrivals.observe(element); });
+    $$('.home-section-head, .home-oil, .card, .promises li, .section-head, .faq-list').forEach(function (element) { arrivals.observe(element); });
   }
 
   // A local wash of colour follows the pointer inside each card.
@@ -340,65 +340,96 @@
     });
   })();
 
-  /* ---------- About promises: follow the oil through four clear checkpoints ---------- */
+  /* ---------- Home and About: one illustrated promise scene at a time ---------- */
 
   var promiseJourney = $('.promise-journey');
   if (promiseJourney) (function () {
-    var buttons = $$('[data-promise-stage]');
-    var stations = $$('.promise-station', promiseJourney);
-    var drop = $('.promise-drop', promiseJourney);
-    var points = [[160, 110], [460, 110], [460, 350], [160, 350]];
-    var routes = [
-      [points[0], points[1]],
-      [points[1], [575, 110], [575, 350], points[2]],
-      [points[2], points[3]],
-      [points[3], points[3]]
-    ].map(function (route) {
-      var lengths = route.slice(1).map(function (point, index) { return Math.abs(point[0] - route[index][0]) + Math.abs(point[1] - route[index][1]); });
-      return { points: route, lengths: lengths, total: lengths.reduce(function (sum, length) { return sum + length; }, 0) };
-    });
-    var details = [
-      'Your oil is measured at your premises, where you can see it.',
-      'Check the rate per litre for your oil type and confirm it before pickup.',
-      'Receive payment when your oil is collected.',
-      'Keep a digital receipt as a record of your collection.'
-    ];
+    var HOLD = 5600;
+    var section = promiseJourney.closest('.promise-section');
+    var buttons = $$('[data-promise-stage]', section);
+    var scenes = $$('[data-promise-scene]', promiseJourney);
+    var milestones = $$('.promise-milestone', promiseJourney);
+    var details = buttons.map(function (button) { return $('.promise-choice-detail', button).textContent; });
+    var announcement = $('[data-promise-announcement]', section);
     var current = 0, elapsed = 0, manualHold = 0;
+    var hovered = null;
 
+    function clamp(value) { return Math.max(0, Math.min(1, value)); }
+
+    // One clock drives the artwork and timeline, so pause, visibility and
+    // reduced-motion preferences also stop every detail inside each scene.
     function draw() {
-      var travel = easeInOut(Math.max(0, Math.min(1, (elapsed - 2800) / 1400)));
-      var route = routes[current];
-      var distance = travel * route.total;
-      var segment = 0;
-      while (segment < route.lengths.length - 1 && distance > route.lengths[segment]) { distance -= route.lengths[segment]; segment++; }
-      var from = route.points[segment], to = route.points[segment + 1];
-      var fraction = route.lengths[segment] ? distance / route.lengths[segment] : 0;
-      drop.setAttribute('transform', 'translate(' + (from[0] + (to[0] - from[0]) * fraction).toFixed(2) + ' ' + (from[1] + (to[1] - from[1]) * fraction).toFixed(2) + ')');
-      drop.style.opacity = current === points.length - 1 ? String(1 - travel) : '1';
+      var time = reduce.matches ? HOLD : elapsed;
+      var action = easeInOut(clamp((time - 400) / 2700));
+      var complete = easeInOut(clamp((time - 2700) / 900));
+      var art = scenes[current];
+      art.style.setProperty('--promise-action', String(action));
+      art.style.setProperty('--promise-complete', String(complete));
+      promiseJourney.style.setProperty('--promise-phase', String(clamp(time / HOLD)));
+      art.style.setProperty('--promise-pour', String(reduce.matches ? 0 : clamp(time / 350) * (1 - clamp((time - 2600) / 500))));
+      art.style.setProperty('--promise-time', String(time));
+      art.style.setProperty('--promise-float', (reduce.matches ? 0 : Math.sin(time / 900) * -3).toFixed(2) + 'px');
     }
 
-    function setStage(index) {
+    function setStage(index, announce) {
       current = index;
       promiseJourney.dataset.stage = String(index);
-      promiseJourney.style.setProperty('--promise-progress', String((index + 1) / points.length));
-      stations.forEach(function (station, i) {
-        station.classList.toggle('is-current', i === index);
-        station.classList.toggle('is-done', i < index);
+      $('[data-promise-count]', promiseJourney).textContent = '0' + (index + 1);
+      scenes.forEach(function (scene, i) { scene.classList.toggle('is-active', i === index); });
+      milestones.forEach(function (milestone, i) {
+        milestone.classList.toggle('is-current', i === index);
+        milestone.classList.toggle('is-done', i < index);
       });
       pressChoice(buttons, index);
       $('.promise-caption-title', promiseJourney).textContent = $('.promise-choice-label', buttons[index]).textContent;
       $('.promise-caption-detail', promiseJourney).textContent = details[index];
+      if (announce) announcement.textContent = 'Promise ' + (index + 1) + ' of ' + scenes.length + '. ' + $('.promise-choice-label', buttons[index]).textContent + '. ' + details[index];
       draw();
     }
 
+    function choose(index) {
+      elapsed = doc.classList.contains('motion-paused') ? HOLD : 0;
+      manualHold = 7500;
+      setStage(index, true);
+    }
+
     buttons.forEach(function (button, index) {
-      button.addEventListener('click', function () { elapsed = 0; manualHold = 7500; setStage(index); });
+      button.addEventListener('pointerenter', function (event) {
+        if (event.pointerType !== 'mouse') return;
+        hovered = index;
+        if (current === index) return;
+        elapsed = doc.classList.contains('motion-paused') ? HOLD : 0;
+        setStage(index);
+      });
+      button.addEventListener('pointerleave', function () {
+        if (hovered !== index) return;
+        hovered = null;
+        manualHold = Math.max(manualHold, 2000);
+      });
+      button.addEventListener('click', function () { choose(index); });
+      button.addEventListener('keydown', function (event) {
+        var next;
+        if (event.key === 'ArrowRight' || event.key === 'ArrowDown') next = Math.min(index + 1, buttons.length - 1);
+        else if (event.key === 'ArrowLeft' || event.key === 'ArrowUp') next = Math.max(index - 1, 0);
+        else if (event.key === 'Home') next = 0;
+        else if (event.key === 'End') next = buttons.length - 1;
+        else return;
+        event.preventDefault();
+        buttons[next].focus();
+        choose(next);
+      });
     });
     setStage(0);
+    reduce.addEventListener('change', draw);
     live(promiseJourney, function (dt) {
-      if (manualHold > 0) { manualHold = Math.max(0, manualHold - dt); return; }
       elapsed += dt;
-      if (elapsed >= 4200) { elapsed = 0; setStage((current + 1) % points.length); }
+      if (hovered !== null) { draw(); return; }
+      if (manualHold > 0) {
+        manualHold = Math.max(0, manualHold - dt);
+        draw();
+        return;
+      }
+      if (elapsed >= HOLD) { elapsed = 0; setStage((current + 1) % scenes.length); }
       else draw();
     });
   })();
@@ -577,6 +608,169 @@
     }
   })();
 
+  /* ---------- Seller App story: scroll selects the scene; manual controls stay in charge ---------- */
+
+  // Decorative only: this sequence never searches a store or downloads an app.
+  var installPreview = $('[data-install-preview]');
+  if (installPreview) (function () {
+    var query = $('[data-install-query]', installPreview);
+    var suggestion = $('[data-install-suggestion]', installPreview);
+    var action = $('[data-install-action]', installPreview);
+    var secondary = $('[data-install-secondary]', installPreview);
+    var ring = $('[data-install-ring]', installPreview);
+    var subtitle = $('[data-install-subtitle]', installPreview);
+    var percent = $('[data-install-percent]', installPreview);
+    var status = $('[data-install-status]', installPreview);
+    var markers = $$('[data-install-marker]', installPreview);
+    var keys = $$('[data-install-key]', installPreview);
+    var searchText = 'Black Gold Seller';
+    var durations = [4000, 2800, 5200, 4200];
+    var labels = ['Search for Black Gold Seller.', 'Open the listing and choose Install.', 'Downloading and installing Black Gold…', 'Installed. Open your seller app.'];
+    var phase = 0, elapsed = 0, currentKey = '';
+
+    function stateValue(name, value) {
+      var next = String(value);
+      if (installPreview.dataset[name] !== next) installPreview.dataset[name] = next;
+    }
+
+    function render() {
+      var state = String(phase);
+      if (installPreview.dataset.phase !== state) {
+        installPreview.dataset.phase = state;
+        markers.forEach(function (marker, i) { marker.classList.toggle('is-current', i === phase); });
+      }
+      var typed = phase === 0 ? searchText.slice(0, Math.max(0, Math.floor((elapsed - 500) / 105))) : searchText;
+      if (query.textContent !== typed) query.textContent = typed;
+      if (suggestion.textContent !== typed) suggestion.textContent = typed;
+      stateValue('searchReady', typed.length === searchText.length);
+      var label = phase < 2 ? 'Install' : 'Open';
+      if (action.textContent !== label) action.textContent = label;
+      var progress = phase === 3 ? 1 : phase === 2 ? Math.min(1, elapsed / durations[2]) : 0;
+      var downloaded = Math.min(1, progress / .82);
+      var installing = phase === 2 && downloaded === 1;
+      stateValue('installing', installing);
+      ring.style.strokeDashoffset = (226.2 * (1 - downloaded)).toFixed(2);
+      var amount = Math.round(downloaded * 100) + '%';
+      if (percent.textContent !== amount) percent.textContent = amount;
+      var detail = phase === 3 ? 'Installed' : phase === 2 ? installing ? 'Installing…' : 'Downloading…' : 'Business';
+      if (subtitle.textContent !== detail) subtitle.textContent = detail;
+      var secondaryLabel = phase === 3 ? 'Uninstall' : 'Cancel';
+      if (secondary.textContent !== secondaryLabel) secondary.textContent = secondaryLabel;
+      var launched = phase === 3 && elapsed >= 2300 && !reduce.matches;
+      stateValue('launched', launched);
+      var statusLabel = launched ? 'Black Gold is ready for your first collection.' : labels[phase];
+      if (status.textContent !== statusLabel) status.textContent = statusLabel;
+      var typing = phase === 0 && typed.length > 0 && typed.length < searchText.length && (elapsed - 500) % 105 < 75;
+      var pressedKey = typing ? typed.slice(-1).toLowerCase() : '';
+      if (pressedKey !== currentKey) {
+        keys.forEach(function (key) { key.classList.toggle('is-pressed', key.dataset.installKey === pressedKey); });
+        currentKey = pressedKey;
+      }
+    }
+
+    function applyPreference() {
+      phase = reduce.matches ? 3 : 0;
+      elapsed = 0;
+      render();
+    }
+
+    applyPreference();
+    reduce.addEventListener('change', applyPreference);
+    live(installPreview, function (dt) {
+      elapsed += dt;
+      while (elapsed >= durations[phase]) {
+        elapsed -= durations[phase];
+        phase = (phase + 1) % durations.length;
+      }
+      render();
+    });
+  })();
+
+  var sellerJourney = $('.seller-journey');
+  if (sellerJourney) (function () {
+    var panel = $('.sj-panel', sellerJourney);
+    var steps = $$('.seller-journey-step', sellerJourney);
+    var scenes = $$('[data-journey-scene]', sellerJourney);
+    var buttons = $$('[data-journey-go]', sellerJourney);
+    var truck = $('.sj-truck', sellerJourney);
+    var road = $('.sj-road', sellerJourney);
+    var current = -1;
+
+    function show(index, announce) {
+      index = Math.max(0, Math.min(steps.length - 1, index));
+      if (index !== current) {
+        current = index;
+        sellerJourney.dataset.step = String(index);
+        steps.forEach(function (step, i) {
+          step.classList.toggle('is-current', i === index);
+          if (i === index) step.setAttribute('aria-current', 'step');
+          else step.removeAttribute('aria-current');
+        });
+        scenes.forEach(function (scene, i) { scene.classList.toggle('is-active', i === index); });
+        pressChoice(buttons, index);
+        buttons.forEach(function (button, i) { button.classList.toggle('is-complete', i < index); });
+        $('[data-journey-count]', panel).textContent = '0' + (index + 1);
+        $('[data-journey-role]', panel).textContent = steps[index].dataset.journeyRole;
+        $('[data-journey-title]', panel).textContent = $('h3', steps[index]).textContent;
+        $('[data-journey-description]', panel).textContent = steps[index].dataset.journeySummary;
+        var progress = index / (steps.length - 1);
+        truck.style.transform = 'translateX(' + (30 + progress * 396).toFixed(2) + 'px)';
+        road.style.strokeDashoffset = (448 * (1 - progress)).toFixed(2);
+      }
+      // Scroll does not flood screen readers with announcements or move focus.
+      if (announce) $('[data-journey-announcement]', panel).textContent = 'Step ' + (index + 1) + ' of ' + steps.length + '. ' + $('h3', steps[index]).textContent + ' ' + steps[index].dataset.journeySummary;
+      measurePanel();
+    }
+
+    function measurePanel() {
+      sellerJourney.style.setProperty('--sj-panel-height', Math.ceil(panel.getBoundingClientRect().height) + 'px');
+    }
+
+    function followScroll() {
+      if (document.hidden || reduce.matches || doc.classList.contains('motion-paused') || doc.classList.contains('menu-locked')) return;
+      var bounds = sellerJourney.getBoundingClientRect();
+      if (bounds.top > window.innerHeight * .9 || bounds.bottom < 0) return;
+      var compact = window.innerWidth <= 1080 && window.innerHeight > 740;
+      var panelBottom = panel.getBoundingClientRect().bottom;
+      var anchor = compact ? Math.min(window.innerHeight - 40, panelBottom + Math.max(30, (window.innerHeight - panelBottom) * .4)) : window.innerHeight * .55;
+      var nearest = 0, distance = Infinity;
+      steps.forEach(function (step, i) {
+        var rect = step.getBoundingClientRect();
+        var nextDistance = Math.abs(rect.top + rect.height * .5 - anchor);
+        if (nextDistance < distance) { distance = nextDistance; nearest = i; }
+      });
+      show(nearest, false);
+    }
+
+    sellerJourney.classList.add('is-enhanced');
+    buttons.forEach(function (button, index) {
+      button.addEventListener('click', function () { show(index, true); });
+      button.addEventListener('keydown', function (event) {
+        var target;
+        if (event.key === 'ArrowRight') target = Math.min(index + 1, steps.length - 1);
+        else if (event.key === 'ArrowLeft') target = Math.max(index - 1, 0);
+        else if (event.key === 'Home') target = 0;
+        else if (event.key === 'End') target = steps.length - 1;
+        else return;
+        event.preventDefault();
+        buttons[target].focus();
+        show(target, true);
+      });
+    });
+    steps.forEach(function (step, index) {
+      step.setAttribute('tabindex', '0');
+      step.addEventListener('focusin', function () { show(index, false); });
+      step.addEventListener('pointerenter', function (event) {
+        if (event.pointerType === 'mouse' || event.pointerType === 'pen') show(index, false);
+      });
+    });
+    scrollVisuals.push(followScroll);
+    window.addEventListener('resize', measurePanel);
+    liveSyncs.push(function () { if (!document.hidden) followScroll(); });
+    show(0, false);
+    if (window.scrollY > 0) followScroll();
+  })();
+
   /* ---------- Seller app: switch real preview screens, without a fake booking ---------- */
 
   var phone = $('.phone');
@@ -593,6 +787,7 @@
       screens.forEach(function (screen, i) { screen.classList.toggle('is-active', i === index); });
       indicators.forEach(function (indicator, i) { indicator.classList.toggle('is-on', i === index); });
       features.forEach(function (card, i) { card.classList.toggle('is-current', i === index); });
+      $$('.phone-nav > span', phone).forEach(function (tab, i) { tab.classList.toggle('on', i === (index === 0 ? 0 : 1)); });
       pressChoice(buttons, index);
       describeCard(features[index], description);
     }
@@ -609,57 +804,10 @@
     });
   })();
 
-  /* ---------- FAQs: the quick-answers chat types itself ---------- */
-
-  var chat = $('.chat');
-  if (chat) (function () {
-    var bubbles = $$('.bubble', chat);
-    var typing = $('.typing', chat);
-
-    // Each pair: the question appears, the answer is "typed", then the next pair.
-    var events = [];
-    var at = 500;
-    for (var p = 0; p + 1 < bubbles.length; p += 2) {
-      events.push({ at: at, show: bubbles[p] });
-      events.push({ at: at + 700, typing: true });
-      events.push({ at: at + 2100, show: bubbles[p + 1], typing: false });
-      at += 3900;
-    }
-    var FADE_AT = at + 1800, END = FADE_AT + 900;
-    var time = 0, next = 0;
-
-    function reset() {
-      time = 0;
-      next = 0;
-      bubbles.forEach(function (b) { b.classList.remove('is-shown'); });
-      typing.classList.remove('is-shown');
-      chat.classList.remove('is-fading');
-    }
-
-    function advance(dt) {
-      time += dt;
-      while (next < events.length && time >= events[next].at) {
-        var e = events[next++];
-        if (e.show) e.show.classList.add('is-shown');
-        if (e.typing !== undefined) typing.classList.toggle('is-shown', e.typing);
-      }
-      if (time >= FADE_AT) chat.classList.add('is-fading');
-      if (time >= END) reset();
-    }
-
-    // Without motion every answer simply shows.
-    function setStatic() {
-      chat.classList.toggle('is-live', !reduce.matches);
-      if (reduce.matches) reset();
-    }
-    setStatic();
-    reduce.addEventListener('change', setStatic);
-    live(chat, advance);
-  })();
-
   /* ---------- FAQ search filters the actual questions and answers ---------- */
 
   var search = $('#faq-search');
+  var resetFaqSearch = null;
   if (search) (function () {
     var answers = $$('#faq-answers details');
     var status = $('#faq-search-status');
@@ -687,7 +835,166 @@
 
     search.addEventListener('input', filter);
     $('[data-clear-search]').addEventListener('click', function () { search.value = ''; filter(); search.focus(); });
+    resetFaqSearch = function () { search.value = ''; filter(); };
     filter();
+  })();
+
+  /* ---------- FAQs hero: a chat box that answers from the questions below ----------
+     No server and no AI service: each question is matched against the FAQ list on
+     the page (its words plus the data-keywords on each answer), so replies only ever
+     repeat published answers. Rare words count for more than common ones like "oil". */
+
+  var chatBox = $('[data-faq-chat]');
+  if (chatBox) (function () {
+    var log = $('[data-chat-log]', chatBox);
+    var typing = $('[data-chat-typing]', chatBox);
+    var suggest = $('[data-chat-suggest]', chatBox);
+    var chatForm = $('[data-chat-form]', chatBox);
+    var input = $('input', chatForm);
+    var STOP = ' a an the is are am was were be been i im me my we our us you your it its this that these those do does did can could will would should shall may might must to of for in on at by from with and or but if so as about please tell know want need there here have has had any some what how which why also just really get got ';
+    var GREETING = /^(hi|hello|hey|hai|vanakkam|namaste|good (morning|afternoon|evening))\b/;
+    var THANKS = /\b(thanks|thank you|thankyou|thx)\b/;
+    var MATCH = 3, FIELD_WEIGHTS = [3, 2, 1];
+    var STARTERS = ['faq-price', 'faq-minimum', 'faq-payment', 'faq-area', 'faq-pickup-code', 'faq-oils'];
+    var pending = 0;
+
+    function stem(word) {
+      if (word.length > 5 && /ing$/.test(word)) return word.slice(0, -3);
+      if (word.length > 4 && /ed$/.test(word)) return word.slice(0, -2);
+      if (word.length > 3 && /[^s]s$/.test(word)) return word.slice(0, -1);
+      return word;
+    }
+    function words(text, keepAll) {
+      return (text.toLocaleLowerCase().match(/[a-z0-9]+/g) || []).filter(function (word) {
+        return keepAll || STOP.indexOf(' ' + word + ' ') === -1;
+      }).map(stem);
+    }
+    // "measur" matches "measurement"; short words must match exactly.
+    function same(a, b) {
+      var short = a.length <= b.length ? a : b, long = short === a ? b : a;
+      return a === b || (short.length >= 4 && long.indexOf(short) === 0);
+    }
+    function mentions(list, word) { return list.some(function (item) { return same(item, word); }); }
+
+    var faqs = $$('#faq-answers details').map(function (item) {
+      var body = $('.faq-body', item);
+      var question = $('summary', item).textContent.trim();
+      return {
+        item: item, question: question, asked: false,
+        points: $$('li', body).map(function (point) { return point.textContent.trim(); }),
+        text: $$('p', body).map(function (para) { return para.textContent.trim(); }).join(' '),
+        fields: [words(item.dataset.keywords || '', true), words(question, true), words(body.textContent, true)]
+      };
+    });
+
+    function rank(query) {
+      var terms = words(query).map(function (term) {
+        var found = faqs.filter(function (faq) { return faq.fields.some(function (field) { return mentions(field, term); }); }).length;
+        return { term: term, weight: found ? Math.log(1 + faqs.length / found) : 0 };
+      });
+      return faqs.map(function (faq, index) {
+        var score = 0;
+        terms.forEach(function (t) {
+          for (var f = 0; f < FIELD_WEIGHTS.length; f++) {
+            if (mentions(faq.fields[f], t.term)) { score += t.weight * FIELD_WEIGHTS[f]; break; }
+          }
+        });
+        return { faq: faq, score: score, index: index };
+      }).sort(function (a, b) { return b.score - a.score || a.index - b.index; });
+    }
+
+    function add(tag, parent, text, className) {
+      var el = document.createElement(tag);
+      if (className) el.setAttribute('class', className);
+      if (text) el.textContent = text;
+      parent.appendChild(el);
+      return el;
+    }
+
+    // Suggested questions under the conversation, never one already answered.
+    function offer(list) {
+      suggest.textContent = '';
+      list.filter(function (faq) { return !faq.asked; }).slice(0, 3).forEach(function (faq) {
+        var chip = add('button', suggest, faq.question);
+        chip.setAttribute('type', 'button');
+        chip.setAttribute('data-chat-ask', faq.question);
+      });
+    }
+    function starters() {
+      return STARTERS.map(function (id) { return faqs.filter(function (faq) { return faq.item.id === id; })[0]; }).filter(Boolean).concat(faqs);
+    }
+
+    function reply(query) {
+      var bubble = add('div', log, '', 'faq-msg faq-msg--bot');
+      var lower = query.toLocaleLowerCase();
+      var ranked = rank(query);
+      var best = ranked[0];
+      if (!best || best.score < MATCH) {
+        if (GREETING.test(lower)) add('p', bubble, 'Hello! Ask me about prices, the 50-litre minimum, payment, pickup codes or where we collect.');
+        else if (THANKS.test(lower)) add('p', bubble, 'You’re welcome. Anything else about selling your used oil?');
+        else {
+          add('p', bubble, 'I couldn’t find that in our FAQs. Try other words, or prepare a pickup enquiry and Black Gold will answer you.');
+          var action = add('button', bubble, 'Prepare pickup enquiry', 'faq-msg-action');
+          action.setAttribute('type', 'button');
+          action.setAttribute('data-chat-enquiry', '');
+        }
+        offer(starters());
+        return;
+      }
+      var faq = best.faq;
+      faq.asked = true;
+      add('p', bubble, faq.question, 'faq-msg-title');
+      if (faq.points.length) {
+        var list = add('ul', bubble);
+        faq.points.forEach(function (point) { add('li', list, point); });
+      }
+      if (faq.text) add('p', bubble, faq.text);
+      var link = add('a', bubble, 'See it in all questions', 'faq-msg-link');
+      link.setAttribute('href', '#' + faq.item.id);
+      link.setAttribute('data-chat-open', '');
+      add('span', link, ' ↓').setAttribute('aria-hidden', 'true');
+      offer(ranked.slice(1).filter(function (r) { return r.score > 0; }).map(function (r) { return r.faq; }).concat(starters()));
+    }
+
+    function scrollToEnd() { log.scrollTop = log.scrollHeight; }
+
+    function ask(text) {
+      text = text.trim().slice(0, 200);
+      if (!text) { input.focus(); return; }
+      add('div', log, text, 'faq-msg faq-msg--user');
+      scrollToEnd();
+      pending++;
+      typing.hidden = reduce.matches;
+      setTimeout(function () {
+        reply(text);
+        if (!--pending) typing.hidden = true;
+        scrollToEnd();
+      }, reduce.matches ? 0 : 650);
+    }
+
+    chatForm.addEventListener('submit', function (event) {
+      event.preventDefault();
+      var text = input.value;
+      input.value = '';
+      ask(text);
+      input.focus();
+    });
+    suggest.addEventListener('click', function (event) {
+      var chip = event.target.closest('[data-chat-ask]');
+      if (chip) ask(chip.dataset.chatAsk);
+    });
+    log.addEventListener('click', function (event) {
+      if (event.target.closest('[data-chat-enquiry]')) { openDialog(pickup); return; }
+      var link = event.target.closest('[data-chat-open]');
+      if (!link) return;
+      var item = document.getElementById(link.getAttribute('href').slice(1));
+      if (!item) return;
+      if (item.hidden && resetFaqSearch) resetFaqSearch();
+      item.open = true;
+    });
+
+    offer(starters());
+    chatBox.hidden = false;
   })();
 
   /* ---------- Dialogs ---------- */
@@ -735,6 +1042,24 @@
   /* ---------- Pickup enquiry ---------- */
 
   var summary = '';
+  var whatsappLink = $('#whatsapp-enquiry');
+  var whatsappRecipient = whatsappLink.getAttribute('href');
+  var emailLink = $('#email-enquiry');
+  var emailRecipient = emailLink.getAttribute('href');
+
+  function quantityRules() {
+    var litres = $('input[name="unit"]:checked', form).value === 'Litres';
+    var input = $('input[name="quantity"]', form);
+    input.setAttribute('min', litres ? '50' : '1');
+    input.setAttribute('placeholder', litres ? 'Minimum 50 litres' : 'Number of barrels');
+    $('.field-error', input.closest('.field')).textContent = litres ? 'Enter 50 to 100,000 litres.' : 'Enter 1 to 100,000 barrels; confirm at least 50 litres total.';
+    if (input.value.trim() && isFinite(Number(input.value)) && Number(input.value) >= (litres ? 50 : 1) && Number(input.value) <= 100000) {
+      input.closest('.field').classList.remove('invalid');
+      input.removeAttribute('aria-invalid');
+    }
+  }
+  $$('input[name="unit"]', form).forEach(function (input) { input.addEventListener('change', quantityRules); });
+  quantityRules();
 
   function validate() {
     var firstBad = null;
@@ -744,7 +1069,7 @@
       var ok = value.length > 0;
       if (ok && input.type === 'number') {
         var n = Number(value);
-        ok = isFinite(n) && n >= 1 && n <= 100000;
+        ok = isFinite(n) && n >= Number(input.getAttribute('min')) && n <= 100000;
       }
       field.classList.toggle('invalid', !ok);
       input.setAttribute('aria-invalid', String(!ok));
@@ -772,10 +1097,12 @@
       'Locality: ' + f.get('area').trim() + ', Chennai\n' +
       'Oil type: ' + (key ? oilText(key, 'title') : f.get('oil')) + '\n' +
       'Approximate quantity: ' + Number(f.get('quantity')) + ' ' + f.get('unit') + '\n\n' +
-      'Please confirm the current rate, minimum quantity, collection charges and pickup availability.\n\n' +
+      'Minimum collection: 50 litres. For barrels, please confirm the total volume.\n' +
+      'Please confirm the current rate, collection charges and pickup availability.\n\n' +
       'Prepared enquiry only — no pickup has been booked.';
     $('#enquiry-text').textContent = summary;
-    $('#whatsapp-enquiry').href = 'https://wa.me/?text=' + encodeURIComponent(summary);
+    whatsappLink.href = whatsappRecipient + '?text=' + encodeURIComponent(summary);
+    emailLink.href = emailRecipient + '?subject=' + encodeURIComponent('Black Gold pickup enquiry') + '&body=' + encodeURIComponent(summary.replace(/\n/g, '\r\n'));
     $('.copy-status').textContent = '';
   }
 

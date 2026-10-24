@@ -1,53 +1,55 @@
 <div class="app-graphic" aria-hidden="true">
-  <div class="orbit orbit-1"></div>
-  <div class="orbit orbit-2"><i></i></div>
-  <div class="chip chip-1"><b>✓</b> Rate shown before you sell</div>
-  <div class="chip chip-2"><b>✓</b> Measured on site</div>
-  <div class="chip chip-3"><b>✓</b> Receipt saved</div>
   <div class="phone">
     <div class="phone-notch"></div>
-    <div class="phone-top"><span>BLACK GOLD</span><span class="phone-status"><i></i><i></i><i></i></span></div>
+    <div class="phone-top"><span class="phone-brand"><img src="assets/black-gold-app-icon.png" alt="" width="28" height="28"><span>BLACK GOLD<small>Seller app</small></span></span><span class="phone-status"><i></i><i></i><i></i></span></div>
     <div class="screens">
       <div class="screen s1">
-        <span class="phone-greeting">Your oil. Your next pickup.</span>
-        <h3>Today’s<br>rates.</h3>
+        <span class="phone-greeting">Sell oil</span>
+        <h3>Ready to list.</h3>
         <ul class="rate-list">
           <li><span>Engine oil</span><b>₹ ••.•• <small>/ L</small></b></li>
           <li><span>Hydraulic oil</span><b>₹ ••.•• <small>/ L</small></b></li>
           <li><span>Transfer oil</span><b>₹ ••.•• <small>/ L</small></b></li>
         </ul>
-        <div class="phone-button">Request pickup ↗</div>
+        <div class="phone-card phone-quantity"><span>EXAMPLE QUANTITY</span><b>− &nbsp; 50 L &nbsp; +</b></div>
+        <p class="phone-hint">Minimum pickup: 50 litres</p>
+        <div class="phone-button">Submit listing ↗</div>
       </div>
       <div class="screen s2">
-        <span class="phone-greeting">New pickup</span>
-        <h3>Ready when<br>you are.</h3>
-        <div class="phone-card">
-          <span>OIL TYPE</span><b>Used engine oil</b>
-          <hr>
-          <span>QUANTITY</span><b class="qty">— 50 L +</b>
+        <span class="phone-greeting">Example order</span>
+        <h3>Vehicle on<br>the way.</h3>
+        <div class="phone-map">
+          <svg viewBox="0 0 220 90"><rect width="220" height="90" fill="#ebe7dc"/><path d="M0 23h220M0 68h220M46 0v90M173 0v90" stroke="#fff" stroke-width="12"/><path d="M46 23h127v45" fill="none" stroke="#c9a227" stroke-width="3" stroke-dasharray="5 5"/><circle cx="173" cy="68" r="8" fill="#2e7d4f"/><path d="M34 13h22v15H34Zm22 5h9l7 7v3H56Z" fill="#1e262d"/><circle cx="40" cy="30" r="4" fill="#1e262d"/><circle cx="64" cy="30" r="4" fill="#1e262d"/></svg>
         </div>
-        <div class="phone-button">Confirm request ↗</div>
+        <div class="phone-code">
+          <span>YOUR PICKUP CODE · EXAMPLE</span>
+          <b>4 7 1 9</b>
+          <p>Share only after your oil is measured and loaded.</p>
+        </div>
+        <div class="phone-timeline"><span>Listed</span><span>Confirmed</span><span class="is-current">On the way</span><span>Picked up</span><span>Paid</span></div>
       </div>
       <div class="screen s3">
         <div class="receipt-tick">✓</div>
-        <h3>Collection<br>recorded.</h3>
+        <h3>Payment<br>received.</h3>
         <ul class="receipt">
-          <li><span>Measured on site</span><b>✓</b></li>
-          <li><span>Paid on pickup</span><b>✓</b></li>
-          <li><span>Digital receipt</span><b>✓</b></li>
+          <li><span>Payment options</span><b>UPI / Cash</b></li>
+          <li><span>Collected quantity</span><b>50 L · example</b></li>
+          <li><span>GST details</span><b>On receipt</b></li>
+          <li><span>Collection record</span><b>Saved</b></li>
         </ul>
+        <div class="phone-button phone-button--receipt">View receipt ↗</div>
       </div>
     </div>
-    <div class="phone-nav"><span class="on">Home</span><span>Pickups</span><span>Account</span></div>
+    <div class="phone-nav"><span class="on">Home</span><span>Orders</span><span>Alerts</span><span>Profile</span></div>
   </div>
-  <span class="concept-label">Illustrative app preview</span>
+  <span class="concept-label">Illustrative screens · sample order · rates are not live</span>
 </div>
 <div class="visual-tools visual-tools--app">
   <p class="visual-hint">Try the app preview</p>
   <div class="preview-controls" role="group" aria-label="App preview screens">
-    <button type="button" data-app-screen="0" aria-pressed="true">Rates</button>
-    <button type="button" data-app-screen="1" aria-pressed="false">Pickup</button>
-    <button type="button" data-app-screen="2" aria-pressed="false">Receipt</button>
+    <button type="button" data-app-screen="0" aria-pressed="true">List oil</button>
+    <button type="button" data-app-screen="1" aria-pressed="false">Track pickup</button>
+    <button type="button" data-app-screen="2" aria-pressed="false">Payment &amp; receipt</button>
   </div>
-  <p class="preview-description" data-app-description>Rate per litre for each oil</p>
+  <p class="preview-description" data-app-description>Choose your oil type and quantity before submitting a listing.</p>
 </div>

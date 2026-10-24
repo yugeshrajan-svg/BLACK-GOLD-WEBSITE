@@ -3,21 +3,21 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-<title>Seller app — Black Gold</title>
-<meta name="description" content="The Black Gold seller app: check today's rate, request a pickup from your phone and keep a digital receipt for every collection.">
-<meta name="theme-color" content="#0a0a09">
+<title>Seller app &amp; complete guide — Black Gold</title>
+<meta name="description" content="The complete Black Gold Seller App guide: register your business, verify your address, list oil, track collection, use your pickup code and keep payment receipts.">
+<meta name="theme-color" content="#1e262d">
 <meta property="og:type" content="website">
 <meta property="og:site_name" content="Black Gold">
 <meta property="og:locale" content="en_IN">
-<meta property="og:title" content="Seller app — Black Gold">
-<meta property="og:description" content="The Black Gold seller app: check today's rate, request a pickup from your phone and keep a digital receipt for every collection.">
+<meta property="og:title" content="Seller app &amp; complete guide — Black Gold">
+<meta property="og:description" content="The complete Black Gold Seller App guide: register your business, verify your address, list oil, track collection, use your pickup code and keep payment receipts.">
 <meta property="og:image" content="og-image.jpg">
 <meta property="og:image:type" content="image/jpeg">
 <meta property="og:image:width" content="1200">
 <meta property="og:image:height" content="630">
 <meta property="og:image:alt" content="Black Gold — Used oil. New value. A thin stream of golden oil pouring into a black pool.">
 <meta name="twitter:card" content="summary_large_image">
-<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 36 44'%3E%3Cpath d='M18 1C14 10 2 20 2 28a16 16 0 0 0 32 0C34 20 22 10 18 1Z' fill='%23d4af62'/%3E%3C/svg%3E">
+<link rel="icon" href="assets/black-gold-app-icon.png" type="image/png">
 <link rel="preload" href="fonts/fraunces-latin.woff2" as="font" type="font/woff2" crossorigin>
 <link rel="preload" href="fonts/inter-latin.woff2" as="font" type="font/woff2" crossorigin>
 <link rel="stylesheet" href="style.css">
@@ -29,7 +29,7 @@
 
 <header class="header">
   <a href="index.html" class="brand" aria-label="Black Gold home">
-    <svg class="brand-mark" viewBox="0 0 36 44" aria-hidden="true"><defs><linearGradient id="drop-gold" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#f3dc9e"/><stop offset=".5" stop-color="#d4af62"/><stop offset="1" stop-color="#a27632"/></linearGradient></defs><path d="M18 1C14 10 2 20 2 28a16 16 0 0 0 32 0C34 20 22 10 18 1Z" fill="url(#drop-gold)"/><path d="M18 15v23a10 10 0 0 0 10-10c0-4-6-10-10-13Z" fill="#0a0a09"/></svg>
+    <img class="brand-mark brand-app-icon" src="assets/black-gold-app-icon.png" alt="" width="40" height="40">
     <span class="brand-text">BLACK GOLD<small>WASTE OIL REFINING</small></span>
   </a>
   <nav id="navigation" class="nav" aria-label="Main navigation">
@@ -37,7 +37,6 @@
     <a href="seller-app.html" data-page="app" aria-current="page">Seller app</a>
     <a href="about.html" data-page="about">About</a>
     <a href="collect.html" data-page="collect">What we collect</a>
-    <a href="how-it-works.html" data-page="how">How it works</a>
     <a href="faq.html" data-page="faq">FAQs</a>
     <button class="button button--gold nav-mobile-cta" data-app>Get the seller app <span class="arrow" aria-hidden="true">↗</span></button>
   </nav>
@@ -46,115 +45,370 @@
 </header>
 
 <main id="main">
-<section class="page-hero" id="top" aria-labelledby="page-title">
+<section class="page-hero seller-app-hero" id="top" aria-labelledby="page-title">
+  <div class="seller-install-backdrop" aria-hidden="true">
+  <div class="install-preview" data-install-preview data-phase="3" data-launched="false" data-search-ready="true">
+    <div class="install-scene-glow"></div>
+    <div class="install-device">
+      <div class="install-window">
+        <div class="install-device-status"><span>9:41</span><span class="install-camera"></span><svg viewBox="0 0 42 16"><path d="M1 11h3v3H1Zm5-4h3v7H6Zm5-4h3v11h-3Z" fill="currentColor"/><path d="M19 5q6-6 12 0M22 8q3-3 6 0" fill="none" stroke="currentColor" stroke-width="1.5"/><circle cx="25" cy="11" r="1.3" fill="currentColor"/><rect x="34" y="3" width="6" height="11" rx="1" fill="currentColor"/></svg></div>
+        <div class="install-store-brand"><svg class="install-play-logo" viewBox="0 0 30 32"><path fill="#00b7ff" d="M2.6 1.3 17.2 16 2.6 30.7C2.2 30.3 2 29.7 2 29V3c0-.7.2-1.3.6-1.7Z"/><path fill="#00d26a" d="M2.6 1.3c.6-.6 1.6-.7 2.6-.1L22.4 11l-5.2 5Z"/><path fill="#ffc800" d="m22.4 11 5.2 3c1.4.8 1.4 3.2 0 4l-5.2 3-5.2-5Z"/><path fill="#ff3a44" d="m17.2 16 5.2 5L5.2 30.8c-1 .6-2 .5-2.6-.1Z"/></svg><span>Google Play</span><svg class="install-store-bell" viewBox="0 0 24 24"><path d="M5 17h14l-2-4V9a5 5 0 0 0-10 0v4ZM10 21h4"/></svg><span class="install-store-avatar">B</span></div>
+        <div class="install-search"><svg viewBox="0 0 24 24"><path d="M20 12H4m7-7-7 7 7 7"/></svg><span data-install-query>Black Gold Seller</span><span class="install-search-caret"></span><svg class="install-search-mic" viewBox="0 0 24 24"><rect x="9" y="3" width="6" height="11" rx="3"/><path d="M6 10v2a6 6 0 0 0 12 0v-2M12 18v3M9 21h6"/></svg></div>
+        <div class="install-content">
+          <div class="install-search-page">
+            <div class="install-suggestion"><svg viewBox="0 0 24 24"><circle cx="10" cy="10" r="6"/><path d="m15 15 5 5"/></svg><span data-install-suggestion>Black Gold Seller</span><span>↗</span></div>
+            <div class="install-search-result"><img src="assets/black-gold-app-icon.png" alt="" width="46" height="46"><span><strong>Black Gold Seller</strong><small>Black Gold · Business</small></span><span>↗</span></div>
+            <p class="install-search-hint">Find your next collection.</p>
+            <div class="install-keyboard">
+              <div class="install-keyboard-suggestions"><span>Black</span><span>Gold</span><span>Seller</span></div>
+              <div class="install-keyboard-row"><span data-install-key="q">q</span><span data-install-key="w">w</span><span data-install-key="e">e</span><span data-install-key="r">r</span><span data-install-key="t">t</span><span data-install-key="y">y</span><span data-install-key="u">u</span><span data-install-key="i">i</span><span data-install-key="o">o</span><span data-install-key="p">p</span></div>
+              <div class="install-keyboard-row install-keyboard-row--middle"><span data-install-key="a">a</span><span data-install-key="s">s</span><span data-install-key="d">d</span><span data-install-key="f">f</span><span data-install-key="g">g</span><span data-install-key="h">h</span><span data-install-key="j">j</span><span data-install-key="k">k</span><span data-install-key="l">l</span></div>
+              <div class="install-keyboard-row"><span class="install-key-special">⇧</span><span data-install-key="z">z</span><span data-install-key="x">x</span><span data-install-key="c">c</span><span data-install-key="v">v</span><span data-install-key="b">b</span><span data-install-key="n">n</span><span data-install-key="m">m</span><span class="install-key-special">⌫</span></div>
+              <div class="install-keyboard-row install-keyboard-row--bottom"><span>?123</span><span>,</span><span class="install-key-space">English</span><span>.</span><span class="install-key-search"><svg viewBox="0 0 24 24"><circle cx="10" cy="10" r="6"/><path d="m15 15 5 5"/></svg></span></div>
+            </div>
+          </div>
+          <div class="install-app-card">
+            <div class="install-app-identity"><div class="install-app-icon"><svg class="install-download-ring" viewBox="0 0 80 80"><circle class="install-ring-track" cx="40" cy="40" r="36"/><circle data-install-ring cx="40" cy="40" r="36" style="stroke-dashoffset:0"/></svg><img src="assets/black-gold-app-icon.png" alt="" width="58" height="58"></div><div><strong>Black Gold Seller</strong><span class="install-publisher">Black Gold</span><small><span data-install-subtitle>Installed</span> <span data-install-percent>100%</span></small></div><span class="install-listing-menu">⋮</span></div>
+            <div class="install-buttons"><span class="install-secondary" data-install-secondary>Uninstall</span><div class="install-action"><span data-install-action>Open</span><span class="install-tap"></span></div></div>
+            <div class="install-screenshots">
+              <div class="install-shot install-shot--list"><strong>List your oil.</strong><div class="install-shot-screen"><span class="install-shot-brand">BLACK GOLD</span><span class="install-shot-heading">Sell used oil</span><span class="install-shot-oil">Engine oil</span><b>50 <small>litres · example</small></b><i></i><span class="install-shot-button">Review listing</span></div></div>
+              <div class="install-shot install-shot--track"><strong>Follow pickup.</strong><div class="install-shot-screen"><span class="install-shot-brand">BLACK GOLD</span><span class="install-shot-heading">On the way</span><svg viewBox="0 0 80 65"><path d="M0 18h80M0 49h80M23 0v65M60 0v65" stroke="#fff" stroke-width="8"/><path d="M14 49h9V18h37v17" stroke="#c9a227" stroke-width="3" stroke-dasharray="3 3" fill="none"/><circle cx="60" cy="35" r="5" fill="#2e7d4f"/></svg><i></i><i></i></div></div>
+              <div class="install-shot install-shot--receipt"><strong>Keep receipts.</strong><div class="install-shot-screen"><span class="install-shot-brand">BLACK GOLD</span><span class="install-shot-paid">✓</span><span class="install-shot-heading">Payment received</span><i></i><i></i><i></i><span class="install-shot-button">View receipt</span></div></div>
+            </div>
+            <div class="install-about"><strong>About this app <span>→</span></strong><p>List used oil, track pickups and keep receipts.</p></div>
+            <div class="install-app-tags"><span>Business</span><span>Android 8.0+</span><span>English &amp; Tamil</span></div>
+          </div>
+        </div>
+        <div class="install-store-nav"><span><svg viewBox="0 0 24 24"><path d="M6 7h12l4 11-3 2-4-4H9l-4 4-3-2ZM6 12h5M8.5 9.5v5"/><circle cx="16" cy="11" r="1"/><circle cx="19" cy="14" r="1"/></svg>Games</span><span><svg viewBox="0 0 24 24"><rect x="3" y="3" width="7" height="7" rx="1"/><rect x="14" y="3" width="7" height="7" rx="1"/><rect x="3" y="14" width="7" height="7" rx="1"/><rect x="14" y="14" width="7" height="7" rx="1"/></svg>Apps</span><span class="is-current"><svg viewBox="0 0 24 24"><circle cx="10" cy="10" r="6"/><path d="m15 15 5 5"/></svg>Search</span><span><svg viewBox="0 0 24 24"><path d="M3 4h7l2 2 2-2h7v15h-7l-2 2-2-2H3ZM12 6v15"/></svg>Books</span></div>
+        <span class="install-device-homebar"></span>
+        <div class="install-launch-screen"><img src="assets/black-gold-logo.png" alt="" width="144" height="144"><span>SELLER APP</span><strong>Your next collection<br>starts here.</strong><p>Used oil. New value.</p></div>
+      </div>
+    </div>
+    <ol class="install-story"><li data-install-marker><span>01</span>Search</li><li data-install-marker><span>02</span>App details</li><li data-install-marker><span>03</span>Install</li><li class="is-current" data-install-marker><span>04</span>Open</li></ol>
+    <p class="install-status"><span class="install-status-dot"></span><span data-install-status>Ready to open Black Gold.</span></p>
+    <p class="install-preview-label">Illustrative Play Store preview · listing not live</p>
+  </div>
+</div>
   <div class="page-hero-inner">
     <div class="page-hero-copy">
-      <p class="eyebrow">Seller app</p>
+      <p class="eyebrow">Black Gold Seller App · Follow your first sale</p>
       <h1 id="page-title">Your next pickup. <em>In your pocket.</em></h1>
+      <p class="seller-hero-description">Used oil sales for businesses in Chennai. Set up your business, request a collection and follow every step through to payment in one app.</p>
       <ul class="points points--hero">
-        <li>Check today’s rate</li>
-        <li>Request a pickup</li>
-        <li>Keep every receipt</li>
+        <li>List oil at the rate shown in your app</li>
+        <li>Track your vehicle and order alerts</li>
+        <li>Get paid by UPI or cash</li>
       </ul>
       <div class="hero-actions">
-        <button class="button button--gold" data-app>Get the seller app <span class="arrow" aria-hidden="true">↗</span></button>
-        <a class="text-link" href="faq.html">FAQs <span aria-hidden="true">→</span></a>
+        <a class="button button--gold" href="#app-workflow">Start the journey <span class="arrow" aria-hidden="true">↓</span></a>
+        <a class="text-link" href="#get-app">See download options <span aria-hidden="true">↓</span></a>
       </div>
-    </div>
-    <div class="page-hero-visual">
-      <div class="app-graphic" aria-hidden="true">
-  <div class="orbit orbit-1"></div>
-  <div class="orbit orbit-2"><i></i></div>
-  <div class="chip chip-1"><b>✓</b> Rate shown before you sell</div>
-  <div class="chip chip-2"><b>✓</b> Measured on site</div>
-  <div class="chip chip-3"><b>✓</b> Receipt saved</div>
-  <div class="phone">
-    <div class="phone-notch"></div>
-    <div class="phone-top"><span>BLACK GOLD</span><span class="phone-status"><i></i><i></i><i></i></span></div>
-    <div class="screens">
-      <div class="screen s1">
-        <span class="phone-greeting">Your oil. Your next pickup.</span>
-        <h3>Today’s<br>rates.</h3>
-        <ul class="rate-list">
-          <li><span>Engine oil</span><b>₹ ••.•• <small>/ L</small></b></li>
-          <li><span>Hydraulic oil</span><b>₹ ••.•• <small>/ L</small></b></li>
-          <li><span>Transfer oil</span><b>₹ ••.•• <small>/ L</small></b></li>
-        </ul>
-        <div class="phone-button">Request pickup ↗</div>
-      </div>
-      <div class="screen s2">
-        <span class="phone-greeting">New pickup</span>
-        <h3>Ready when<br>you are.</h3>
-        <div class="phone-card">
-          <span>OIL TYPE</span><b>Used engine oil</b>
-          <hr>
-          <span>QUANTITY</span><b class="qty">— 50 L +</b>
-        </div>
-        <div class="phone-button">Confirm request ↗</div>
-      </div>
-      <div class="screen s3">
-        <div class="receipt-tick">✓</div>
-        <h3>Collection<br>recorded.</h3>
-        <ul class="receipt">
-          <li><span>Measured on site</span><b>✓</b></li>
-          <li><span>Paid on pickup</span><b>✓</b></li>
-          <li><span>Digital receipt</span><b>✓</b></li>
-        </ul>
-      </div>
-    </div>
-    <div class="phone-nav"><span class="on">Home</span><span>Pickups</span><span>Account</span></div>
-  </div>
-  <span class="concept-label">Illustrative app preview</span>
-</div>
-<div class="visual-tools visual-tools--app">
-  <p class="visual-hint">Try the app preview</p>
-  <div class="preview-controls" role="group" aria-label="App preview screens">
-    <button type="button" data-app-screen="0" aria-pressed="true">Rates</button>
-    <button type="button" data-app-screen="1" aria-pressed="false">Pickup</button>
-    <button type="button" data-app-screen="2" aria-pressed="false">Receipt</button>
-  </div>
-  <p class="preview-description" data-app-description>Rate per litre for each oil</p>
-</div>
+      <p class="seller-compatibility">Android 8.0+ <span aria-hidden="true">·</span> English &amp; Tamil in the app <span aria-hidden="true">·</span> 50 L minimum pickup</p>
     </div>
   </div>
   <button class="motion-toggle page-motion" data-motion><span class="motion-icon" aria-hidden="true"></span><span class="motion-label">Pause motion</span></button>
 </section>
 
-<section class="section" aria-labelledby="features-title">
+<nav class="seller-page-nav" aria-label="Seller App guide sections">
+  <span>Explore the app</span>
+  <a href="#app-workflow">Follow the journey</a>
+  <a href="#app-features">Features</a>
+  <a href="#app-setup">Before you start</a>
+  <a href="#app-help">Account help</a>
+  <a href="#get-app">Download</a>
+</nav>
+
+<section class="section seller-workflow" id="app-workflow" aria-labelledby="workflow-title">
+  <div class="section-head">
+    <p class="eyebrow">One sale. Eight simple steps.</p>
+    <h2 id="workflow-title">Scroll your way to <em>payment received.</em></h2>
+    <p class="seller-section-intro">Follow the pictures as you scroll, or choose a numbered step. See what you do, what Black Gold handles and what happens next.</p>
+  </div>
+  <div class="seller-journey" data-step="0">
+  <div class="sj-panel" role="region" aria-label="Illustrated Seller App journey">
+    <div class="sj-panel-top"><p><span data-journey-count>01</span> / 08 <span class="sj-role" data-journey-role>You</span></p><span class="sj-demo-label">Illustrative journey</span></div>
+    <svg class="sj-scene" viewBox="0 0 560 340" aria-hidden="true" focusable="false">
+      <defs>
+        <g id="sj-phone"><rect width="144" height="224" rx="23" fill="#1e262d"/><rect x="8" y="8" width="128" height="208" rx="17" fill="#fffdf8"/><path d="M51 16h42" stroke="#1e262d" stroke-width="5" stroke-linecap="round"/><path d="M55 206h34" stroke="#cbc5b6" stroke-width="4" stroke-linecap="round"/></g>
+        <g id="sj-proof"><path d="M0 0h91l27 28v122H0Z" fill="#fff" stroke="#1e262d" stroke-width="3" stroke-linejoin="round"/><path d="M91 0v28h27M18 83h80M18 100h64M18 117h74" fill="none" stroke="#b8b3a6" stroke-width="4"/><path d="m22 55 19-17 19 17v16H22Z" fill="#f7edcc" stroke="#8a6a0f" stroke-width="3"/></g>
+        <g id="sj-shop"><rect x="8" y="40" width="140" height="105" rx="3" fill="#fff" stroke="#1e262d" stroke-width="3"/><path d="M0 40 16 10h124l16 30Z" fill="#c9a227" stroke="#1e262d" stroke-width="3"/><path d="M36 12 28 40M66 12l-3 28M96 12l3 28M126 12l8 28" stroke="#fff3cb" stroke-width="9"/><rect x="23" y="66" width="56" height="51" rx="3" fill="#e3f1e8"/><path d="M93 145V66h38v79" fill="#ede9de" stroke="#1e262d" stroke-width="3"/></g>
+        <g id="sj-drum"><ellipse cx="45" cy="10" rx="42" ry="10" fill="#cfaa44" stroke="#8a6a0f" stroke-width="3"/><path d="M3 10v101c0 14 84 14 84 0V10" fill="#c9a227" stroke="#8a6a0f" stroke-width="3"/><path d="M5 35h80M5 90h80" stroke="#f6e4a6" stroke-width="6"/><path d="M45 42c-4 9-14 19-14 27a14 14 0 0 0 28 0c0-8-10-18-14-27Z" fill="#1e262d"/></g>
+        <g id="sj-check"><circle r="26" fill="#2e7d4f"/><path class="sj-tick" d="m-12 0 8 8 17-18" fill="none" stroke="#fff" stroke-width="4" stroke-linecap="round" stroke-linejoin="round"/></g>
+      </defs>
+      <ellipse cx="280" cy="148" rx="230" ry="127" fill="#f0ead8" class="sj-halo"/>
+      <g class="sj-art is-active" data-journey-scene="0">
+        <use href="#sj-phone" x="94" y="17"/>
+        <circle cx="166" cy="79" r="22" fill="#f7edcc"/><circle cx="166" cy="72" r="8" fill="#8a6a0f"/><path d="M150 93c0-20 32-20 32 0" fill="#8a6a0f"/>
+        <path class="sj-write" d="M116 122h94M116 144h94M116 166h62" stroke="#c4bda9" stroke-width="7" stroke-linecap="round"/>
+        <use href="#sj-shop" x="320" y="83"/>
+        <path class="sj-connect" d="M249 126h53m-9-8 9 8-9 8" fill="none" stroke="#8a6a0f" stroke-width="3"/>
+        <text x="398" y="68" class="sj-label">YOUR BUSINESS</text>
+      </g>
+      <g class="sj-art" data-journey-scene="1">
+        <use href="#sj-proof" x="111" y="48"/>
+        <rect x="92" y="170" width="57" height="43" rx="9" fill="#1e262d"/><circle cx="121" cy="192" r="12" fill="none" stroke="#f6f4ef" stroke-width="3"/>
+        <path class="sj-connect" d="M253 126h52m-9-8 9 8-9 8" fill="none" stroke="#8a6a0f" stroke-width="3"/>
+        <path d="m394 54 62 24v57c0 38-62 68-62 68s-62-30-62-68V78Z" fill="#e3f1e8" stroke="#2e7d4f" stroke-width="3"/>
+        <use href="#sj-check" x="394" y="121"/>
+        <text x="394" y="236" class="sj-label">BUSINESS VERIFIED</text>
+      </g>
+      <g class="sj-art" data-journey-scene="2">
+        <use href="#sj-phone" x="96" y="17"/>
+        <text x="168" y="72" class="sj-label">SELL OIL</text>
+        <rect x="114" y="91" width="108" height="57" rx="8" fill="#f7edcc"/><text x="168" y="127" class="sj-big">50 L</text>
+        <path d="M122 166h92" stroke="#c4bda9" stroke-width="5" stroke-linecap="round"/><rect x="117" y="181" width="102" height="18" rx="6" fill="#c9a227"/>
+        <use href="#sj-drum" x="351" y="80"/>
+        <text x="396" y="233" class="sj-label">TYPE + QUANTITY</text>
+        <path class="sj-connect" d="M260 126h65m-9-8 9 8-9 8" fill="none" stroke="#8a6a0f" stroke-width="3"/>
+      </g>
+      <g class="sj-art" data-journey-scene="3">
+        <rect x="83" y="75" width="156" height="103" rx="10" fill="#fff" stroke="#1e262d" stroke-width="4"/><path d="M161 178v27m-33 0h66" stroke="#1e262d" stroke-width="5" stroke-linecap="round"/>
+        <path class="sj-write" d="M108 103h105M108 126h66M108 149h84" stroke="#c9a227" stroke-width="7" stroke-linecap="round"/>
+        <text x="161" y="239" class="sj-label">BLACK GOLD OFFICE</text>
+        <rect x="332" y="53" width="135" height="150" rx="13" fill="#fff" stroke="#cfc8b6" stroke-width="2"/><use href="#sj-check" x="400" y="103"/>
+        <text x="400" y="155" class="sj-label">CONFIRMED</text><path d="M356 177h88" stroke="#b8d4c2" stroke-width="5" stroke-linecap="round"/>
+        <path class="sj-connect" d="M262 126h47m-9-8 9 8-9 8" fill="none" stroke="#8a6a0f" stroke-width="3"/>
+      </g>
+      <g class="sj-art" data-journey-scene="4">
+        <rect x="65" y="43" width="240" height="184" rx="15" fill="#fff" stroke="#cfc8b6" stroke-width="2"/>
+        <path d="M68 99h234M68 172h234M135 45v179M232 45v179" stroke="#eeeadf" stroke-width="19"/>
+        <path class="sj-map-route" d="M96 180h39V99h97V68" fill="none" stroke="#c9a227" stroke-width="5" stroke-linecap="round" stroke-dasharray="8 8"/>
+        <circle cx="96" cy="180" r="10" fill="#1e262d"/><path d="M232 48c-18 0-25 23 0 44 25-21 18-44 0-44Z" fill="#2e7d4f"/><circle cx="232" cy="64" r="5" fill="#fff"/>
+        <use href="#sj-shop" x="344" y="77"/>
+        <text x="185" y="252" class="sj-label">LIVE VEHICLE LOCATION</text>
+      </g>
+      <g class="sj-art" data-journey-scene="5">
+        <use href="#sj-drum" x="94" y="82"/>
+        <path d="M217 59h117v147c0 15-117 15-117 0Zm117 25h31v72h-31" fill="#fff" stroke="#1e262d" stroke-width="4" stroke-linejoin="round"/>
+        <path class="sj-oil-fill" d="M223 126h105v76c0 10-105 10-105 0Z" fill="#c9a227"/>
+        <path d="M304 83h23M312 105h15M304 127h23M312 149h15M304 171h23" stroke="#1e262d" stroke-width="3"/>
+        <path class="sj-pour" d="M168 87c16-57 75-59 81-8v36" fill="none" stroke="#c9a227" stroke-width="7" stroke-linecap="round"/>
+        <rect x="405" y="110" width="68" height="54" rx="9" fill="#1e262d"/><circle cx="439" cy="137" r="16" fill="none" stroke="#fff" stroke-width="4"/>
+        <text x="278" y="248" class="sj-label">MEASURE · CHECK · PHOTO</text>
+      </g>
+      <g class="sj-art" data-journey-scene="6">
+        <use href="#sj-phone" x="95" y="17"/>
+        <text x="167" y="70" class="sj-label">PICKUP CODE</text>
+        <rect x="110" y="88" width="114" height="52" rx="8" fill="#1e262d"/><text x="167" y="122" class="sj-code">4 7 1 9</text>
+        <text x="167" y="166" class="sj-label">EXAMPLE ONLY</text>
+        <use href="#sj-drum" x="348" y="89"/>
+        <use href="#sj-check" x="437" y="91"/>
+        <text x="392" y="237" class="sj-label">MEASURED &amp; LOADED</text>
+      </g>
+      <g class="sj-art" data-journey-scene="7">
+        <path class="sj-receipt" d="M102 32h150v204l-15-10-15 10-15-10-15 10-15-10-15 10-15-10-15 10-15-10-15 10Z" fill="#fff" stroke="#2e7d4f" stroke-width="3"/>
+        <use href="#sj-check" x="177" y="78"/><text x="177" y="128" class="sj-label">PAYMENT RECEIVED</text>
+        <path d="M124 150h104M124 173h72" stroke="#b8d4c2" stroke-width="6" stroke-linecap="round"/><text x="177" y="205" class="sj-label">GST RECEIPT</text>
+        <circle cx="397" cy="118" r="58" fill="#e3f1e8" stroke="#2e7d4f" stroke-width="3"/><text x="397" y="142" class="sj-rupee">₹</text>
+        <text x="397" y="216" class="sj-label">UPI OR CASH</text>
+      </g>
+      <path d="M56 309h448" stroke="#dad4c4" stroke-width="13" stroke-linecap="round"/><path class="sj-road" d="M56 309h448" stroke="#c9a227" stroke-width="4" stroke-linecap="round"/>
+      <g class="sj-truck" style="transform: translateX(30px)">
+        <path d="M0 267h63v36H0Zm63 10h23l17 17v9H63Z" fill="#1e262d"/><path d="M70 282h13l11 12H70Z" fill="#b5dec5"/><rect x="8" y="274" width="42" height="21" rx="4" fill="#c9a227"/>
+        <path d="M29 277c-2 4-7 8-7 11a7 7 0 0 0 14 0c0-3-5-7-7-11Z" fill="#1e262d"/>
+        <circle cx="20" cy="306" r="9" fill="#1e262d" stroke="#f6f4ef" stroke-width="3"/><circle cx="83" cy="306" r="9" fill="#1e262d" stroke="#f6f4ef" stroke-width="3"/>
+      </g>
+    </svg>
+    <div class="sj-caption"><h3 data-journey-title>Register your business.</h3><p data-journey-description>Create your seller account with your business details, GST number and shop location.</p></div>
+    <div class="sj-controls" role="group" aria-label="Choose a journey step">
+      <button type="button" data-journey-go="0" aria-label="Step 1: Register your business" aria-pressed="true">1</button>
+      <button type="button" data-journey-go="1" aria-label="Step 2: Verify your business" aria-pressed="false">2</button>
+      <button type="button" data-journey-go="2" aria-label="Step 3: List your oil" aria-pressed="false">3</button>
+      <button type="button" data-journey-go="3" aria-label="Step 4: Office confirms" aria-pressed="false">4</button>
+      <button type="button" data-journey-go="4" aria-label="Step 5: Track the vehicle" aria-pressed="false">5</button>
+      <button type="button" data-journey-go="5" aria-label="Step 6: Measure the oil" aria-pressed="false">6</button>
+      <button type="button" data-journey-go="6" aria-label="Step 7: Share your pickup code" aria-pressed="false">7</button>
+      <button type="button" data-journey-go="7" aria-label="Step 8: Payment and receipt" aria-pressed="false">8</button>
+    </div>
+    <div class="sj-panel-bottom"><p>Scroll the story or choose a step</p><button class="motion-toggle" data-motion><span class="motion-icon" aria-hidden="true"></span><span class="motion-label">Pause motion</span></button></div>
+    <p class="sj-announcement" role="status" aria-live="polite" data-journey-announcement></p>
+  </div>
+  <ol class="seller-journey-steps">
+    <li class="seller-journey-step is-current" id="app-step-1" data-journey-role="You" data-journey-summary="Create your seller account with your business details, GST number and shop location." aria-current="step">
+      <span class="sj-step-number" aria-hidden="true">01</span><span class="sj-step-role">You · Get started</span><h3>Register your business.</h3><p>Open Black Gold and add your business name, type, phone number and GST number. Save your shop location so the driver can find you.</p><a class="text-link" href="#app-setup">What to have ready <span aria-hidden="true">↓</span></a>
+    </li>
+    <li class="seller-journey-step" id="app-step-2" data-journey-role="You + office" data-journey-summary="Upload your address proof. Black Gold verifies your business before the first collection.">
+      <span class="sj-step-number" aria-hidden="true">02</span><span class="sj-step-role">You + office · Get verified</span><h3>A quick proof check.</h3><p>Upload a photo of an electricity bill, rental agreement or property tax receipt. The office checks your business details before your first pickup.</p><span class="sj-step-note">One setup for your future collections</span>
+    </li>
+    <li class="seller-journey-step" id="app-step-3" data-journey-role="You" data-journey-summary="Tap Sell oil, choose the type and quantity, then check the rate and estimate before submitting.">
+      <span class="sj-step-number" aria-hidden="true">03</span><span class="sj-step-role">You · Start a sale</span><h3>List the oil you have.</h3><p>Choose engine, hydraulic or transfer oil and enter your quantity. Review the current rate and estimated amount before GST, then submit your listing.</p><span class="sj-step-note">At least 50 litres ready for pickup</span>
+    </li>
+    <li class="seller-journey-step" id="app-step-4" data-journey-role="Black Gold office" data-journey-summary="The office confirms your price and quantity, then plans the pickup. Watch for your order update.">
+      <span class="sj-step-number" aria-hidden="true">04</span><span class="sj-step-role">Office · Confirm the plan</span><h3>Your pickup is planned.</h3><p>Black Gold confirms the price and quantity and arranges collection. Follow the confirmation in Orders and Alerts.</p><span class="sj-step-note">Need to change a listing? Contact the office.</span>
+    </li>
+    <li class="seller-journey-step" id="app-step-5" data-journey-role="You" data-journey-summary="Open your order to follow the vehicle’s live location. Keep the pickup code private for now.">
+      <span class="sj-step-number" aria-hidden="true">05</span><span class="sj-step-role">You · Follow the vehicle</span><h3>See your pickup coming.</h3><p>Check the driver’s name and live vehicle map in your order. Updates arrive automatically, and your four-digit pickup code appears in the app.</p><span class="sj-step-note">Keep your code until the oil is measured and loaded</span>
+    </li>
+    <li class="seller-journey-step" id="app-step-6" data-journey-role="Driver + you" data-journey-summary="Watch the driver measure the oil, check its quality and record a photo at your shop.">
+      <span class="sj-step-number" aria-hidden="true">06</span><span class="sj-step-role">Driver + you · At your shop</span><h3>Every litre is recorded.</h3><p>The driver measures your oil in front of you, checks its quality and records a photo. Any difference from your listing is flagged to the office.</p><span class="sj-step-note">Payment uses the quantity actually collected</span>
+    </li>
+    <li class="seller-journey-step" id="app-step-7" data-journey-role="You" data-journey-summary="Only after measurement and loading, give the driver your four-digit code to complete the pickup.">
+      <span class="sj-step-number" aria-hidden="true">07</span><span class="sj-step-role">You · Authorise completion</span><h3 id="pickup-code">Loaded? Now share the code.</h3><p>Once your oil is measured and loaded, give the driver your four-digit pickup code. The driver needs it to complete collection.</p><span class="sj-step-note">Never share the code over a phone call</span>
+    </li>
+    <li class="seller-journey-step seller-journey-step--paid" id="app-step-8" data-journey-role="Black Gold" data-journey-summary="Receive UPI or cash payment at pickup. Open your completed order to keep or share the GST receipt.">
+      <span class="sj-step-number" aria-hidden="true">08</span><span class="sj-step-role">Black Gold · Sale complete</span><h3>Get paid. Keep the receipt.</h3><p>Receive payment by UPI or cash for the oil collected. Your completed order holds the quantity, agreed rate, payment and GST details in a receipt you can print or share.</p><a class="text-link" href="#get-app">See app download options <span aria-hidden="true">↓</span></a>
+    </li>
+  </ol>
+</div>
+</section>
+
+<section class="section seller-features" id="app-features" aria-labelledby="features-title">
   <div class="section-head">
     <p class="eyebrow">In the app</p>
     <h2 id="features-title">Everything for your <em>oil sales.</em></h2>
   </div>
-  <div class="cards cards--3">
-  <article class="card" data-app-feature>
+  <div class="seller-feature-layout">
+    <div class="page-hero-visual">
+      <div class="app-graphic" aria-hidden="true">
+  <div class="phone">
+    <div class="phone-notch"></div>
+    <div class="phone-top"><span class="phone-brand"><img src="assets/black-gold-app-icon.png" alt="" width="28" height="28"><span>BLACK GOLD<small>Seller app</small></span></span><span class="phone-status"><i></i><i></i><i></i></span></div>
+    <div class="screens">
+      <div class="screen s1">
+        <span class="phone-greeting">Sell oil</span>
+        <h3>Ready to list.</h3>
+        <ul class="rate-list">
+          <li><span>Engine oil</span><b>₹ ••.•• <small>/ L</small></b></li>
+          <li><span>Hydraulic oil</span><b>₹ ••.•• <small>/ L</small></b></li>
+          <li><span>Transfer oil</span><b>₹ ••.•• <small>/ L</small></b></li>
+        </ul>
+        <div class="phone-card phone-quantity"><span>EXAMPLE QUANTITY</span><b>− &nbsp; 50 L &nbsp; +</b></div>
+        <p class="phone-hint">Minimum pickup: 50 litres</p>
+        <div class="phone-button">Submit listing ↗</div>
+      </div>
+      <div class="screen s2">
+        <span class="phone-greeting">Example order</span>
+        <h3>Vehicle on<br>the way.</h3>
+        <div class="phone-map">
+          <svg viewBox="0 0 220 90"><rect width="220" height="90" fill="#ebe7dc"/><path d="M0 23h220M0 68h220M46 0v90M173 0v90" stroke="#fff" stroke-width="12"/><path d="M46 23h127v45" fill="none" stroke="#c9a227" stroke-width="3" stroke-dasharray="5 5"/><circle cx="173" cy="68" r="8" fill="#2e7d4f"/><path d="M34 13h22v15H34Zm22 5h9l7 7v3H56Z" fill="#1e262d"/><circle cx="40" cy="30" r="4" fill="#1e262d"/><circle cx="64" cy="30" r="4" fill="#1e262d"/></svg>
+        </div>
+        <div class="phone-code">
+          <span>YOUR PICKUP CODE · EXAMPLE</span>
+          <b>4 7 1 9</b>
+          <p>Share only after your oil is measured and loaded.</p>
+        </div>
+        <div class="phone-timeline"><span>Listed</span><span>Confirmed</span><span class="is-current">On the way</span><span>Picked up</span><span>Paid</span></div>
+      </div>
+      <div class="screen s3">
+        <div class="receipt-tick">✓</div>
+        <h3>Payment<br>received.</h3>
+        <ul class="receipt">
+          <li><span>Payment options</span><b>UPI / Cash</b></li>
+          <li><span>Collected quantity</span><b>50 L · example</b></li>
+          <li><span>GST details</span><b>On receipt</b></li>
+          <li><span>Collection record</span><b>Saved</b></li>
+        </ul>
+        <div class="phone-button phone-button--receipt">View receipt ↗</div>
+      </div>
+    </div>
+    <div class="phone-nav"><span class="on">Home</span><span>Orders</span><span>Alerts</span><span>Profile</span></div>
+  </div>
+  <span class="concept-label">Illustrative screens · sample order · rates are not live</span>
+</div>
+<div class="visual-tools visual-tools--app">
+  <p class="visual-hint">Try the app preview</p>
+  <div class="preview-controls" role="group" aria-label="App preview screens">
+    <button type="button" data-app-screen="0" aria-pressed="true">List oil</button>
+    <button type="button" data-app-screen="1" aria-pressed="false">Track pickup</button>
+    <button type="button" data-app-screen="2" aria-pressed="false">Payment &amp; receipt</button>
+  </div>
+  <p class="preview-description" data-app-description>Choose your oil type and quantity before submitting a listing.</p>
+</div>
+    </div>
+    <div class="cards cards--3">
+  <article class="card" data-app-feature data-preview-description="Choose your oil type and quantity, then check the current rate and estimate before you submit.">
     <span class="card-icon" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M3 12V4h8l10 10-8 8L3 12z"/><circle cx="7.5" cy="7.5" r="1.3"/></svg></span>
-    <h3>Rates</h3>
-    <ul class="points"><li>Rate per litre for each oil</li><li>Check before you sell</li></ul>
+    <h3>List your oil</h3>
+    <ul class="points"><li>Choose engine, hydraulic or transfer oil and enter your quantity</li><li>See the current rate and estimated amount before GST before submitting</li><li>The office confirms the agreed price and pickup plan</li></ul>
   </article>
-  <article class="card" data-app-feature>
+  <article class="card" data-app-feature data-preview-description="Follow the vehicle and order updates. Keep your code until the oil is measured and loaded.">
     <span class="card-icon" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M2 6.5h11v10H2zM13 9.5h4.2l3.3 3.4v3.6H13"/><circle cx="6" cy="17.5" r="1.9"/><circle cx="17" cy="17.5" r="1.9"/></svg></span>
-    <h3>Pickups</h3>
-    <ul class="points"><li>Enter your quantity</li><li>Request from your phone</li></ul>
+    <h3>Track your pickup</h3>
+    <ul class="points"><li>See the vehicle, driver’s name and live location</li><li>Order and map updates arrive automatically</li><li>Use your private four-digit code to confirm collection</li></ul>
   </article>
-  <article class="card" data-app-feature>
+  <article class="card" data-app-feature data-preview-description="Receive UPI or cash payment at pickup, then keep or share your receipt with GST details.">
     <span class="card-icon" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M6 3h12v18l-2-1.4-2 1.4-2-1.4-2 1.4-2-1.4L6 21zM9 8h6M9 11.5h6M9 15h3.5"/></svg></span>
-    <h3>Records</h3>
-    <ul class="points"><li>Digital receipt for every pickup</li><li>All your sales in one place</li></ul>
+    <h3>Payment &amp; receipt</h3>
+    <ul class="points"><li>Receive UPI or cash payment at pickup</li><li>See the collected quantity, agreed rate, payment and GST details</li><li>Open, print or share your digital receipt with your accountant</li></ul>
   </article>
 </div>
+  </div>
+  <div class="seller-navigation-guide" aria-labelledby="app-navigation-title">
+    <h3 id="app-navigation-title">Know your way around.</h3>
+    <dl class="seller-app-tabs">
+      <div><dt><span aria-hidden="true">01</span> Home</dt><dd>Check the current rates, view your sales totals and start with “Sell oil”.</dd></div>
+      <div><dt><span aria-hidden="true">02</span> Orders</dt><dd>Follow your listings, open the vehicle map and find completed sale receipts.</dd></div>
+      <div><dt><span aria-hidden="true">03</span> Alerts</dt><dd>Get updates when an order is confirmed, on the way, picked up or paid.</dd></div>
+      <div><dt><span aria-hidden="true">04</span> Profile</dt><dd>Manage your shop location, UPI ID, app language and account settings.</dd></div>
+    </dl>
+  </div>
+</section>
+
+<section class="section seller-setup" id="app-setup" aria-labelledby="setup-title">
+  <div class="seller-section-copy">
+    <p class="eyebrow">Before your first listing</p>
+    <h2 id="setup-title">A little setup.<br><em>Ready for every pickup.</em></h2>
+    <p>The app is for registered car and bike service centres and industrial businesses. Black Gold checks your GST number and address proof before your first collection.</p>
+    <div class="seller-minimum"><strong>50 <span>litres</span></strong><p>Minimum collection. Enter your oil in litres or barrels; confirm the total volume for a barrel pickup.</p></div>
+    <a class="text-link" href="collect.html">Check the oils we collect <span aria-hidden="true">→</span></a>
+  </div>
+  <div class="seller-checklist">
+    <h3>Have these ready</h3>
+    <ul>
+      <li><span class="seller-check" aria-hidden="true">✓</span><div><strong>Your business details</strong><p>Business name, type, phone number and GST number.</p></div></li>
+      <li><span class="seller-check" aria-hidden="true">✓</span><div><strong>A photo of your address proof</strong><p>An electricity bill, rental agreement or property tax receipt.</p></div></li>
+      <li><span class="seller-check" aria-hidden="true">✓</span><div><strong>Your shop location</strong><p>Save your shop on the map or drop a pin where the oil is ready for collection.</p></div></li>
+      <li><span class="seller-check" aria-hidden="true">✓</span><div><strong>Your payment preference</strong><p>Add your UPI ID in Profile for bank payment, or choose cash at pickup.</p></div></li>
+    </ul>
+  </div>
+</section>
+
+
+
+<section class="section seller-help" id="app-help" aria-labelledby="app-help-title">
+  <div class="seller-section-copy">
+    <p class="eyebrow">Your app, your account</p>
+    <h2 id="app-help-title">Help for <em>the everyday details.</em></h2>
+    <p>Use Profile for your preferences and account settings. The Black Gold office helps with submitted orders and sign-in problems.</p>
+    <a class="text-link" href="faq.html">Collection &amp; payment FAQs <span aria-hidden="true">→</span></a>
+  </div>
+  <div class="seller-help-list">
+    <details>
+      <summary>Can I use the app in Tamil?<span class="faq-icon" aria-hidden="true"></span></summary>
+      <div class="faq-body"><p>Yes. Choose English or Tamil from Profile to change the language throughout the Seller App.</p></div>
+    </details>
+    <details id="app-listing-help">
+      <summary>How do I change or cancel a listing?<span class="faq-icon" aria-hidden="true"></span></summary>
+      <div class="faq-body"><p>After submitting, contact the Black Gold office to request a change or cancellation. Submitted listings cannot be edited or cancelled inside the app.</p></div>
+    </details>
+    <details>
+      <summary>What if I forget my password?<span class="faq-icon" aria-hidden="true"></span></summary>
+      <div class="faq-body"><p>Contact the Black Gold office for a temporary password. After signing in, change it from Profile.</p></div>
+    </details>
+    <details>
+      <summary>Can I delete my account?<span class="faq-icon" aria-hidden="true"></span></summary>
+      <div class="faq-body"><p>You can request account deletion from Profile. Your phone number, address, shop location and documents are removed; completed sale records needed for tax are retained.</p></div>
+    </details>
+  </div>
 </section>
 
 <section class="section app-download-section" id="get-app" aria-labelledby="download-title">
   <div>
     <p class="eyebrow">Get the Black Gold seller app</p>
-    <h2 id="download-title">Your oil sales.<br><em>One app.</em></h2>
-    <p class="download-description">Choose Google Play or a direct APK download for your Android phone.</p>
+    <h2 id="download-title">Install it.<br><em>Make it yours.</em></h2>
+    <p class="download-description">Free to download for Android 8.0 or newer. Google Play and direct APK options will be available here when the official links are added.</p>
+    <ol class="app-install-guide">
+      <li><strong>Choose a download</strong><span>Use Google Play or the direct APK option when the links are available.</span></li>
+      <li><strong>Install on Android</strong><span>Follow your phone’s installation prompts for the option you selected.</span></li>
+      <li><strong>Open Black Gold</strong><span>Register your business using the setup checklist above, then follow your first sale in the app.</span></li>
+    </ol>
+    <a class="text-link" href="#app-setup">Back to the setup checklist <span aria-hidden="true">↑</span></a>
     <p class="download-returning">Already installed? Open the app to check rates and request your next pickup.</p>
   </div>
   <div class="app-download-options">
   <div class="store-links">
     <a class="store-link" data-app-download="googlePlay" aria-disabled="true" tabindex="-1">
-      <svg viewBox="0 0 28 32" aria-hidden="true"><path d="M4 3v26l21-13Z"/><path d="m4 3 13 13L4 29"/></svg>
+      <svg class="store-icon-play" viewBox="0 0 30 32" aria-hidden="true"><path fill="#00b7ff" d="M2.6 1.3 17.2 16 2.6 30.7C2.2 30.3 2 29.7 2 29V3c0-.7.2-1.3.6-1.7Z"/><path fill="#00d26a" d="M2.6 1.3c.6-.6 1.6-.7 2.6-.1L22.4 11l-5.2 5Z"/><path fill="#ffc800" d="m22.4 11 5.2 3c1.4.8 1.4 3.2 0 4l-5.2 3-5.2-5Z"/><path fill="#ff3a44" d="m17.2 16 5.2 5L5.2 30.8c-1 .6-2 .5-2.6-.1Z"/></svg>
       <span><small>Get it on</small><strong>Google Play</strong></span>
       <span class="store-link-arrow" aria-hidden="true">↗</span>
     </a>
@@ -169,10 +423,10 @@
 </section>
 <section class="closing" aria-labelledby="closing-title">
   <div class="closing-inner">
-    <p class="eyebrow">Black Gold seller app</p>
-    <h2 id="closing-title">Your next pickup<br class="br-wide"> starts with <em>the app.</em></h2>
+    <p class="eyebrow">For Android sellers</p>
+    <h2 id="closing-title">Keep Black Gold on your phone.</h2>
     <div class="closing-cta">
-      <p>Check your rate. Request a pickup.<br>Keep your receipts in one place.</p>
+      <p>Choose your installation option and return to the app for your next oil sale.</p>
       <div class="closing-actions">
         <button class="button button--gold" data-app>Get the seller app <span class="arrow" aria-hidden="true">↗</span></button>
         <button class="text-link" data-pickup>Prepare pickup enquiry</button>
@@ -185,15 +439,20 @@
 <footer class="footer">
   <div class="footer-top">
     <div class="footer-brand">
-      <a class="brand" href="index.html"><svg class="brand-mark" viewBox="0 0 36 44" aria-hidden="true"><path d="M18 1C14 10 2 20 2 28a16 16 0 0 0 32 0C34 20 22 10 18 1Z" fill="url(#drop-gold)"/><path d="M18 15v23a10 10 0 0 0 10-10c0-4-6-10-10-13Z" fill="#0f0e0c"/></svg><span class="brand-text">BLACK GOLD<small>WASTE OIL REFINING</small></span></a>
-      <p>Used oil. New value.<br>Chennai, Tamil Nadu, India.</p>
+      <a class="brand" href="index.html"><img class="brand-mark brand-app-icon" src="assets/black-gold-app-icon.png" alt="" width="40" height="40"><span class="brand-text">BLACK GOLD<small>WASTE OIL REFINING</small></span></a>
+      <p>Used oil. New value.</p>
+      <address class="footer-office"><span class="footer-office-label">Office</span><span>No. 22J, TVK Industrial Estate, Guindy, Chennai – 32</span></address>
+      <div class="footer-contact">
+        <a class="footer-phone" href="tel:+917010860788" aria-label="Call Black Gold on +91 70108 60788"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="m7 3 3 5-3 3c2 3 3 4 6 6l3-3 5 3c0 3-2 4-4 4C9 21 3 15 3 7c0-2 1-4 4-4Z"/></svg>+91 70108 60788</a>
+        <a class="footer-email" href="mailto:support@myblackgold.app" aria-label="Email Black Gold enquiries at support@myblackgold.app"><svg viewBox="0 0 24 24" aria-hidden="true"><rect x="3" y="5" width="18" height="14" rx="2"/><path d="m4 7 8 6 8-6"/></svg><span>support@myblackgold.app</span></a>
+        <a class="footer-whatsapp" href="https://wa.me/917010860788" target="_blank" rel="noopener">Chat on WhatsApp <span aria-hidden="true">↗</span></a>
+      </div>
     </div>
     <nav class="footer-col" aria-label="Footer">
       <span class="eyebrow">Explore</span>
       <a href="index.html" data-page="home">Home</a>
       <a href="about.html" data-page="about">About</a>
       <a href="collect.html" data-page="collect">What we collect</a>
-      <a href="how-it-works.html" data-page="how">How it works</a>
       <a href="seller-app.html" data-page="app" aria-current="page">Seller app</a>
       <a href="faq.html" data-page="faq">FAQs</a>
     </nav>
@@ -205,7 +464,7 @@
   </div>
   <div class="footer-bottom">
     <span>© <span id="year">2026</span> Black Gold</span>
-    <span>Client review edition · Contact &amp; app links pending</span>
+    <span>Client review edition · App links pending</span>
     <a href="#top">Back to top ↑</a>
   </div>
 </footer>
@@ -227,7 +486,7 @@
     <label class="field"><span>Business name</span><input name="business" required maxlength="100" autocomplete="organization" placeholder="Your workshop or company"><span class="field-error">Add your business name.</span></label>
     <label class="field"><span>Chennai locality</span><input name="area" required maxlength="100" placeholder="e.g. Ambattur"><span class="field-error">Add your locality.</span></label>
     <div class="form-row">
-      <label class="field"><span>Approximate quantity</span><input name="quantity" type="number" inputmode="numeric" min="1" max="100000" required placeholder="Enter quantity"><span class="field-error">Enter a quantity from 1 to 100,000.</span></label>
+      <label class="field"><span>Approximate quantity</span><input name="quantity" type="number" inputmode="numeric" min="50" max="100000" required placeholder="Minimum 50 litres"><span class="field-error">Enter 50 to 100,000 litres.</span></label>
       <fieldset class="segmented">
         <legend>Unit</legend>
         <div class="seg-track">
@@ -236,17 +495,18 @@
         </div>
       </fieldset>
     </div>
-    <p class="form-note">Confirm the rate, minimum volume and collection availability with Black Gold before booking. Nothing is sent or saved by this form unless you choose to share the summary.</p>
+    <p class="form-note">Minimum collection: 50 litres. For barrels, confirm the total volume with Black Gold. This form prepares an enquiry; collection is confirmed separately.</p>
     <button class="button button--ink" type="submit">Create enquiry summary <span class="arrow" aria-hidden="true">↗</span></button>
   </form>
   <div id="enquiry-result" hidden>
     <div class="result-head"><span class="result-tick" aria-hidden="true">✓</span><h3 tabindex="-1">Your enquiry is ready.</h3></div>
     <pre id="enquiry-text"></pre>
-    <p>Share this summary with your Black Gold contact. A pickup has not been booked.</p>
+    <p>Share this summary with Black Gold by WhatsApp or email, or call <a class="enquiry-contact" href="tel:+917010860788">+91 70108 60788</a> to discuss your collection. A pickup has not been booked.</p>
     <div class="result-actions">
       <button class="button button--ink" id="download-enquiry">Download <span class="arrow" aria-hidden="true">↓</span></button>
       <button class="button button--outline" id="copy-enquiry">Copy text</button>
-      <a class="button button--outline" id="whatsapp-enquiry" href="#" target="_blank" rel="noopener">Share on WhatsApp</a>
+      <a class="button button--outline" id="whatsapp-enquiry" href="https://wa.me/917010860788" target="_blank" rel="noopener">Send enquiry on WhatsApp</a>
+      <a class="button button--outline" id="email-enquiry" href="mailto:support@myblackgold.app">Email enquiry</a>
     </div>
     <p class="copy-status" role="status" aria-live="polite"></p>
     <button class="text-link" id="edit-enquiry">Edit details <span aria-hidden="true">←</span></button>
@@ -261,7 +521,7 @@
   <div class="app-download-options">
   <div class="store-links">
     <a class="store-link" data-app-download="googlePlay" aria-disabled="true" tabindex="-1">
-      <svg viewBox="0 0 28 32" aria-hidden="true"><path d="M4 3v26l21-13Z"/><path d="m4 3 13 13L4 29"/></svg>
+      <svg class="store-icon-play" viewBox="0 0 30 32" aria-hidden="true"><path fill="#00b7ff" d="M2.6 1.3 17.2 16 2.6 30.7C2.2 30.3 2 29.7 2 29V3c0-.7.2-1.3.6-1.7Z"/><path fill="#00d26a" d="M2.6 1.3c.6-.6 1.6-.7 2.6-.1L22.4 11l-5.2 5Z"/><path fill="#ffc800" d="m22.4 11 5.2 3c1.4.8 1.4 3.2 0 4l-5.2 3-5.2-5Z"/><path fill="#ff3a44" d="m17.2 16 5.2 5L5.2 30.8c-1 .6-2 .5-2.6-.1Z"/></svg>
       <span><small>Get it on</small><strong>Google Play</strong></span>
       <span class="store-link-arrow" aria-hidden="true">↗</span>
     </a>
