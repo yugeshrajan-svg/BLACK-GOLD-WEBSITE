@@ -6,13 +6,13 @@ Open `dist/index.html` in a modern browser to review the website, or upload ever
 
 You need [Node.js](https://nodejs.org/) 18 or later. No `npm install` is required.
 
-From the project folder, build and serve the site with one command, then open http://127.0.0.1:8000:
+From the project folder, build and serve the site with one command, then open http://127.0.0.1:3000:
 
 ```sh
-node build.mjs && python -m http.server 8000 --bind 127.0.0.1 --directory dist
+node build.mjs && python -m http.server 3000 --bind 127.0.0.1 --directory dist
 ```
 
-If Python is not installed, use `node build.mjs && npx serve dist` instead (it downloads the `serve` package the first time and prints the address to open). You can also open `dist/index.html` directly in a browser, but a local server is closer to how the site behaves once hosted.
+If Python is not installed, use `node build.mjs && npx serve dist -l 3000` instead (it downloads the `serve` package the first time and prints the address to open). You can also open `dist/index.html` directly in a browser, but a local server is closer to how the site behaves once hosted.
 
 To run the interaction smoke checks:
 
