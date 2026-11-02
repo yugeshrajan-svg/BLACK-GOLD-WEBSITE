@@ -65,7 +65,7 @@ The download buttons are configured in `src/config/app-downloads.json`:
 ```json
 {
   "googlePlay": "",
-  "apk": ""
+  "apk": "assets/black-gold-seller.apk"
 }
 ```
 
@@ -73,11 +73,13 @@ When the seller app is public on Google Play, set `googlePlay` to `https://play.
 
 ### Direct APK download
 
-The website's “Tap to download” button is **off** for now (`"apk": ""`). Version 1.0.0's Google-signed APK was tried on 2 November 2026 and removed the same day: Play Console's **automatic protection** was on, so Google added a check (`com.pairip.licensecheck`) that stops the app opening unless Google Play installed it. Website installs showed “Something went wrong. Check that Google Play is enabled…”.
+The website's “Tap to download” button serves **`public/assets/black-gold-seller.apk`**: the Google-signed universal APK of **version 1.0.1** (version code 2, SHA-256 `3203e6ff9bca42dc6b2404505e46e97f1c648e91ca9d310eef08f695c379ee2d`), the first release uploaded after Play Console's automatic protection was turned off. Installed from the file, it opens normally (checked on an Android 14 emulator on 2 November 2026).
+
+Version 1.0.0's Google-signed APK can't be used: automatic protection was on when it was uploaded, so Google added a check (`com.pairip.licensecheck`) that stops the app opening unless Google Play installed it (“Something went wrong. Check that Google Play is enabled…”).
 
 The file to publish is the **Google-signed universal APK of a release made with automatic protection turned off**. It carries the same signature as the Google Play app, so Google Play can update phones that installed it from the website, and it runs on every Android 8.0+ phone. Never publish a debug build or an APK signed with the upload key: Android only updates an installed app with a build signed by the same key, so those would block the Google Play version until the user uninstalls them. Website installs don't count towards Google Play's closed-testing requirement, so testers still join through the Play test link.
 
-To turn the download on (and to update it for each new release):
+To update the download for each new release (or to turn it back on):
 
 1. Play Console → **Test and release → App integrity** → **Automatic protection**: make sure it's **off** before the release is uploaded. It only changes releases made afterwards.
 2. Play Console → **Test and release → Latest releases and bundles** → click that version's app bundle (this opens **App bundle explorer**) → **Downloads** → **Signed, universal APK**.

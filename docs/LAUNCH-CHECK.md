@@ -5,6 +5,8 @@
 > **Update, 2 November 2026 (evening):** the direct download is back with the right file: the Google-signed universal APK of version 1.0.0 from Play Console's App bundle explorer (signed `CN=Android, O=Google Inc.`, all CPU types, Android 8.0+). Google Play can update phones that install it. The button reads “Tap to download · Android app”.
 >
 > **Update, 2 November 2026 (night):** download turned off again. Play Console's automatic protection had added a Google Play install check to version 1.0.0, so the website copy installs but won't open (“Something went wrong…”). It returns with the first release made after automatic protection is turned off; see docs/UPDATING.md.
+>
+> **Update, 2 November 2026 (late):** download back on with version 1.0.1's Google-signed universal APK, uploaded after automatic protection was turned off. It has no Play install check and opens normally when installed from the file.
 
 The owner plans to launch direct website APK downloads on 3 November 2026 while the team completes the Google Play submission. The owner has requested use of the currently supplied APK for this launch. The website has not been deployed; domain and hosting selection remain deferred.
 
