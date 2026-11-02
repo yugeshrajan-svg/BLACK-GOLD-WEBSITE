@@ -1,0 +1,152 @@
+/* ---------- About: a stepped refinery with flowing oil and filling tanks ---------- */
+
+.about-hero { display: grid; align-items: center; min-height: 0; background: #182329; }
+.about-hero-image, .about-hero-shade { position: absolute; inset: 0; width: 100%; height: 100%; pointer-events: none; }
+.about-hero-image { z-index: -2; object-fit: cover; object-position: 66% center; }
+.about-hero-shade { z-index: -1; background: linear-gradient(90deg, rgba(15, 23, 27, .94) 0%, rgba(15, 23, 27, .8) 32%, rgba(15, 23, 27, .35) 62%, rgba(15, 23, 27, .08) 100%), linear-gradient(180deg, rgba(15, 23, 27, .62), transparent 30%, transparent 65%, rgba(15, 23, 27, .72)); }
+.about-hero .page-hero-inner { grid-template-columns: minmax(0, 1fr); min-height: 0; }
+.about-hero .page-hero-copy { max-width: 610px; }
+.about-hero h1 { font-size: clamp(48px, 6.2vw, 92px); }
+.about-hero h1 em { color: #e7c85c; }
+.about-hero .points--hero { max-width: 30em; }
+.about-image-caption { position: absolute; bottom: 25px; right: var(--pad-x); margin: 0; color: #e1ded4; font-size: 10px; letter-spacing: .05em; }
+.about-cycle-heading { display: flex; align-items: end; justify-content: space-between; gap: 24px; margin-bottom: var(--section-gap); }
+.about-cycle-heading .section-head { margin-bottom: 0; }
+.about-cycle-heading .motion-toggle { flex: none; }
+.about-cycle-layout { display: grid; grid-template-columns: minmax(0, 1.1fr) minmax(0, 1fr); gap: var(--layout-gap); align-items: center; }
+.about-cycle-layout .page-hero-visual { width: 100%; max-width: none; }
+.about-cycle-layout .stage-cards { grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 16px; }
+.about-cycle-layout .card { padding: var(--card-pad); }
+@media (max-width: 1080px) {
+  .about-cycle-layout { grid-template-columns: 1fr; }
+  .about-cycle-layout .page-hero-visual { max-width: 620px; justify-self: center; }
+}
+@media (max-width: 760px) {
+  .page-hero.about-hero { padding-bottom: 64px; }
+  .about-hero-image { object-position: 68% center; }
+  .about-hero-shade { background: linear-gradient(90deg, rgba(15, 23, 27, .88), rgba(15, 23, 27, .5)), linear-gradient(180deg, rgba(15, 23, 27, .55), transparent 30%, rgba(15, 23, 27, .65)); }
+  .about-cycle-heading { align-items: flex-start; flex-direction: column; }
+  .about-cycle-layout .stage-cards { grid-template-columns: 1fr; }
+  .about-image-caption { right: auto; left: var(--pad-x); }
+}
+
+.refinery { --journey-progress: .25; width: min(100%, 620px); padding: 22px; border: 1px solid rgba(141, 225, 196, .22); border-radius: 24px; background: linear-gradient(150deg, #172b25, #0b1713 65%); box-shadow: 0 28px 70px -48px #000; }
+.refinery-label { color: var(--accent-bright); font: 500 11px/1.5 var(--sans); letter-spacing: .1em; text-transform: uppercase; }
+.refinery-svg { width: 100%; height: auto; margin: 18px 0 4px; overflow: visible; }
+.refinery-grid { fill: none; stroke: #b5dec5; stroke-width: .6; opacity: .08; }
+.refinery-platform { fill: #243e33; }
+.refinery-pipe { fill: none; stroke: #3c5144; stroke-width: 13; stroke-linejoin: round; }
+.refinery-flow { fill: none; stroke: #ecc174; stroke-width: 5; stroke-linecap: round; stroke-dasharray: 10 14; animation: refinery-flow 2.4s linear infinite; }
+.refinery-shell { fill: #15251e; stroke: #4e6555; stroke-width: 1.5; transition: stroke .45s, fill .45s; }
+.refinery-liquid { fill: url(#refinery-oil); opacity: .55; transform-box: fill-box; transform-origin: center bottom; transform: scaleY(.45); transition: opacity .45s, transform .8s; }
+.refinery-cap { fill: #314b3a; stroke: #71836a; stroke-width: 1; }
+.refinery-foot { fill: #2b4333; }
+.refinery-rib { fill: none; stroke: #819279; stroke-width: 3; opacity: .65; }
+.refinery-panel { fill: #12231b; stroke: var(--station); stroke-width: 1; }
+.refinery-symbol { fill: none; stroke: var(--station); stroke-width: 2; stroke-linecap: round; stroke-linejoin: round; }
+.refinery-filter { fill: none; stroke: #b2d5bb; stroke-width: 5; }
+.refinery-filter-detail { fill: none; stroke: #345b46; stroke-width: 2; }
+.refinery-number { fill: #a5b9aa; font: 500 17px var(--sans); transition: fill .4s; }
+.refinery-sensor { fill: #526353; transition: fill .4s, filter .4s; }
+.refinery-stage.is-current .refinery-shell { stroke: var(--station); fill: #1c3326; }
+.refinery-stage.is-current .refinery-liquid { opacity: 1; animation: refinery-fill 4.3s ease-in-out infinite; }
+.refinery-stage.is-done .refinery-liquid { opacity: .85; transform: scaleY(.8); }
+.refinery-stage.is-current .refinery-number { fill: var(--station); }
+.refinery-stage.is-current .refinery-sensor { fill: var(--station); filter: drop-shadow(0 0 5px var(--station)); }
+.refinery-caption { display: flex; align-items: center; gap: 14px; padding: 18px 0; border-top: 1px solid rgba(141, 225, 196, .18); }
+.refinery-step { display: grid; place-items: center; flex: none; width: 42px; height: 42px; border-radius: 12px; background: #b5dec5; color: #123e2e; font: 600 14px/1 var(--sans); }
+.refinery-caption-title { font: 500 25px/1.3 var(--serif); color: #f2ede1; }
+.refinery-progress { height: 3px; overflow: hidden; border-radius: 2px; background: #2c4334; }
+.refinery-progress span { display: block; height: 100%; background: linear-gradient(90deg, #edbf78, #b5dec5); transform: scaleX(var(--journey-progress)); transform-origin: left; transition: transform .7s var(--ease); }
+
+/* ---------- What we collect: the sample jar (changes oil on its own) ---------- */
+
+.oil-stage {
+  --oil-top: #3d2c14; --oil-bottom: #0c0905; --oil-glow: rgba(201, 150, 70, .32); --level: 112px;
+  width: min(100%, 460px); display: grid; justify-items: center; gap: 22px;
+}
+.oil-stage[data-tone='hydraulic'] { --oil-top: #9b6521; --oil-bottom: #3b1e07; --oil-glow: rgba(214, 140, 50, .38); --level: 138px; }
+.oil-stage[data-tone='transfer'] { --oil-top: #c38d30; --oil-bottom: #5b380c; --oil-glow: rgba(230, 186, 96, .42); --level: 124px; }
+.jar-art { position: relative; width: 100%; min-height: 360px; display: grid; place-items: center; }
+.jar-glow { position: absolute; width: 360px; height: 360px; max-width: 100%; border-radius: 50%; background: radial-gradient(circle, var(--oil-glow) 0%, transparent 62%); filter: blur(10px); transition: background 1s var(--ease); }
+.jar { position: relative; width: min(240px, 72%); height: auto; overflow: visible; filter: drop-shadow(0 40px 40px rgba(0, 0, 0, .55)); }
+.jar-shadow { fill: rgba(0, 0, 0, .7); filter: blur(5px); }
+.jar-body { fill: rgba(255, 255, 255, .035); stroke: rgba(238, 232, 218, .3); stroke-width: 1.2; }
+.jar-shine { fill: #fff; opacity: .35; }
+.jar-neck { fill: #26231d; }
+.jar-lid { fill: #141310; stroke: rgba(201, 164, 92, .35); stroke-width: 1; }
+.jar-ridges { stroke: rgba(201, 164, 92, .3); stroke-width: 1.5; }
+.jar-label rect { fill: #eee6d3; stroke: rgba(0, 0, 0, .1); }
+.jar-label line { stroke: #b8954f; stroke-width: 1; }
+.jar-label-brand { font: 600 10px var(--serif); letter-spacing: 2.4px; fill: #16130d; }
+.jar-label-type { font: italic 500 16px var(--serif); letter-spacing: .5px; fill: #8c6a2b; }
+.jar-label-no { font: 600 6.5px var(--sans); letter-spacing: 2px; fill: #7a7468; }
+.jar-liquid { transform: translateY(var(--level)); transition: transform 1.6s var(--ease); }
+.oil-stop-top { stop-color: var(--oil-top); transition: stop-color 1s var(--ease); }
+.oil-stop-bottom { stop-color: var(--oil-bottom); transition: stop-color 1s var(--ease); }
+.wave { fill: url(#oil-fill); }
+.wave-back { opacity: .5; animation: wave-120 6s linear infinite; }
+.wave-front { animation: wave-160 4.5s linear infinite; }
+.jar .bubble { fill: rgba(255, 228, 170, .4); animation: bubble 5s ease-in infinite; }
+.b2 { animation-delay: 1.4s; animation-duration: 6s; }
+.b3 { animation-delay: 2.6s; }
+.b4 { animation-delay: 3.5s; animation-duration: 4.2s; }
+.oil-stage-caption { display: flex; align-items: center; gap: 18px; }
+.oil-stage-name { font: 500 22px/1 var(--serif); color: var(--head); transition: opacity .35s var(--ease); }
+.oil-stage.is-swapping .oil-stage-name { opacity: 0; }
+.oil-dots { display: flex; gap: 6px; }
+.oil-dots i { width: 22px; height: 3px; border-radius: 2px; background: var(--line-strong); transition: background .6s var(--ease); }
+.oil-dots i.is-on { background: var(--gold-grad); }
+
+/* ---------- Pickup route: the base the homepage journey builds on ---------- */
+
+.route { width: min(100%, 580px); display: grid; gap: 36px; }
+.route-board { position: relative; }
+.route-track { position: absolute; left: 12.5%; right: 12.5%; top: 32px; height: 4px; border-radius: 2px; background: #2a2620; overflow: hidden; }
+.route-fill { position: absolute; inset: 0; background: linear-gradient(90deg, #b5dec5, var(--accent-bright)); transform: scaleX(0); transform-origin: left; }
+.route-drop { position: absolute; top: 34px; left: 12.5%; width: 18px; height: 22px; transform: translate(-50%, -50%) rotate(-90deg); }
+.route-drop svg { width: 100%; height: 100%; fill: var(--accent-bright); filter: drop-shadow(0 0 8px rgba(var(--accent-rgb), .6)); }
+.route-nodes { position: relative; display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); list-style: none; margin: 0; padding: 0; }
+.route-node { display: grid; justify-items: center; gap: 6px; text-align: center; }
+.route-icon { position: relative; z-index: 1; width: 68px; height: 68px; display: grid; place-items: center; border-radius: 50%; background: #14110c; border: 1px solid rgba(201, 164, 92, .5); color: #c9a227; transition: background .7s var(--ease), color .7s var(--ease), border-color .7s var(--ease); }
+.route-icon svg { width: 26px; height: 26px; fill: none; stroke: currentColor; stroke-width: 1.3; stroke-linecap: round; stroke-linejoin: round; }
+.route-icon::after { content: ''; position: absolute; inset: -9px; border-radius: 50%; border: 1px solid rgba(241, 220, 164, .55); opacity: 0; }
+.route-node.is-on .route-icon { background: var(--accent-bright); border-color: var(--accent-bright); color: #132030; }
+.route-node.is-current .route-icon::after { animation: halo 2.4s var(--ease) infinite; }
+.route-caption { display: flex; align-items: baseline; justify-content: center; gap: 16px; padding: 20px 24px; border: 1px solid var(--line); border-radius: 12px; background: rgba(255, 255, 255, .02); transition: opacity .35s var(--ease), transform .6s var(--ease); }
+.route-caption.is-swapping { opacity: 0; transform: translateY(6px); }
+.route-caption-no { font: italic 500 36px/1 var(--serif); padding-right: .05em; background: var(--foil); -webkit-background-clip: text; background-clip: text; color: transparent; }
+.route-caption-title { font: 500 clamp(20px, 1.8vw, 26px)/1.2 var(--serif); color: var(--head); }
+html:not(.js) .route-fill, .route.is-static .route-fill { transform: none; }
+html:not(.js) .route-drop, .route.is-static .route-drop, html:not(.js) .route-caption, .route.is-static .route-caption { display: none; }
+html:not(.js) .route-icon, .route.is-static .route-icon { background: var(--gold-grad); border-color: #f1dca4; color: var(--on-gold); }
+
+/* Homepage pickup journey: readable illustrations linked by a moving truck. */
+.route--pickup { width: 100%; gap: 20px; }
+.pickup-journey-hint { font-size: 13px; color: #6b675e; }
+.route--pickup .route-board { padding-top: 0; }
+.pickup-progress { position: sticky; top: calc(var(--header-h) + 12px); z-index: 3; height: 78px; margin-bottom: 16px; border: 1px solid #d8cfb4; border-radius: 14px; background: rgba(246, 244, 239, .97); -webkit-backdrop-filter: blur(8px); backdrop-filter: blur(8px); }
+.route--pickup .route-track { top: 39px; height: 4px; background: #d5cfbf; }
+.route--pickup .route-fill { background: linear-gradient(90deg, #2e7d4f, #2e7d4f); }
+.route--pickup .route-drop { top: 25px; z-index: 2; width: 48px; height: 32px; transform: translate(-50%, -50%); }
+.route--pickup .route-drop svg { fill: none; filter: drop-shadow(0 3px 3px rgba(27, 47, 70, .18)); }
+.pickup-road-labels { position: absolute; top: 50px; left: 0; right: 0; display: grid; grid-template-columns: repeat(4, 1fr); list-style: none; margin: 0; padding: 0; text-align: center; font: 600 11px/1.4 var(--sans); color: #6b675e; }
+.route--pickup .home-steps { gap: 20px; }
+.route--pickup .home-steps li { position: relative; display: flex; flex-direction: column; align-items: flex-start; gap: 0; padding: 20px; text-align: left; background: rgba(255, 255, 255, .5); }
+.route--pickup .home-steps li::before { margin: 0 0 12px; font: 600 12px/1 var(--sans); }
+.route--pickup .route-node .route-icon { width: 100%; height: 144px; border: 0; border-radius: 16px; background: transparent; color: inherit; }
+.route--pickup .route-icon svg { width: min(100%, 144px); height: 144px; fill: none; stroke: none; font-family: var(--sans); }
+.route--pickup .route-node.is-current .route-icon::after { display: none; animation: none; }
+.route--pickup .home-steps h3 { min-height: 0; margin: 12px 0 8px; font-size: clamp(21px, 1.7vw, 25px); }
+.route--pickup .home-steps li.is-highlighted { border-color: rgb(var(--tile-rgb)); background: rgba(var(--tile-rgb), .08); box-shadow: inset 0 3px 0 rgb(var(--tile-rgb)), 0 16px 30px -28px rgba(var(--tile-rgb), .6); }
+.route--pickup .home-steps li.is-highlighted h3 { color: rgb(var(--tile-rgb)); }
+.route--pickup .home-steps li:last-child { --tile-rgb: 46, 125, 79; border-color: #94bea4; background: #e4f2e8; }
+.route--pickup .home-steps li:last-child h3 { color: #2e7d4f; }
+.route--pickup .route-caption { justify-content: flex-start; background: rgba(255, 255, 255, .55); border-color: #d8cfb4; }
+.route--pickup .route-caption-no { background: none; color: #2e7d4f; font: 600 16px/1 var(--sans); }
+.route--pickup .route-caption-title { font-size: clamp(21px, 2vw, 27px); }
+.route--pickup[data-step='3'] .route-caption { border-color: #7cb396; background: #def0e4; }
+.route--pickup[data-step='3'] .route-caption-no, .route--pickup[data-step='3'] .route-caption-title { color: #2e7d4f; }
+.pickup-road-labels li:last-child { color: #2e7d4f; }
+.route--pickup.is-travelling .pickup-truck .pickup-wheel { transform-box: fill-box; transform-origin: center; animation: spin .8s linear infinite; }
+.motion-paused .route--pickup *, .tab-hidden .route--pickup *, .route--pickup.is-offscreen * { animation-play-state: paused !important; }

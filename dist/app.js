@@ -70,21 +70,6 @@
   menu.addEventListener('click', function () { setMenu(menu.getAttribute('aria-expanded') !== 'true'); });
   $$('a, .nav-mobile-cta', nav).forEach(function (el) { el.addEventListener('click', function () { setMenu(false); }); });
 
-  // Services panel (desktop): opens on hover in CSS, and on click or keyboard here.
-  var group = $('.nav-group', nav);
-  if (group) {
-    var groupToggle = $('.nav-group-toggle', group);
-    var setGroup = function (open) {
-      group.classList.toggle('open', open);
-      groupToggle.setAttribute('aria-expanded', String(open));
-    };
-    groupToggle.addEventListener('click', function () { setGroup(!group.classList.contains('open')); });
-    document.addEventListener('click', function (e) { if (!group.contains(e.target)) setGroup(false); });
-    group.addEventListener('focusout', function (e) { if (!group.contains(e.relatedTarget)) setGroup(false); });
-    group.addEventListener('keydown', function (e) {
-      if (e.key === 'Escape' && group.classList.contains('open')) { e.stopPropagation(); setGroup(false); groupToggle.focus(); }
-    });
-  }
   document.addEventListener('keydown', function (e) {
     if (e.key === 'Escape' && nav.classList.contains('open')) { setMenu(false); menu.focus(); }
   });
@@ -243,7 +228,7 @@
         arrivals.unobserve(entry.target);
       });
     }, { threshold: .1 });
-    $$('.home-section-head, .home-oil, .card, .promises li, .section-head, .faq-list').forEach(function (element) { arrivals.observe(element); });
+    $$('.home-section-head, .home-oil, .card, .section-head, .faq-list').forEach(function (element) { arrivals.observe(element); });
   }
 
   // A local wash of colour follows the pointer inside each card.

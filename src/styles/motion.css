@@ -1,0 +1,27 @@
+/* ---------- Keyframes ---------- */
+
+@keyframes ambient-drift { from { transform: translate(-12px, 8px) scale(.96); } to { transform: translate(15px, -10px) scale(1.06); } }
+@keyframes content-arrival { from { opacity: .25; transform: translateY(14px); } to { opacity: 1; transform: none; } }
+@keyframes refinery-flow { to { stroke-dashoffset: -48; } }
+@keyframes refinery-fill { 0%, 100% { transform: scaleY(.4); } 55% { transform: scaleY(.86); } }
+
+@keyframes spin { to { transform: rotate(360deg); } }
+@keyframes wave-120 { to { transform: translateX(-120px); } }
+@keyframes wave-160 { to { transform: translateX(-160px); } }
+@keyframes bubble { 0% { transform: translateY(0); opacity: 0; } 15% { opacity: 1; } 100% { transform: translateY(-150px); opacity: 0; } }
+@keyframes screen {
+  0% { opacity: 0; transform: translateY(16px); }
+  5%, 31% { opacity: 1; transform: none; }
+  36%, 100% { opacity: 0; transform: translateY(-16px); }
+}
+@keyframes dialog-in { from { opacity: 0; transform: translateY(30px); } }
+@keyframes flow { to { stroke-dashoffset: -4; } }
+@keyframes halo { 0% { opacity: .8; transform: scale(1); } 100% { opacity: 0; transform: scale(1.45); } }
+@keyframes chat-in { from { opacity: 0; transform: translateY(8px); } }
+@keyframes chat-dot { 0%, 60%, 100% { opacity: .35; transform: none; } 30% { opacity: 1; transform: translateY(-3px); } }
+@keyframes ripple { 0% { opacity: 0; transform: scale(.2); } 15% { opacity: .7; } 100% { opacity: 0; transform: scale(1); } }
+
+/* The pause control stops every looping animation, not just the oil. */
+.motion-paused .page-hero-visual::before, .motion-paused .route-icon::after, .motion-paused .jar, .motion-paused .wave, .motion-paused .screen {
+  animation-play-state: paused;
+}

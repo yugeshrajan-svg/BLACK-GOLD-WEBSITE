@@ -1,0 +1,168 @@
+/* ---------- Home hero: flowing oil with a WebP fallback ---------- */
+
+.hero {
+  position: relative;
+  min-height: 0;
+  display: grid; grid-template-columns: minmax(0, 1fr); grid-template-rows: auto auto;
+  align-items: center;
+  padding: calc(var(--header-h) + 24px) var(--edge-x) 16px;
+  color: var(--head);
+  background: #080a08;
+  overflow: hidden; isolation: isolate;
+  row-gap: 12px;
+}
+.hero-background, .hero-shade { position: absolute; inset: 0; width: 100%; height: 100%; }
+.hero-background {
+  z-index: -2;
+  background: #070706 url('assets/oil-poster.webp') 70% center / cover no-repeat;
+}
+.hero-oil {
+  position: absolute; inset: 0; width: 100%; height: 100%;
+  pointer-events: none; opacity: 0; transition: opacity .6s;
+}
+.hero-oil.is-ready { opacity: 1; }
+.hero-shade {
+  z-index: -1;
+  background:
+    linear-gradient(90deg, rgba(7, 7, 6, .9) 0%, rgba(7, 7, 6, .66) 39%, rgba(7, 7, 6, .15) 78%),
+    linear-gradient(0deg, rgba(7, 7, 6, .92) 0%, rgba(7, 7, 6, 0) 30%),
+    linear-gradient(180deg, rgba(7, 7, 6, .8) 0%, rgba(7, 7, 6, 0) 24%);
+}
+
+.hero-inner { position: relative; align-self: center; padding: 0; min-width: 0; max-width: 680px; }
+.hero-eyebrow { color: var(--text); }
+.hero-title {
+  margin: 16px 0 20px;
+  font-size: clamp(56px, 7.6vw, 124px);
+  font-weight: 500;
+  line-height: .98;
+  letter-spacing: -.02em;
+}
+.hero-title .line { display: block; overflow: hidden; padding: 0 .12em .12em 0; margin-bottom: -.12em; }
+.hero-title .line > span { display: inline-block; }
+.hero-description { max-width: 32em; margin-bottom: 20px; font-size: clamp(17px, 1.4vw, 20px); line-height: 1.6; color: var(--text); text-wrap: pretty; }
+.hero-actions { display: flex; align-items: center; flex-wrap: wrap; gap: 12px 20px; }
+
+.hero-bottom {
+  grid-column: 1 / -1;
+  display: flex; align-items: center; justify-content: space-between; gap: 20px;
+  padding: 12px 0 0;
+  font-size: 10.5px; font-weight: 600; letter-spacing: .18em; text-transform: uppercase;
+  color: var(--muted);
+}
+.motion-toggle { display: inline-flex; align-items: center; gap: 10px; min-height: 44px; font-size: 11px; font-weight: 600; letter-spacing: .1em; text-transform: uppercase; color: var(--text); padding: 10px 0; transition: color .2s; }
+.motion-icon { position: relative; width: 8px; height: 10px; }
+.motion-icon::before, .motion-icon::after { content: ''; position: absolute; top: 0; bottom: 0; width: 2px; background: currentColor; }
+.motion-icon::before { left: 0; }
+.motion-icon::after { right: 0; }
+.motion-toggle[data-paused] .motion-icon::before { width: 0; height: 0; left: 1px; background: none; border-style: solid; border-width: 5px 0 5px 8px; border-color: transparent transparent transparent currentColor; }
+.motion-toggle[data-paused] .motion-icon::after { display: none; }
+.motion-toggle:hover { color: var(--gold); }
+.scroll-cue { display: grid; place-items: center; width: 44px; height: 44px; margin-left: auto; flex: none; font-size: 22px; color: var(--text); }
+/* Home hero: the pickup enquiry waits in the bottom-right corner, beside the scroll arrow. */
+.hero-enquiry { flex: none; text-transform: none; box-shadow: 0 14px 34px -16px rgba(201, 162, 39, .7); }
+
+/* Laptops and monitors: every page opens on a first screen that fills the window, content centred.
+   Taller content still grows the section; phones and tablets keep the compact height. */
+@media (min-width: 1025px) {
+  .hero, .page-hero, .page-hero.about-hero, .page-hero.seller-app-hero { min-height: 100vh; min-height: 100svh; }
+  .hero { grid-template-rows: minmax(0, 1fr) auto; }
+  .page-hero { display: grid; align-content: center; }
+  .about-hero, .seller-app-hero { align-content: normal; }
+}
+
+/* Large monitors: a wider page, and each first screen scaled up so its content fills the window
+   instead of floating in it. Steps follow the window height, so the scaled content still fits. */
+@media (min-width: 1600px) {
+  :root { --pad-x: max(20px, 4.5vw, calc((100vw - 1520px) / 2)); }
+}
+@media (min-width: 1600px) and (min-height: 860px) {
+  :root { --header-h: 84px; }
+  .header .brand, .header .nav, .header .nav-action { zoom: 1.1; }
+  .header.is-scrolled { height: calc(var(--header-h) - 8px); }
+  .hero-inner, .hero-bottom { zoom: 1.15; }
+  .page-hero-inner, .seller-app-hero .seller-install-backdrop { zoom: 1.1; }
+}
+@media (min-width: 1800px) and (min-height: 940px) {
+  :root { --header-h: 90px; }
+  .header .brand, .header .nav, .header .nav-action { zoom: 1.15; }
+  .hero-inner, .hero-bottom { zoom: 1.3; }
+  .page-hero-inner, .seller-app-hero .seller-install-backdrop { zoom: 1.2; }
+}
+@media (min-width: 2200px) and (min-height: 1180px) {
+  :root { --header-h: 108px; }
+  .header .brand, .header .nav, .header .nav-action { zoom: 1.4; }
+  .hero-inner, .hero-bottom { zoom: 1.7; }
+  .page-hero-inner, .seller-app-hero .seller-install-backdrop { zoom: 1.5; }
+}
+
+/* Home introduces the app; its full demo lives on the seller-app page. */
+.hero--app .hero-title { margin-block: 16px 20px; font-size: clamp(48px, 5.4vw, 78px); line-height: 1.08; }
+.hero--app .hero-description { max-width: 29em; margin-bottom: 20px; font-size: clamp(17px, 1.4vw, 20px); }
+.hero-downloads { width: min(100%, 480px); }
+.hero-downloads .store-link { border-color: rgba(246, 244, 239, .4); background: rgba(18, 24, 28, .94); }
+.hero-downloads .download-status { margin-top: 8px; color: #d7d5cb; }
+body[data-page='home'] #seller-app { --accent: #8a6a0f; --accent-rgb: 138, 106, 15; --accent-bright: #e7c85c; --accent-soft: #f7edcc; background: radial-gradient(ellipse at 83% 32%, #f2e7c5 0%, transparent 52%), #faf8f1; }
+/* The home introduction uses the same Play Store sequence as the Seller App hero. */
+body[data-page='home'] #seller-app { overflow: hidden; }
+.home-app-intro { position: relative; z-index: 1; }
+.app-section-actions { display: flex; align-items: center; flex-wrap: wrap; gap: 12px 20px; }
+.home-app-intro { display: grid; grid-template-columns: minmax(0, 1.15fr) minmax(0, 1fr); align-items: center; gap: var(--layout-gap); }
+.home-app-content { min-width: 0; }
+.home-app-intro h2 { margin-top: 16px; font-size: clamp(38px, 4.1vw, 60px); line-height: 1.1; letter-spacing: -.035em; }
+.home-app-intro h2 em { background: none; }
+.home-app-copy { max-width: 31em; margin-top: 16px; color: #5f625c; }
+.home-app-benefits { display: grid; gap: 16px; margin-top: 20px; padding: 0; list-style: none; }
+.home-app-benefits li { display: flex; align-items: flex-start; gap: 14px; }
+.home-app-benefit-icon { display: grid; flex: none; place-items: center; width: 40px; height: 40px; border: 1px solid #e8dfc8; border-radius: var(--radius); background: #f4eedf; color: #8a6a0f; }
+.home-app-benefit-icon svg { width: 21px; height: 21px; fill: none; stroke: currentColor; stroke-width: 1.5; stroke-linecap: round; stroke-linejoin: round; }
+.home-app-benefits h3 { font: 600 15px/1.5 var(--sans); letter-spacing: -.01em; }
+.home-app-benefits p { margin-top: 4px; font-size: 14px; line-height: 1.6; color: #5f625c; }
+.home-app-links { display: flex; align-items: center; flex-wrap: wrap; gap: 12px 20px; }
+.home-app-links .motion-toggle { color: var(--muted); }
+/* Homepage: the download choices sit in the app introduction as dark store buttons. */
+.home-app-get { width: min(100%, 480px); margin-top: 24px; }
+.home-app-platform { margin-bottom: 12px; color: #6b675e; font: 500 13px/1.6 var(--sans); }
+.home-app-platform > span { margin-inline: 5px; color: #9d957e; }
+.home-app-get + .home-app-links { margin-top: 12px; }
+@media (max-width: 960px) {
+  .home-app-intro { grid-template-columns: 1fr; gap: var(--layout-gap); }
+  .home-app-content { width: 100%; max-width: 560px; margin-inline: auto; }
+  .home-app-intro h2 { font-size: clamp(38px, 6.5vw, 54px); }
+}
+@media (max-width: 480px) {
+  .home-app-intro h2 { font-size: clamp(34px, 9.5vw, 44px); }
+  .home-app-benefits { gap: 16px; }
+  .home-app-links { align-items: flex-start; flex-direction: column; gap: 8px; }
+}
+.home-help-link { display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 16px 28px; padding: 20px var(--pad-x); background: #e3ece5; border-top: 1px solid #b8cbbc; }
+.home-help-link p { font-size: 15px; }
+.app-download-section { display: grid; grid-template-columns: minmax(0, 1.2fr) minmax(0, 1fr); gap: var(--layout-gap); align-items: center; }
+.app-download-section h2 { margin-top: 16px; }
+.download-description { max-width: 30em; margin-top: 16px; }
+.download-returning { max-width: 32em; margin-top: 16px; font-size: 14px; color: var(--muted); }
+.app-install-guide { display: grid; gap: 14px; margin: 20px 0; padding-left: 22px; }
+.app-install-guide li { padding-left: 8px; font-size: 14px; }
+.app-install-guide li::marker { color: var(--accent); font-weight: 600; }
+.app-install-guide strong, .app-install-guide span { display: block; }
+.app-install-guide strong { margin-bottom: 5px; color: var(--head); }
+.store-links { display: grid; grid-template-columns: repeat(auto-fit, minmax(min(100%, 208px), 1fr)); gap: 12px; }
+.store-link { display: flex; align-items: center; gap: 12px; min-width: 0; min-height: 64px; padding: 12px 16px; border: 1px solid #1e262d; border-radius: var(--radius); background: #1e262d; color: #fff; transition: border-color .2s, background-color .2s; }
+.store-link > svg { width: 26px; height: 28px; flex: none; fill: none; stroke: #e7c85c; stroke-width: 1.8; stroke-linecap: round; stroke-linejoin: round; }
+.store-link > .store-icon-play { stroke: none; }
+.store-link small { display: block; margin-bottom: 3px; font: 500 11px/1.4 var(--sans); color: #d7d5cb; }
+.store-link strong { font: 600 17px/1.25 var(--sans); white-space: nowrap; }
+.store-link-arrow { margin-left: auto; color: #e7c85c; font-size: 18px; }
+.store-link[href]:hover { border-color: #8a6a0f; background: #303c44; }
+.store-link[aria-disabled='true'] { opacity: 1; cursor: default; }
+.store-links .store-link--apk { border-color: #c9a227; background: #c9a227; color: #1e262d; }
+.store-link--apk small { color: #3e3a2b; }
+.store-link--apk > svg, .store-link--apk .store-link-arrow { color: #1e262d; stroke: currentColor; }
+.store-link--apk[href]:hover { border-color: #e7c85c; background: #e7c85c; }
+.store-link--ios { display: inline-flex; gap: 8px; min-height: 44px; max-width: 100%; margin-top: 12px; padding: 8px 12px; cursor: default; opacity: 1; }
+.store-link--ios > .store-icon-apple { width: 19px; height: 22px; fill: currentColor; stroke: none; }
+.store-ios-name { font: 600 13px/1.4 var(--sans); }
+.store-ios-status { font: 500 11px/1.4 var(--sans); color: #d7d5cb; }
+.download-status { margin-top: 12px; font-size: 14px; line-height: 1.6; color: var(--muted); }
+.closing-actions { display: flex; align-items: center; flex-wrap: wrap; gap: 12px 20px; }
+#app-dialog .app-download-options { margin: 26px 0; }

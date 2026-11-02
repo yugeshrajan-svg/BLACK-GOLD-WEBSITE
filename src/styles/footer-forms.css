@@ -1,0 +1,133 @@
+/* ---------- Closing call to action (every page) ---------- */
+
+.closing {
+  position: relative; isolation: isolate; overflow: hidden;
+  display: grid; align-items: end;
+  padding: var(--section-y) var(--pad-x);
+  color: var(--head);
+  background: radial-gradient(ellipse at 95% 10%, rgba(var(--accent-rgb), .14), transparent 65%), linear-gradient(115deg, #f3e9d5, var(--accent-soft));
+  border-top: 2px solid rgba(var(--accent-rgb), .35);
+}
+.closing h2 { max-width: 18ch; margin: 12px 0 24px; font-size: clamp(38px, 4.6vw, 64px); line-height: 1.12; letter-spacing: -.018em; }
+.closing-cta { display: flex; justify-content: space-between; align-items: center; gap: 24px; padding-top: 20px; border-top: 1px solid var(--line-strong); }
+.closing-cta p { max-width: 35em; font: 400 clamp(15px, 1.2vw, 18px)/1.6 var(--sans); color: var(--text); }
+
+/* ---------- Footer ---------- */
+
+.footer { background: #1e262d; color: var(--text); padding: clamp(32px, 3vw, 48px) var(--pad-x) 24px; overflow: hidden; border-top: 1px solid var(--line); }
+.footer-top { display: grid; grid-template-columns: 2fr 1fr 1fr; gap: 28px; }
+.footer-brand p { margin-top: 16px; font: italic 400 18px/1.55 var(--serif); color: var(--muted); }
+.footer-office { display: flex; flex-direction: column; gap: 6px; max-width: 34ch; margin-top: 16px; color: var(--text); font: normal 400 14px/1.7 var(--sans); }
+.footer-office-label { color: var(--gold); font-size: 10px; font-weight: 600; letter-spacing: .12em; text-transform: uppercase; }
+.footer-contact { display: flex; flex-direction: column; align-items: flex-start; gap: 4px; margin-top: 12px; }
+.footer-phone { display: inline-flex; align-items: center; gap: 10px; min-height: 44px; color: var(--head); font: 500 clamp(20px, 1.8vw, 24px)/1.4 var(--sans); letter-spacing: -.02em; }
+.footer-email { display: inline-flex; align-items: center; gap: 10px; min-height: 44px; max-width: 100%; color: var(--text); font-size: 14px; line-height: 1.5; }
+.footer-email > span { min-width: 0; overflow-wrap: anywhere; }
+.footer-phone svg, .footer-email svg { flex: none; width: 19px; height: 19px; fill: none; stroke: var(--gold); stroke-width: 1.5; stroke-linecap: round; stroke-linejoin: round; }
+.footer-whatsapp { display: inline-flex; align-items: center; gap: 8px; min-height: 44px; color: var(--text); font-size: 14px; text-decoration: underline; text-decoration-color: var(--line-strong); text-underline-offset: 5px; }
+.footer-phone:hover, .footer-email:hover, .footer-whatsapp:hover { color: var(--gold-hi); }
+.footer-col { display: flex; flex-direction: column; align-items: flex-start; gap: 12px; }
+.footer-col .eyebrow { margin-bottom: 8px; }
+.footer-col a, .footer-col button { font: 400 17px/1.3 var(--serif); color: var(--head); transition: color .4s; }
+.footer-col a:hover, .footer-col button:hover, .footer-col a[aria-current='page'] { color: var(--gold-hi); }
+.footer-bottom { display: flex; flex-wrap: wrap; justify-content: space-between; gap: 12px 24px; margin-top: 28px; padding-top: 20px; border-top: 1px solid var(--line); font-size: 12px; font-weight: 500; line-height: 1.6; color: var(--muted); }
+.footer-bottom a:hover { color: var(--gold); }
+
+/* ---------- Dialogs and the pickup form ---------- */
+
+dialog {
+  width: min(660px, calc(100% - 24px)); max-height: calc(100dvh - 24px);
+  padding: 32px; border: 1px solid var(--line); border-radius: 12px;
+  background: #fffdf9; color: var(--text);
+  box-shadow: 0 40px 100px -30px rgba(23, 21, 15, .5);
+  overflow: auto; overscroll-behavior: contain;
+}
+dialog[open] { animation: dialog-in .2s var(--ease); }
+dialog::backdrop { background: rgba(20, 18, 14, .55); -webkit-backdrop-filter: blur(8px); backdrop-filter: blur(8px); }
+dialog h2 { margin: 16px 0 12px; font-size: clamp(32px, 3.8vw, 44px); font-weight: 700; }
+dialog > p:not(.eyebrow) { color: var(--text); font-weight: 500; }
+.close { position: absolute; right: 20px; top: 20px; width: 44px; height: 44px; display: grid; place-items: center; border-radius: 50%; border: 1px solid var(--line-strong); font-size: 22px; line-height: 1; color: var(--head); transition: background-color .4s, color .4s, border-color .4s, transform .7s var(--ease); }
+.close:hover { background: var(--head); border-color: var(--head); color: var(--bg); }
+#app-dialog .button { margin-top: 32px; }
+
+form { display: grid; gap: 16px; margin-top: 24px; }
+fieldset { min-width: 0; margin: 0; padding: 0; border: 0; }
+legend, .field { font-size: 13px; font-weight: 700; letter-spacing: .06em; text-transform: uppercase; color: var(--text); }
+legend { padding: 0; margin-bottom: 12px; }
+.choice-grid { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 10px; }
+.choice-grid label, .seg-track label { position: relative; cursor: pointer; }
+.choice-grid input, .seg-track input { position: absolute; inset: 0; margin: 0; opacity: 0; cursor: pointer; }
+.choice-grid span { display: flex; flex-direction: column; gap: 4px; height: 100%; padding: 16px; border: 1px solid var(--line-strong); border-radius: 8px; background: var(--bg); font: 700 18px/1.15 var(--serif); letter-spacing: 0; text-transform: none; color: var(--head); transition: border-color .4s, box-shadow .4s, background-color .4s; }
+.choice-grid small { font: 600 12px/1.4 var(--sans); color: var(--muted); }
+.choice-grid input:checked + span { border-color: var(--head); box-shadow: inset 0 0 0 1px var(--head); background: var(--bg-2); }
+.choice-grid input:focus-visible + span, .seg-track input:focus-visible + span { outline: 2px solid #c9a227; outline-offset: 3px; }
+/* A small sample jar per oil, in the same colours as the home page jars. */
+.oil-option--engine { --sample-top: #615039; --sample-bottom: #1e1c16; --sample-cap: #3c4037; }
+.oil-option--hydraulic { --sample-top: #d59a41; --sample-bottom: #8c4714; --sample-cap: #205f4c; }
+.oil-option--transfer { --sample-top: #c7a256; --sample-bottom: #6c461b; --sample-cap: #1e262d; }
+.enquiry-jar { display: block; width: 66px; height: 88px; margin: 0 0 8px -6px; overflow: visible; transition: transform .3s var(--ease); }
+.choice-grid input:checked + span .enquiry-jar { transform: translateY(-2px) scale(1.06); }
+.enquiry-jar-shadow { fill: rgba(30, 38, 45, .12); }
+.enquiry-jar-back { fill: #f8fcf7; }
+.enquiry-jar-oil-top { stop-color: var(--sample-top); }
+.enquiry-jar-oil-bottom { stop-color: var(--sample-bottom); }
+.enquiry-jar-body { fill: none; stroke: #7a9281; stroke-width: 1.5; }
+.enquiry-jar-shoulder { fill: #e0e9dd; stroke: #7a9281; stroke-width: 1.5; }
+.enquiry-jar-lid { fill: var(--sample-cap); }
+.enquiry-jar-ridges { fill: none; stroke: #fff; stroke-width: 1.2; opacity: .3; }
+.enquiry-jar-shine { fill: none; stroke: #fff; stroke-width: 2.5; stroke-linecap: round; opacity: .6; }
+.enquiry-jar-ticks { fill: none; stroke: #fff; stroke-width: 1.2; stroke-linecap: round; opacity: .7; }
+
+.field { display: flex; flex-direction: column; gap: 10px; }
+.field input { width: 100%; min-width: 0; padding: 14px 0; border: 0; border-bottom: 1px solid var(--line-strong); border-radius: 0; background: transparent; font: 600 18px/1.3 var(--sans); letter-spacing: 0; text-transform: none; color: var(--head); transition: border-color .4s; }
+.field input::placeholder { color: #8f8879; font-weight: 500; }
+.field input:focus { outline: none; border-bottom-color: #c9a227; }
+/* The area list: a box to tap, which opens the phone's own scrolling picker. */
+.field select {
+  appearance: none; -webkit-appearance: none;
+  width: 100%; min-width: 0; min-height: 56px; padding: 12px 52px 12px 16px;
+  border: 1.5px solid var(--line-strong); border-radius: var(--radius);
+  background: #fff url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%231e262d' stroke-width='2.4' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='m6 9 6 6 6-6'/%3E%3C/svg%3E") no-repeat right 16px center / 20px;
+  font: 600 18px/1.3 var(--sans); letter-spacing: 0; text-transform: none; color: var(--head);
+  cursor: pointer; transition: border-color .3s, box-shadow .3s;
+}
+.field select:hover { border-color: var(--muted); }
+.field select:focus { outline: none; border-color: #c9a227; box-shadow: 0 0 0 3px rgba(201, 162, 39, .25); }
+.field select:invalid { color: #8f8879; font-weight: 500; }
+.field select option { color: #1e262d; font-weight: 500; }
+.field.invalid select { border-color: #b4462a; }
+.field-error { display: none; font: 600 12px/1.4 var(--sans); letter-spacing: .02em; text-transform: none; color: #b4462a; }
+.field.invalid input { border-bottom-color: #b4462a; }
+.field.invalid .field-error { display: block; }
+.form-row { display: grid; grid-template-columns: minmax(0, 1fr) auto; gap: 24px; align-items: end; }
+.seg-track { display: flex; border: 1px solid var(--line-strong); border-radius: var(--radius); overflow: hidden; }
+.seg-track span { display: block; padding: 13px 20px; font-size: 11px; font-weight: 700; letter-spacing: .12em; text-transform: uppercase; color: var(--muted); transition: background-color .4s, color .4s; }
+.seg-track input:checked + span { background: var(--head); color: var(--bg); }
+.form-note { padding: 16px; border-left: 3px solid #b48a3f; border-radius: 0 var(--radius) var(--radius) 0; background: #f5ecd6; font-size: 14px; font-weight: 500; line-height: 1.65; color: #655025; }
+form .button { justify-self: start; margin-top: 4px; }
+
+.result-head { display: flex; align-items: center; gap: 16px; margin-top: 30px; }
+.result-tick { width: 44px; height: 44px; display: grid; place-items: center; border-radius: 50%; border: 1px solid #c9a227; color: var(--gold-hi); flex: none; }
+.result-head h3 { font-size: 30px; font-weight: 700; outline: none; }
+pre { margin: 20px 0; padding: 22px; white-space: pre-wrap; font: 500 14px/1.85 var(--sans); color: var(--text); background: var(--bg); border: 1px solid var(--line); border-radius: 8px; }
+#enquiry-result > p { font-size: 14px; color: var(--muted); }
+.enquiry-contact { color: var(--head); font-weight: 600; white-space: nowrap; text-decoration: underline; text-underline-offset: 3px; }
+#enquiry-result > .send-intro { margin-top: 14px; font-size: 15px; color: var(--text); }
+/* WhatsApp and email are the two ways to send; they lead the result, in their own colours. */
+.send-actions { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 12px; margin-top: 16px; }
+.send-button { display: flex; align-items: center; gap: 14px; min-height: 76px; padding: 14px 20px; border-radius: var(--radius); font: 700 17px/1.25 var(--sans); color: #fff; box-shadow: 0 14px 30px -18px rgba(23, 21, 15, .7); transition: background-color .2s, transform .2s, box-shadow .2s; }
+.send-button:hover { transform: translateY(-1px); box-shadow: 0 18px 34px -18px rgba(23, 21, 15, .8); }
+.send-button:active { transform: scale(.98); }
+.send-button:focus-visible { outline: 3px solid #c9a227; outline-offset: 3px; }
+.send-button svg { flex: none; width: 30px; height: 30px; }
+.send-button > span { min-width: 0; }
+.send-button small { display: block; margin-top: 4px; font-size: 13px; font-weight: 500; overflow-wrap: anywhere; color: rgba(255, 255, 255, .85); }
+.send-button--whatsapp { background: #0f7d42; }
+.send-button--whatsapp:hover { background: #0b6a37; }
+.send-button--whatsapp svg { fill: currentColor; }
+.send-button--email { background: #1e262d; }
+.send-button--email:hover { background: #2f3a43; }
+.send-button--email svg { fill: none; stroke: currentColor; stroke-width: 1.6; stroke-linecap: round; stroke-linejoin: round; }
+.result-actions { display: flex; flex-wrap: wrap; gap: 10px; margin-top: 16px; }
+.result-actions .button { min-height: 44px; padding: 0 18px; }
+.copy-status { min-height: 1.5em; margin: 12px 0 6px; font-size: 13px; color: var(--gold-hi); }

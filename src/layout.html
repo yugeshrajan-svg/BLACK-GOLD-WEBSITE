@@ -5,18 +5,20 @@
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <title>{{title}}</title>
 <meta name="description" content="{{description}}">
+{{pageUrlMetadata}}
 <meta name="theme-color" content="#1e262d">
 <meta property="og:type" content="website">
 <meta property="og:site_name" content="Black Gold">
 <meta property="og:locale" content="en_IN">
 <meta property="og:title" content="{{title}}">
 <meta property="og:description" content="{{description}}">
-<meta property="og:image" content="og-image.jpg">
+<meta property="og:image" content="{{shareImage}}">
 <meta property="og:image:type" content="image/jpeg">
 <meta property="og:image:width" content="1200">
 <meta property="og:image:height" content="630">
 <meta property="og:image:alt" content="Black Gold Refining logo: a black oil barrel with a gold oil drop. We buy used oil.">
 <meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:image" content="{{shareImage}}">
 <link rel="icon" href="assets/favicon-32.png" sizes="32x32" type="image/png">
 <link rel="icon" href="assets/favicon-192.png" sizes="192x192" type="image/png">
 <link rel="apple-touch-icon" href="assets/apple-touch-icon.png">
@@ -90,7 +92,6 @@
   </div>
   <div class="footer-bottom">
     <span>© <span id="year">2026</span> Black Gold</span>
-    <span>Client review edition · App links pending</span>
     <a href="#top">Back to top ↑</a>
   </div>
 </footer>
@@ -148,7 +149,7 @@
   <button class="close" aria-label="Close dialog"><span aria-hidden="true">×</span></button>
   <p class="eyebrow">Black Gold seller app</p>
   <h2 id="app-dialog-title">Your oil sales.<br><em>One app.</em></h2>
-  <p>Choose Google Play or a direct APK download for your Android phone.</p>
+  <p>{{downloadDescription}}</p>
   {{> app-download-options}}
   <button class="text-link" data-close>Back to the website <span aria-hidden="true">→</span></button>
 </dialog>

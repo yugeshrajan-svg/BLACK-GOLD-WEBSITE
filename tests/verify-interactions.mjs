@@ -3,9 +3,9 @@
 import { readFileSync, existsSync } from 'node:fs';
 import vm from 'node:vm';
 import assert from 'node:assert/strict';
-const downloadLinks = JSON.parse(readFileSync('src/app-downloads.json','utf8'));
-const contactDetails = JSON.parse(readFileSync('src/contact.json','utf8'));
-const areaList = JSON.parse(readFileSync('src/areas.json','utf8'));
+const downloadLinks = JSON.parse(readFileSync('src/config/app-downloads.json','utf8'));
+const contactDetails = JSON.parse(readFileSync('src/config/contact.json','utf8'));
+const areaList = JSON.parse(readFileSync('src/config/areas.json','utf8'));
 
 const decode = s => s.replace(/&(?:amp|lt|gt|quot|#39|#\d+);/g, x => ({'&amp;':'&','&lt;':'<','&gt;':'>','&quot;':'"','&#39;':"'"}[x] ?? String.fromCodePoint(+x.slice(2,-1))));
 const escape = s => s.replaceAll('&','&amp;').replaceAll('"','&quot;').replaceAll('<','&lt;');
@@ -211,12 +211,17 @@ for (const reduced of [false,true]) {
     home.q('#pickup-dialog').close();
     for (const [platform,url] of Object.entries(downloadLinks)) {
       const options = home.qa('[data-app-download="'+platform+'"]');
-      assert.equal(options.length,3,'Downloads show in the hero, app introduction and shared dialog');
-      assert.ok(home.q('.hero [data-app-download="'+platform+'"]'),'The hero offers each download directly');
-      options.forEach(option => {
-        if (url) assert.equal(option.getAttribute('href'),url);
-        else { assert.equal(option.getAttribute('aria-disabled'),'true'); assert.equal(option.hasAttribute('href'),false); }
-      });
+      assert.equal(options.length,url || platform === 'googlePlay' ? 3 : 0,'Show downloads and the Google Play coming-soon option in each download area');
+      if (url) {
+        assert.ok(home.q('.hero [data-app-download="'+platform+'"]'),'The hero offers each available download directly');
+        options.forEach(option => assert.equal(option.getAttribute('href'),url));
+      } else if (platform === 'googlePlay') {
+        options.forEach(option => {
+          assert.equal(option.getAttribute('aria-disabled'),'true');
+          assert.equal(option.hasAttribute('href'),false);
+          assert.match(option.textContent,/Coming soon/);
+        });
+      }
     }
     home.click('#app-dialog [data-close]');
     home.click('#pickup-process [data-route-step="2"]'); home.flush();
@@ -235,9 +240,10 @@ for (const reduced of [false,true]) {
     assert.equal(home.qa('#our-promises [data-promise-stage]').length,4,'The home page presents all four promises');
     const homeSections = home.q('#main').children.filter(node => node.tag === 'section').map(node => node.id);
     assert.equal(homeSections.indexOf('our-promises'),homeSections.indexOf('seller-app') + 1,'Our promise follows Meet your seller app directly');
-    assert.ok(home.q('#get-app [data-app-download="googlePlay"] .store-icon-play'),'The introduction shows the Google Play button with its icon');
-    assert.ok(home.q('#get-app [data-app-download="apk"]'),'and the direct APK download');
-    assert.match(home.q('#get-app .home-app-ios').textContent,/iOS app coming soon/);
+    assert.ok(home.q('#get-app [data-app-download="googlePlay"] .store-icon-play'),'Show Google Play with its icon, including before launch');
+    assert.equal(Boolean(home.q('#get-app [data-app-download="apk"]')),Boolean(downloadLinks.apk),'Show the configured direct APK download');
+    assert.ok(home.q('#get-app .store-link--ios .store-icon-apple'),'The compact iOS button includes the Apple symbol');
+    assert.ok(home.q('#get-app .store-link--ios').hasAttribute('disabled'),'The iOS coming-soon button is inactive');
     home.click('[data-home-oil="hydraulic"]');
     assert.equal(home.q('#home-oil-panel').dataset.tone,'hydraulic');
     assert.equal(home.q('[data-home-oil="hydraulic"]').getAttribute('aria-selected'),'true');
@@ -589,7 +595,7 @@ const chooseArea = (page, value) => {
   page.q('select[name="area"]').fire('change');
 };
 const form = load('index.html');
-assert.deepEqual(form.qa('select[name="area"] option').map(n => n.value),['',...areaList,'Other'],'The list prompts first, then every area in src/areas.json, then Other area');
+assert.deepEqual(form.qa('select[name="area"] option').map(n => n.value),['',...areaList,'Other'],'The list prompts first, then every area in src/config/areas.json, then Other area');
 assert.equal(form.q('select[name="area"]').value,'','No area is chosen until the visitor picks one');
 assert.equal(form.qa('.choice-grid .enquiry-jar').length,3,'Each oil choice shows its sample jar');
 assert.equal(form.q('.area-other').hidden,true,'The typed area box waits for Other area');
