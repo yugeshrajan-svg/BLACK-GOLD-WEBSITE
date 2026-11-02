@@ -30,7 +30,7 @@ BLACK-GOLD-WEBSITE/
 │   ├── scripts/             ← Website behaviour and oil animation
 │   └── layout.html          ← Shared head, menu, footer and dialogs
 ├── public/                  ← Files copied into the built website
-│   ├── assets/              ← Images, icons and seller APK
+│   ├── assets/              ← Images and icons
 │   ├── fonts/               ← Self-hosted fonts and their licence
 │   └── og-image.jpg         ← Social sharing image
 ├── scripts/                 ← Build and local-server tools
@@ -57,13 +57,12 @@ BLACK-GOLD-WEBSITE/
 | Pickup area choices | `src/config/areas.json` |
 | Google Play and APK links | `src/config/app-downloads.json` |
 | Final website URL and generated search/share URLs | `src/config/site.json` |
-| Seller app file | `public/assets/black-gold-seller.apk` |
 | Colours, spacing, page styles | `src/styles/` |
 | Interactions and animation logic | `src/scripts/` |
 
 Read [the update guide](docs/UPDATING.md) for examples and a map of the shared sections and stylesheets.
 
-The [launch review](docs/LAUNCH-CHECK.md) records the remaining release items. Set the final HTTPS URL in `src/config/site.json` when the domain is chosen; the build then supplies canonical URLs, absolute sharing images and a sitemap automatically.
+The [launch review](docs/LAUNCH-CHECK.md) records the remaining release items. The final HTTPS URL, `https://myblackgold.app`, is set in `src/config/site.json`; the build supplies canonical URLs, absolute sharing images and a sitemap from it.
 
 ## Build, check and upload
 
@@ -71,12 +70,14 @@ The [launch review](docs/LAUNCH-CHECK.md) records the remaining release items. S
 npm run check
 ```
 
-This builds a fresh `dist/` and checks all five pages, local links, section anchors, metadata, downloads and shared interactions. It also confirms that static files, including the APK, are copied without alteration. Interaction checks simulate desktop, compact layouts and reduced motion; they do not replace visual testing on a real phone.
+This builds a fresh `dist/` and checks all five pages, local links, section anchors, metadata, downloads and shared interactions. It also confirms that static files are copied without alteration. Interaction checks simulate desktop, compact layouts and reduced motion; they do not replace visual testing on a real phone.
 
-After a successful check, upload **the contents of `dist/`** to your static website host. `npm run build` generates the website without running checks; `npm start` builds and serves it without watching for changes.
+After a successful check, commit and push, including `dist/`. The live site at myblackgold.app is served from this repo's `dist/` on the Black Gold server: after a push, run `cd /opt/blackgold-website && git pull` there. `npm run build` generates the website without running checks; `npm start` builds and serves it without watching for changes.
 
 ## Current download and enquiry behaviour
 
-The website provides the supplied 64-bit Android APK through the first, gold “Download APK” button. Direct website distribution can be used while the Google Play submission is under review. Google Play displays “Coming soon” until its official URL is configured. A smaller iOS button with an Apple symbol also displays “Coming soon”. Both coming-soon options are inactive. The Play Store animation and app screens are labelled illustrations.
+The seller app is distributed through Google Play (in closed testing until production approval), so the website offers no direct APK download. The Google Play button displays “Coming soon” until its official URL is configured, and the download section asks visitors to contact Black Gold. A smaller iOS button with an Apple symbol also displays “Coming soon”. Both coming-soon options are inactive. The Play Store animation and app screens are labelled illustrations. See [the update guide](docs/UPDATING.md#direct-apk-download) before offering an APK again.
+
+The footer links to the privacy policy and account deletion pages, which the Black Gold server serves at `https://myblackgold.app/privacy` and `/delete-account`.
 
 The enquiry form prepares a summary for WhatsApp or email. Visitors choose whether to send it; the website does not automatically send details or book a pickup.

@@ -58,35 +58,30 @@ Edit the list in `src/config/areas.json`. Keep the names in the desired order. T
 
 Use valid JSON: double quotes, commas between entries, and no comma after the last entry.
 
-## Replace the seller app
+## App download links
 
-1. Obtain the updated APK.
-2. Replace **`public/assets/black-gold-seller.apk`** with that file, keeping this destination name.
-3. Run `npm run check`.
-4. Open the website, choose **Get seller app**, and check **Download APK**.
-5. Upload the rebuilt `dist/` contents to update the hosted download.
-
-For example, in PowerShell from the project folder:
-
-```powershell
-Copy-Item -LiteralPath 'C:\path\to\new-seller.apk' -Destination 'public/assets/black-gold-seller.apk' -Force
-npm run check
-```
-
-The current supplied file is an APK whose filename ended in `.apk.zip`. It already contained `AndroidManifest.xml`, `classes.dex` and the other APK contents, so it was copied unchanged to the `.apk` destination. A normal ZIP containing a separate APK must be extracted first; use the APK inside it. Do not unpack and repackage the APK itself.
-
-The download URL stays `assets/black-gold-seller.apk`. The link is configured in `src/config/app-downloads.json`:
+The download buttons are configured in `src/config/app-downloads.json`:
 
 ```json
 {
   "googlePlay": "",
-  "apk": "assets/black-gold-seller.apk"
+  "apk": ""
 }
 ```
 
-To enable Google Play, replace the empty value with the official `https://play.google.com/store/apps/details?id=...` URL. Its “Coming soon” button then becomes an active store link automatically. An empty APK value hides the APK button. The APK can also use an HTTPS URL instead of a local file. The smaller iOS “Coming soon” button, including its Apple symbol, is in `src/partials/app-download-options.html`.
+When the seller app is public on Google Play, set `googlePlay` to `https://play.google.com/store/apps/details?id=com.blackgold.seller`. Its “Coming soon” button then becomes an active store link, and the install steps on the Seller app page switch to Google Play wording automatically. The smaller iOS “Coming soon” button, including its Apple symbol, is in `src/partials/app-download-options.html`.
 
-The current APK contains ARM64 native libraries. If a future release supports different phones, update the compatibility sentence in `scripts/build.mjs` (`downloadDescription`) and the compatibility text in `src/pages/seller-app.html` to match that release.
+### Direct APK download
+
+The website offered a direct APK until 2 November 2026; it was removed because that file was a debug-signed test build. Android only updates an installed app with a build signed by the same key, so phones with that APK could not install or update the Google Play version without uninstalling it first, and testers who installed it did not count towards Google Play's closed-testing requirement.
+
+To offer a direct download again, use only the **Google-signed universal APK** of a released version: Play Console → **Test and release → App bundle explorer** → choose the version → **Downloads** → **Signed, universal APK**. It carries the same signature as the Play Store app, so Google Play can update it later. Then:
+
+1. Copy it to **`public/assets/black-gold-seller.apk`**.
+2. Set `"apk": "assets/black-gold-seller.apk"` in `src/config/app-downloads.json` (an HTTPS URL also works).
+3. Run `npm run check`, then commit and push. The APK button and APK install steps return automatically; an empty `apk` value hides them again.
+
+Never publish a debug build or an APK signed with the upload key.
 
 ## Change images or branding
 

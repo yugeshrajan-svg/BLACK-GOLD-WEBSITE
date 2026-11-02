@@ -90,7 +90,12 @@ export function buildSite() {
       ? 'Tap Download APK to save the app to your Android phone.'
       : available.googlePlay
         ? 'Choose an available download option below.'
-        : 'Contact Black Gold for the latest download information.'
+        : 'Contact Black Gold for the latest download information.',
+    downloadInstallStep: available.apk && !available.googlePlay
+      ? 'Open the downloaded APK. Android may ask you to allow app installs from the browser you used; review and follow your phone’s installation prompts.'
+      : available.googlePlay
+        ? 'Tap Install on the Google Play page. Google Play keeps the app up to date.'
+        : 'The app is coming to Google Play. Until then, contact Black Gold to join the early testing.'
   };
 
   // Prepare and validate everything before replacing generated output.
