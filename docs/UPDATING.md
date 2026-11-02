@@ -65,7 +65,7 @@ The download buttons are configured in `src/config/app-downloads.json`:
 ```json
 {
   "googlePlay": "",
-  "apk": ""
+  "apk": "assets/black-gold-seller.apk"
 }
 ```
 
@@ -73,15 +73,15 @@ When the seller app is public on Google Play, set `googlePlay` to `https://play.
 
 ### Direct APK download
 
-The website offered a direct APK until 2 November 2026; it was removed because that file was a debug-signed test build. Android only updates an installed app with a build signed by the same key, so phones with that APK could not install or update the Google Play version without uninstalling it first, and testers who installed it did not count towards Google Play's closed-testing requirement.
+The “Tap to download” button serves **`public/assets/black-gold-seller.apk`**: the **Google-signed universal APK** of version 1.0.0 (SHA-256 `ea62ad0107c5143e3b9b6381422156665eceb41f067757917d91b07b0410c3ce`). It carries the same signature as the Google Play app, so Google Play can update phones that installed it from the website, and it runs on every Android 8.0+ phone (all four CPU types).
 
-To offer a direct download again, use only the **Google-signed universal APK** of a released version: Play Console → **Test and release → App bundle explorer** → choose the version → **Downloads** → **Signed, universal APK**. It carries the same signature as the Play Store app, so Google Play can update it later. Then:
+Only ever publish that kind of file. Android only updates an installed app with a build signed by the same key: a debug build (the website's first APK, removed on 2 November 2026) or an APK signed with the upload key would block the Google Play version until the user uninstalls it. Website installs also don't count towards Google Play's closed-testing requirement, so testers still join through the Play test link.
 
-1. Copy it to **`public/assets/black-gold-seller.apk`**.
-2. Set `"apk": "assets/black-gold-seller.apk"` in `src/config/app-downloads.json` (an HTTPS URL also works).
-3. Run `npm run check`, then commit and push. The APK button and APK install steps return automatically; an empty `apk` value hides them again.
+To update the download for a new release:
 
-Never publish a debug build or an APK signed with the upload key.
+1. Play Console → **Test and release → Latest releases and bundles** → click the new version's app bundle (this opens **App bundle explorer**) → **Downloads** → **Signed, universal APK**.
+2. Replace **`public/assets/black-gold-seller.apk`** with it, keeping that name.
+3. Run `npm run check`, then commit and push. An empty `apk` value in `src/config/app-downloads.json` hides the button and the APK install steps again.
 
 ## Change images or branding
 

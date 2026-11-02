@@ -1,6 +1,8 @@
 # Launch review — 2 November 2026
 
 > **Update, 2 November 2026 (later):** the site is live at https://myblackgold.app, served from this repo's `dist/` on the Black Gold server. At the owner's request the direct APK download was removed: the supplied APK is a debug-signed test build, which conflicts with the Google Play version and doesn't count towards Play's closed test. The download section now shows Google Play as “Coming soon” and asks visitors to contact Black Gold. `src/config/site.json` holds the final URL. The review below describes the earlier plan.
+>
+> **Update, 2 November 2026 (evening):** the direct download is back with the right file: the Google-signed universal APK of version 1.0.0 from Play Console's App bundle explorer (signed `CN=Android, O=Google Inc.`, all CPU types, Android 8.0+). Google Play can update phones that install it. The button reads “Tap to download · Android app”.
 
 The owner plans to launch direct website APK downloads on 3 November 2026 while the team completes the Google Play submission. The owner has requested use of the currently supplied APK for this launch. The website has not been deployed; domain and hosting selection remain deferred.
 

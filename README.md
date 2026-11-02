@@ -30,7 +30,7 @@ BLACK-GOLD-WEBSITE/
 │   ├── scripts/             ← Website behaviour and oil animation
 │   └── layout.html          ← Shared head, menu, footer and dialogs
 ├── public/                  ← Files copied into the built website
-│   ├── assets/              ← Images and icons
+│   ├── assets/              ← Images, icons and the seller app (APK)
 │   ├── fonts/               ← Self-hosted fonts and their licence
 │   └── og-image.jpg         ← Social sharing image
 ├── scripts/                 ← Build and local-server tools
@@ -76,7 +76,7 @@ After a successful check, commit and push, including `dist/`. The live site at m
 
 ## Current download and enquiry behaviour
 
-The seller app is distributed through Google Play (in closed testing until production approval), so the website offers no direct APK download. The Google Play button displays “Coming soon” until its official URL is configured, and the download section asks visitors to contact Black Gold. A smaller iOS button with an Apple symbol also displays “Coming soon”. Both coming-soon options are inactive. The Play Store animation and app screens are labelled illustrations. See [the update guide](docs/UPDATING.md#direct-apk-download) before offering an APK again.
+The gold “Tap to download” button gives Android phones the seller app directly: the Google-signed universal APK from Play Console, so Google Play can update it later (see [the update guide](docs/UPDATING.md#direct-apk-download) before replacing it). The Google Play button displays “Coming soon” until its official URL is configured; the app is in closed testing until production approval. A smaller iOS button with an Apple symbol also displays “Coming soon”. Both coming-soon options are inactive. The Play Store animation and app screens are labelled illustrations.
 
 The footer links to the privacy policy and account deletion pages, which the Black Gold server serves at `https://myblackgold.app/privacy` and `/delete-account`.
 
