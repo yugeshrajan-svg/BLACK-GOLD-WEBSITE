@@ -7,7 +7,7 @@ export const root = resolve(dirname(fileURLToPath(import.meta.url)), '..');
 export const output = join(root, 'dist');
 const styles = [
   'base.css', 'header.css', 'home.css', 'components.css', 'collection.css',
-  'seller-app.css', 'faq.css', 'footer-forms.css', 'motion.css', 'responsive.css'
+  'seller-app.css', 'faq.css', 'footer-forms.css', 'motion.css', 'responsive.css', 'theme.css'
 ];
 
 export function buildSite() {

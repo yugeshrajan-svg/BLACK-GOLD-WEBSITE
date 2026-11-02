@@ -14,31 +14,33 @@
 @font-face { font-family: 'Inter'; font-style: normal; font-weight: 300 700; font-display: swap; src: url('fonts/inter-latin-ext.woff2') format('woff2'); unicode-range: U+0100-02BA, U+02BD-02C5, U+02C7-02CC, U+02CE-02D7, U+02DD-02FF, U+0304, U+0308, U+0329, U+1D00-1DBF, U+1E00-1E9F, U+1EF2-1EFF, U+2020, U+20A0-20AB, U+20AD-20C4, U+2113, U+2C60-2C7F, U+A720-A7FF; }
 
 /* ---------- Colour tokens ----------
-   Light is the default: warm white pages, near-black text, dark gold for small accents
-   (dark enough to read as text). Dark areas re-declare the same tokens below. */
+   Black and metallic gold on every page, matching the home page's glass barrel: near-black
+   pages, warm paper text, bright gold for small accents. The app's own screens (phone
+   mock-ups) stay light. Dark areas re-declare the same tokens below. */
 
 :root {
-  --bg: #f6f4ef;
-  --bg-2: #eeeadf;
-  --bg-3: #ffffff;
-  --line: #e4e0d6;
-  --line-strong: #ccc6b7;
-  --line-gold: rgba(138, 106, 15, .35);
-  --head: #1e262d;
-  --text: #454b4e;
-  --muted: #6b675e;
-  --brand-gold: #c9a227;
-  --gold: #8a6a0f;
-  --gold-hi: #6a5208;
-  --gold-grad: linear-gradient(115deg, #f1dca4 0%, #c9a227 45%, #9a7533 100%);
-  --foil: linear-gradient(100deg, #6e521f 0%, #97753b 45%, #ad8945 60%, #7a5c26 100%);
-  --on-gold: #1e262d;
-  --glass: rgba(246, 244, 239, .92);
-  --chip-bg: rgba(255, 253, 248, .95);
-  --accent: #2e7d4f;
-  --accent-rgb: 46, 125, 79;
+  --bg: #07080a;
+  --bg-2: #0e1013;
+  --bg-3: #15181c;
+  --line: rgba(236, 230, 216, .12);
+  --line-strong: rgba(236, 230, 216, .22);
+  --line-gold: rgba(214, 168, 67, .38);
+  --head: #f3eee2;
+  --text: #d9d3c4;
+  --muted: #a8a294;
+  --brand-gold: #d6a843;
+  --gold: #e0b453;
+  --gold-hi: #f1d38a;
+  /* Metallic gold, light to deep, like the logo's foil */
+  --gold-grad: linear-gradient(115deg, #f8e7b0 0%, #e4bb57 36%, #c48f2e 68%, #8c6220 100%);
+  --foil: linear-gradient(100deg, #b08a48 0%, #e3c98a 45%, #f3e2b4 60%, #c9a227 100%);
+  --on-gold: #1b1408;
+  --glass: rgba(7, 8, 10, .9);
+  --chip-bg: rgba(21, 19, 15, .92);
+  --accent: #7fcf9c;
+  --accent-rgb: 127, 207, 156;
   --accent-bright: #b5dec5;
-  --accent-soft: #e3f1e8;
+  --accent-soft: rgba(127, 207, 156, .12);
 
   --serif: 'Fraunces', Georgia, 'Times New Roman', serif;
   --sans: 'Inter', system-ui, -apple-system, 'Segoe UI', Arial, sans-serif;
@@ -60,29 +62,29 @@
   interpolate-size: allow-keywords;
 }
 
-/* Page accents stay within the app's gold, green and charcoal palette. */
-body[data-page='about'] { --accent: #2e7d4f; --accent-rgb: 46, 125, 79; --accent-bright: #b5dec5; --accent-soft: #e3f1e8; }
-body[data-page='collect'] { --accent: #8a6a0f; --accent-rgb: 138, 106, 15; --accent-bright: #e7c85c; --accent-soft: #f7edcc; }
-body[data-page='app'] { --accent: #8a6a0f; --accent-rgb: 138, 106, 15; --accent-bright: #e7c85c; --accent-soft: #f7edcc; }
-body[data-page='faq'] { --accent: #1e262d; --accent-rgb: 30, 38, 45; --accent-bright: #e7c85c; --accent-soft: #eeeee6; }
+/* Page accents stay within the gold, green and paper palette, bright enough for black. */
+body[data-page='about'] { --accent: #7fcf9c; --accent-rgb: 127, 207, 156; --accent-bright: #b5dec5; --accent-soft: rgba(127, 207, 156, .12); }
+body[data-page='collect'] { --accent: #e0b453; --accent-rgb: 224, 180, 83; --accent-bright: #f1d38a; --accent-soft: rgba(224, 180, 83, .12); }
+body[data-page='app'] { --accent: #e0b453; --accent-rgb: 224, 180, 83; --accent-bright: #f1d38a; --accent-soft: rgba(224, 180, 83, .12); }
+body[data-page='faq'] { --accent: #e6dfcf; --accent-rgb: 230, 223, 207; --accent-bright: #f1d38a; --accent-soft: rgba(230, 223, 207, .08); }
 
-/* Charcoal surrounds frame the light content and app screens. */
+/* Heroes, header and footer: the same black, a shade deeper, so sections still read apart. */
 .hero, .page-hero, .footer,
 .header:not(.on-light), .header.menu-open {
-  --bg: #1e262d;
-  --bg-2: #263139;
-  --bg-3: #303c44;
-  --line: rgba(236, 226, 204, .1);
-  --line-strong: rgba(236, 226, 204, .18);
-  --line-gold: rgba(201, 164, 92, .32);
-  --head: #f6f4ef;
-  --text: #dedacd;
-  --muted: #b9b6ac;
-  --gold: #c9a227;
-  --gold-hi: #f1dca4;
+  --bg: #050607;
+  --bg-2: #0c0e10;
+  --bg-3: #14171a;
+  --line: rgba(236, 230, 216, .1);
+  --line-strong: rgba(236, 230, 216, .18);
+  --line-gold: rgba(214, 168, 67, .34);
+  --head: #f3eee2;
+  --text: #dcd6c7;
+  --muted: #aaa496;
+  --gold: #e0b453;
+  --gold-hi: #f1d38a;
   --foil: linear-gradient(100deg, #b08a48 0%, #e3c98a 45%, #f3e2b4 60%, #c9a227 100%);
-  --glass: rgba(30, 38, 45, .92);
-  --chip-bg: rgba(24, 22, 17, .92);
+  --glass: rgba(5, 6, 7, .9);
+  --chip-bg: rgba(21, 19, 15, .92);
 }
 
 /* ---------- Base ---------- */

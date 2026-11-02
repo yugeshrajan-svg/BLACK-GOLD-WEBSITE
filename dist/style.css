@@ -16,31 +16,33 @@
 @font-face { font-family: 'Inter'; font-style: normal; font-weight: 300 700; font-display: swap; src: url('fonts/inter-latin-ext.woff2') format('woff2'); unicode-range: U+0100-02BA, U+02BD-02C5, U+02C7-02CC, U+02CE-02D7, U+02DD-02FF, U+0304, U+0308, U+0329, U+1D00-1DBF, U+1E00-1E9F, U+1EF2-1EFF, U+2020, U+20A0-20AB, U+20AD-20C4, U+2113, U+2C60-2C7F, U+A720-A7FF; }
 
 /* ---------- Colour tokens ----------
-   Light is the default: warm white pages, near-black text, dark gold for small accents
-   (dark enough to read as text). Dark areas re-declare the same tokens below. */
+   Black and metallic gold on every page, matching the home page's glass barrel: near-black
+   pages, warm paper text, bright gold for small accents. The app's own screens (phone
+   mock-ups) stay light. Dark areas re-declare the same tokens below. */
 
 :root {
-  --bg: #f6f4ef;
-  --bg-2: #eeeadf;
-  --bg-3: #ffffff;
-  --line: #e4e0d6;
-  --line-strong: #ccc6b7;
-  --line-gold: rgba(138, 106, 15, .35);
-  --head: #1e262d;
-  --text: #454b4e;
-  --muted: #6b675e;
-  --brand-gold: #c9a227;
-  --gold: #8a6a0f;
-  --gold-hi: #6a5208;
-  --gold-grad: linear-gradient(115deg, #f1dca4 0%, #c9a227 45%, #9a7533 100%);
-  --foil: linear-gradient(100deg, #6e521f 0%, #97753b 45%, #ad8945 60%, #7a5c26 100%);
-  --on-gold: #1e262d;
-  --glass: rgba(246, 244, 239, .92);
-  --chip-bg: rgba(255, 253, 248, .95);
-  --accent: #2e7d4f;
-  --accent-rgb: 46, 125, 79;
+  --bg: #07080a;
+  --bg-2: #0e1013;
+  --bg-3: #15181c;
+  --line: rgba(236, 230, 216, .12);
+  --line-strong: rgba(236, 230, 216, .22);
+  --line-gold: rgba(214, 168, 67, .38);
+  --head: #f3eee2;
+  --text: #d9d3c4;
+  --muted: #a8a294;
+  --brand-gold: #d6a843;
+  --gold: #e0b453;
+  --gold-hi: #f1d38a;
+  /* Metallic gold, light to deep, like the logo's foil */
+  --gold-grad: linear-gradient(115deg, #f8e7b0 0%, #e4bb57 36%, #c48f2e 68%, #8c6220 100%);
+  --foil: linear-gradient(100deg, #b08a48 0%, #e3c98a 45%, #f3e2b4 60%, #c9a227 100%);
+  --on-gold: #1b1408;
+  --glass: rgba(7, 8, 10, .9);
+  --chip-bg: rgba(21, 19, 15, .92);
+  --accent: #7fcf9c;
+  --accent-rgb: 127, 207, 156;
   --accent-bright: #b5dec5;
-  --accent-soft: #e3f1e8;
+  --accent-soft: rgba(127, 207, 156, .12);
 
   --serif: 'Fraunces', Georgia, 'Times New Roman', serif;
   --sans: 'Inter', system-ui, -apple-system, 'Segoe UI', Arial, sans-serif;
@@ -62,29 +64,29 @@
   interpolate-size: allow-keywords;
 }
 
-/* Page accents stay within the app's gold, green and charcoal palette. */
-body[data-page='about'] { --accent: #2e7d4f; --accent-rgb: 46, 125, 79; --accent-bright: #b5dec5; --accent-soft: #e3f1e8; }
-body[data-page='collect'] { --accent: #8a6a0f; --accent-rgb: 138, 106, 15; --accent-bright: #e7c85c; --accent-soft: #f7edcc; }
-body[data-page='app'] { --accent: #8a6a0f; --accent-rgb: 138, 106, 15; --accent-bright: #e7c85c; --accent-soft: #f7edcc; }
-body[data-page='faq'] { --accent: #1e262d; --accent-rgb: 30, 38, 45; --accent-bright: #e7c85c; --accent-soft: #eeeee6; }
+/* Page accents stay within the gold, green and paper palette, bright enough for black. */
+body[data-page='about'] { --accent: #7fcf9c; --accent-rgb: 127, 207, 156; --accent-bright: #b5dec5; --accent-soft: rgba(127, 207, 156, .12); }
+body[data-page='collect'] { --accent: #e0b453; --accent-rgb: 224, 180, 83; --accent-bright: #f1d38a; --accent-soft: rgba(224, 180, 83, .12); }
+body[data-page='app'] { --accent: #e0b453; --accent-rgb: 224, 180, 83; --accent-bright: #f1d38a; --accent-soft: rgba(224, 180, 83, .12); }
+body[data-page='faq'] { --accent: #e6dfcf; --accent-rgb: 230, 223, 207; --accent-bright: #f1d38a; --accent-soft: rgba(230, 223, 207, .08); }
 
-/* Charcoal surrounds frame the light content and app screens. */
+/* Heroes, header and footer: the same black, a shade deeper, so sections still read apart. */
 .hero, .page-hero, .footer,
 .header:not(.on-light), .header.menu-open {
-  --bg: #1e262d;
-  --bg-2: #263139;
-  --bg-3: #303c44;
-  --line: rgba(236, 226, 204, .1);
-  --line-strong: rgba(236, 226, 204, .18);
-  --line-gold: rgba(201, 164, 92, .32);
-  --head: #f6f4ef;
-  --text: #dedacd;
-  --muted: #b9b6ac;
-  --gold: #c9a227;
-  --gold-hi: #f1dca4;
+  --bg: #050607;
+  --bg-2: #0c0e10;
+  --bg-3: #14171a;
+  --line: rgba(236, 230, 216, .1);
+  --line-strong: rgba(236, 230, 216, .18);
+  --line-gold: rgba(214, 168, 67, .34);
+  --head: #f3eee2;
+  --text: #dcd6c7;
+  --muted: #aaa496;
+  --gold: #e0b453;
+  --gold-hi: #f1d38a;
   --foil: linear-gradient(100deg, #b08a48 0%, #e3c98a 45%, #f3e2b4 60%, #c9a227 100%);
-  --glass: rgba(30, 38, 45, .92);
-  --chip-bg: rgba(24, 22, 17, .92);
+  --glass: rgba(5, 6, 7, .9);
+  --chip-bg: rgba(21, 19, 15, .92);
 }
 
 /* ---------- Base ---------- */
@@ -266,7 +268,7 @@ h1 em, h2 em {
 .brand-logo { display: block; width: auto; border-radius: 10px; transition: height .6s var(--ease), background-color .6s var(--ease); }
 .header .brand-logo { height: 70px; }
 .header.is-scrolled .brand-logo { height: 60px; }
-.header.on-light:not(.menu-open) .brand-logo { background-color: #1e262d; }
+.header.on-light:not(.menu-open) .brand-logo { background-color: transparent; }
 .footer .brand-logo { height: 92px; }
 
 .nav { margin-left: auto; display: flex; align-items: center; gap: 24px; }
@@ -457,6 +459,54 @@ body[data-page='home'] #seller-app { overflow: hidden; }
 .download-status { margin-top: 12px; font-size: 14px; line-height: 1.6; color: var(--muted); }
 .closing-actions { display: flex; align-items: center; flex-wrap: wrap; gap: 12px 20px; }
 #app-dialog .app-download-options { margin: 26px 0; }
+
+/* ---------- Home hero: a glass oil barrel in front of "Black Gold." ----------
+   glass-hero.js draws the barrel and the words with WebGL over the whole hero (laptops)
+   or the top of it (phones and portrait screens). Until it's ready, or without WebGL,
+   .hero-words shows the same words as text in the same place. */
+
+.hero.hero--glass { background: var(--bg); }
+.hero-stage { position: absolute; inset: 0; z-index: -1; overflow: hidden; }
+.hero-glass { position: absolute; inset: 0; width: 100%; height: 100%; opacity: 0; transition: opacity .8s var(--ease); cursor: grab; touch-action: pan-y; }
+.hero-glass.dragging { cursor: grabbing; }
+.hero-stage.is-ready .hero-glass { opacity: 1; }
+.hero-words {
+  position: absolute; left: 64.5%; top: 47%; transform: translate(-50%, -50%);
+  text-align: center; white-space: nowrap; pointer-events: none;
+  font: 700 min(27vh, 13.5vw)/1.02 var(--serif); letter-spacing: 0; color: var(--head);
+  transition: opacity .8s var(--ease);
+}
+.hero-words span, .hero-words em { display: block; }
+.hero-words em { font-weight: 600; padding-right: .06em; background: var(--gold-grad); -webkit-background-clip: text; background-clip: text; color: transparent; }
+.hero-stage.is-ready .hero-words { opacity: 0; }
+
+.hero.hero--glass .hero-inner { max-width: min(37vw, 560px); }
+.hero.hero--glass .hero-title { font-size: clamp(40px, 3.7vw, 60px); }
+
+.hero-turn { position: absolute; top: calc(var(--header-h) + 18px); right: var(--edge-x); display: flex; gap: 14px; }
+.hero-turn[hidden] { display: none; }
+.hero-turn-button { display: grid; place-items: center; width: 42px; height: 42px; border: 2px solid var(--head); border-radius: 50%; color: var(--head); transition: background-color .25s, color .25s; }
+.hero-turn-button svg { width: 18px; height: 18px; }
+.hero-turn-button:hover { background: var(--head); color: var(--bg); }
+
+/* Bottom right: the enquiry button, a line, then a huge outlined 50 L (the minimum pickup) off the edge. */
+.hero-cta { display: flex; align-items: center; flex: 0 1 54%; min-width: 0; margin-right: calc(-1 * var(--edge-x) - 2vw); }
+.hero-cta-line { flex: 1; min-width: 32px; height: 1.5px; background: rgba(236, 230, 216, .55); }
+.hero-count { flex: none; font: 500 clamp(120px, 15vw, 280px)/.8 var(--serif); letter-spacing: -.03em; text-transform: none; color: transparent; -webkit-text-stroke: 1.5px rgba(228, 187, 87, .85); transform: translateY(16%); user-select: none; }
+.hero-count small { font-size: .42em; letter-spacing: 0; }
+
+@media (max-width: 1024px), (max-aspect-ratio: 1/1) {
+  .hero.hero--glass { padding-top: calc(var(--header-h) + min(52svh, 118vw)); }
+  .hero-stage { bottom: auto; height: calc(var(--header-h) + min(52svh, 118vw)); }
+  .hero-words { left: 50%; top: 58%; font-size: min(15svh, 25vw); }
+  .hero.hero--glass .hero-inner { max-width: none; }
+  .hero.hero--glass .hero-title { font-size: clamp(38px, 9vw, 56px); }
+  .hero-turn { top: calc(var(--header-h) + 6px); }
+  .hero.hero--glass .hero-bottom { flex-wrap: wrap; row-gap: 4px; }
+  .hero-cta { order: -1; flex: 1 0 100%; margin-right: calc(-1 * var(--edge-x) - 10vw); }
+  .hero.hero--glass .hero-enquiry { width: auto; }
+  .hero-count { font-size: clamp(96px, 26vw, 170px); }
+}
 
 /* Source: src/styles/components.css */
 /* ---------- Page heroes: title, bullets and one live visual ---------- */
@@ -1661,4 +1711,148 @@ pre { margin: 20px 0; padding: 22px; white-space: pre-wrap; font: 500 14px/1.85 
   .home-oil[aria-selected='true'] .home-jar-wave { animation: none; }
   .home-oil:hover, .card:hover { translate: none; }
   .motion-toggle { display: none; }
+}
+
+/* Source: src/styles/theme.css */
+/* ==========================================================================
+   Black and metallic gold, everywhere
+   The colour tokens in base.css already set the black palette. This file, loaded
+   last, darkens the surfaces the other stylesheets paint in light colours, and
+   keeps a few "light islands" (illustration panels) readable on purpose.
+   ========================================================================== */
+
+/* ---------- Gold: metallic, light to deep ---------- */
+
+.button--gold { background: var(--gold-grad); color: var(--on-gold); }
+.button--gold:hover { background: linear-gradient(115deg, #fff3cf 0%, #ecc66b 38%, #cf9a35 72%, #9a6c24 100%); box-shadow: 0 8px 28px -14px rgba(228, 187, 87, .8); }
+.hero h1 em, .closing h2 em {
+  padding-right: .06em;
+  background: var(--gold-grad); -webkit-background-clip: text; background-clip: text; color: transparent;
+}
+
+/* ---------- Page heroes, sections, closing banner ---------- */
+
+.page-hero {
+  background:
+    radial-gradient(65% 90% at 90% 40%, rgba(var(--accent-rgb), .16) 0%, transparent 75%),
+    radial-gradient(45% 55% at 5% 100%, rgba(214, 168, 67, .08) 0%, transparent 70%),
+    var(--bg);
+}
+.closing {
+  background:
+    radial-gradient(ellipse at 95% 10%, rgba(var(--accent-rgb), .16), transparent 65%),
+    linear-gradient(115deg, #15110a 0%, #0b0a08 45%, var(--bg) 100%);
+}
+
+/* Home sections that were cream or mint */
+body[data-page='home'] #seller-app {
+  --accent: #e0b453; --accent-rgb: 224, 180, 83; --accent-bright: #f1d38a; --accent-soft: rgba(224, 180, 83, .12);
+  background: radial-gradient(ellipse at 83% 32%, rgba(214, 168, 67, .16) 0%, transparent 52%), var(--bg);
+}
+body[data-page='home'] #what-we-collect {
+  background:
+    linear-gradient(180deg, rgba(7, 8, 10, .9) 0%, rgba(7, 8, 10, .78) 24%, rgba(7, 8, 10, .55) 38%, rgba(7, 8, 10, .55) 72%, rgba(7, 8, 10, .8) 88%, rgba(7, 8, 10, .92) 100%),
+    #07080a url('assets/about-refinery.webp') center 65% / cover no-repeat;
+}
+body[data-page='home'] #what-we-collect .home-oil-panel { background: linear-gradient(rgba(var(--tile-rgb), .12), rgba(var(--tile-rgb), .12)), rgba(14, 16, 19, .88); }
+body[data-page='home'] #pickup-process { background-color: var(--bg-2); --accent: #7fcf9c; --accent-rgb: 127, 207, 156; }
+body[data-page='home'] #questions { background-color: var(--bg); --accent: #e0b453; --accent-rgb: 224, 180, 83; }
+.home-help-link { background: var(--bg-3); border-top-color: var(--line-strong); }
+/* "Our promise" keeps its coloured scenes, on black with a gold glow instead of teal. */
+.section.promise-section {
+  background:
+    radial-gradient(ellipse at 4% 8%, rgba(214, 168, 67, .12), transparent 50%),
+    radial-gradient(ellipse at 96% 92%, rgba(214, 168, 67, .07), transparent 55%),
+    var(--bg-2);
+}
+.footer { background: var(--bg); }
+
+/* ---------- Cards: dark surfaces, tints bright enough for black ---------- */
+
+.card { background: radial-gradient(300px circle at var(--mx, 0%) var(--my, 0%), rgba(var(--tile-rgb), .14), transparent 80%), var(--bg-3); }
+.card, .home-steps li, .home-steps li:nth-child(4) { --tile-rgb: 127, 207, 156; }
+.card:nth-child(2), .home-steps li:nth-child(2) { --tile-rgb: 224, 180, 83; }
+.card:nth-child(3), .home-steps li:nth-child(3) { --tile-rgb: 205, 200, 188; }
+
+.home-oil { --tile-rgb: 226, 160, 72; background: radial-gradient(240px circle at var(--mx, 70%) var(--my, 20%), rgba(var(--tile-rgb), .14), transparent 80%), var(--bg-3); }
+.home-oil[data-home-oil='hydraulic'], .home-oil-panel[data-tone='hydraulic'] { --tile-rgb: 127, 207, 156; }
+.home-oil[data-home-oil='transformer'], .home-oil-panel[data-tone='transformer'] { --tile-rgb: 205, 200, 188; }
+.home-oil-panel { --tile-rgb: 226, 160, 72; }
+.home-oil-indicator { background: var(--bg-3); }
+
+/* Pickup route (home) */
+.route-caption, .route--pickup .route-caption { background: rgba(21, 24, 28, .72); }
+.route--pickup[data-step='3'] .route-caption { border-color: rgba(127, 207, 156, .5); background: rgba(127, 207, 156, .12); }
+.pickup-progress { border-color: var(--line-strong); background: rgba(14, 16, 19, .92); }
+.route--pickup .route-track { background: rgba(236, 230, 216, .18); }
+.route--pickup .home-steps li { background: rgba(21, 24, 28, .62); }
+.route--pickup .home-steps li:last-child { --tile-rgb: 127, 207, 156; border-color: rgba(127, 207, 156, .5); background: rgba(127, 207, 156, .1); }
+.route--pickup .home-steps li::before { background: var(--bg-3); }
+.route--pickup .home-steps li:last-child h3, .route--pickup .route-caption-no,
+.route--pickup[data-step='3'] .route-caption-no, .route--pickup[data-step='3'] .route-caption-title,
+.pickup-road-labels li:last-child { color: #7fcf9c; }
+.pickup-journey-hint, .pickup-road-labels, .home-app-platform { color: var(--muted); }
+.home-app-benefit-icon { color: var(--gold); }
+
+/* ---------- Download buttons ---------- */
+
+.store-link { border-color: var(--line-strong); background: var(--bg-3); }
+.store-link[href]:hover { border-color: var(--line-gold); background: #1c2025; }
+.store-links .store-link--apk { border-color: transparent; background: var(--gold-grad); color: var(--on-gold); }
+.store-link--apk small { color: #3a2a0c; }
+.store-links .store-link--apk > svg, .store-links .store-link--apk .store-link-arrow { stroke: var(--on-gold); color: var(--on-gold); }
+.store-links .store-link--apk:hover { background: linear-gradient(115deg, #fff3cf 0%, #ecc66b 38%, #cf9a35 72%, #9a6c24 100%); }
+
+/* ---------- Dialogs and forms ---------- */
+
+dialog { background: #111317; box-shadow: 0 40px 100px -30px #000; }
+.field select {
+  background: var(--bg-3) url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%23f3eee2' stroke-width='2.4' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='m6 9 6 6 6-6'/%3E%3C/svg%3E") no-repeat right 16px center / 20px;
+}
+.field select:invalid { color: var(--muted); }
+/* Browsers that draw the option list themselves (Windows, Linux) use these; phones and macOS use their own picker. */
+.field select option { background: #15181c; color: #f3eee2; }
+dialog::backdrop { background: rgba(0, 0, 0, .66); }
+.form-note { border-left-color: var(--gold); background: rgba(224, 180, 83, .1); color: var(--gold-hi); }
+
+/* ---------- FAQs ---------- */
+
+.faq-search-field { background: var(--bg-3); }
+details[open] .faq-icon { color: var(--bg); }
+
+/* ---------- Seller app page ---------- */
+
+.seller-page-nav { background: var(--bg-2); }
+.seller-page-nav a { color: var(--head); text-decoration-color: rgba(214, 168, 67, .5); }
+.seller-page-nav a:hover { color: var(--gold); }
+.section.seller-features, .section.seller-workflow { background: var(--bg); }
+.section.seller-setup, .section.seller-help { background: var(--bg-2); }
+.seller-app-tabs dt span { background: var(--bg-3); color: var(--gold); }
+.seller-minimum { border-color: var(--line-gold); }
+.seller-minimum > strong { color: var(--gold); }
+.seller-checklist { border-color: var(--line-strong); background: var(--bg-3); box-shadow: none; }
+.seller-checklist li { border-top-color: var(--line); }
+.seller-check { background: rgba(127, 207, 156, .14); color: #7fcf9c; }
+.seller-checklist strong { color: var(--head); }
+.seller-help-list, .seller-help-list details { border-color: var(--line-strong); }
+
+/* The journey's step cards go dark; its illustration panel stays a light island. */
+.seller-journey-step { border-color: var(--line-strong); border-left-color: rgba(214, 168, 67, .55); background: var(--bg-3); }
+.seller-journey-step::after { background: var(--line-strong); }
+.seller-journey-step.is-current { border-color: var(--gold); background: rgba(224, 180, 83, .08); box-shadow: none; }
+.sj-step-number { background: rgba(224, 180, 83, .14); color: var(--gold); }
+.sj-step-role { color: var(--muted); }
+.sj-step-note { border-top-color: var(--line); color: var(--gold); }
+.seller-journey-step--paid { border-left-color: #7fcf9c; background: rgba(127, 207, 156, .08); }
+.seller-journey-step--paid.is-current { border-color: #7fcf9c; background: rgba(127, 207, 156, .12); }
+.seller-journey-step--paid h3, .seller-journey-step--paid .sj-step-number { color: #7fcf9c; }
+.seller-journey-step--paid .sj-step-number { background: rgba(127, 207, 156, .14); }
+
+/* Light islands: illustration panels keep the light palette, so their text stays dark. */
+.sj-panel {
+  --bg: #fffdf8; --bg-2: #f6f4ef; --bg-3: #ffffff;
+  --line: #e4e0d6; --line-strong: #ccc6b7;
+  --head: #1e262d; --text: #454b4e; --muted: #6b675e;
+  --gold: #8a6a0f; --gold-hi: #6a5208;
+  color: var(--text);
 }

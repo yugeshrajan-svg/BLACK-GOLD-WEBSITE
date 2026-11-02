@@ -166,3 +166,51 @@ body[data-page='home'] #seller-app { overflow: hidden; }
 .download-status { margin-top: 12px; font-size: 14px; line-height: 1.6; color: var(--muted); }
 .closing-actions { display: flex; align-items: center; flex-wrap: wrap; gap: 12px 20px; }
 #app-dialog .app-download-options { margin: 26px 0; }
+
+/* ---------- Home hero: a glass oil barrel in front of "Black Gold." ----------
+   glass-hero.js draws the barrel and the words with WebGL over the whole hero (laptops)
+   or the top of it (phones and portrait screens). Until it's ready, or without WebGL,
+   .hero-words shows the same words as text in the same place. */
+
+.hero.hero--glass { background: var(--bg); }
+.hero-stage { position: absolute; inset: 0; z-index: -1; overflow: hidden; }
+.hero-glass { position: absolute; inset: 0; width: 100%; height: 100%; opacity: 0; transition: opacity .8s var(--ease); cursor: grab; touch-action: pan-y; }
+.hero-glass.dragging { cursor: grabbing; }
+.hero-stage.is-ready .hero-glass { opacity: 1; }
+.hero-words {
+  position: absolute; left: 64.5%; top: 47%; transform: translate(-50%, -50%);
+  text-align: center; white-space: nowrap; pointer-events: none;
+  font: 700 min(27vh, 13.5vw)/1.02 var(--serif); letter-spacing: 0; color: var(--head);
+  transition: opacity .8s var(--ease);
+}
+.hero-words span, .hero-words em { display: block; }
+.hero-words em { font-weight: 600; padding-right: .06em; background: var(--gold-grad); -webkit-background-clip: text; background-clip: text; color: transparent; }
+.hero-stage.is-ready .hero-words { opacity: 0; }
+
+.hero.hero--glass .hero-inner { max-width: min(37vw, 560px); }
+.hero.hero--glass .hero-title { font-size: clamp(40px, 3.7vw, 60px); }
+
+.hero-turn { position: absolute; top: calc(var(--header-h) + 18px); right: var(--edge-x); display: flex; gap: 14px; }
+.hero-turn[hidden] { display: none; }
+.hero-turn-button { display: grid; place-items: center; width: 42px; height: 42px; border: 2px solid var(--head); border-radius: 50%; color: var(--head); transition: background-color .25s, color .25s; }
+.hero-turn-button svg { width: 18px; height: 18px; }
+.hero-turn-button:hover { background: var(--head); color: var(--bg); }
+
+/* Bottom right: the enquiry button, a line, then a huge outlined 50 L (the minimum pickup) off the edge. */
+.hero-cta { display: flex; align-items: center; flex: 0 1 54%; min-width: 0; margin-right: calc(-1 * var(--edge-x) - 2vw); }
+.hero-cta-line { flex: 1; min-width: 32px; height: 1.5px; background: rgba(236, 230, 216, .55); }
+.hero-count { flex: none; font: 500 clamp(120px, 15vw, 280px)/.8 var(--serif); letter-spacing: -.03em; text-transform: none; color: transparent; -webkit-text-stroke: 1.5px rgba(228, 187, 87, .85); transform: translateY(16%); user-select: none; }
+.hero-count small { font-size: .42em; letter-spacing: 0; }
+
+@media (max-width: 1024px), (max-aspect-ratio: 1/1) {
+  .hero.hero--glass { padding-top: calc(var(--header-h) + min(52svh, 118vw)); }
+  .hero-stage { bottom: auto; height: calc(var(--header-h) + min(52svh, 118vw)); }
+  .hero-words { left: 50%; top: 58%; font-size: min(15svh, 25vw); }
+  .hero.hero--glass .hero-inner { max-width: none; }
+  .hero.hero--glass .hero-title { font-size: clamp(38px, 9vw, 56px); }
+  .hero-turn { top: calc(var(--header-h) + 6px); }
+  .hero.hero--glass .hero-bottom { flex-wrap: wrap; row-gap: 4px; }
+  .hero-cta { order: -1; flex: 1 0 100%; margin-right: calc(-1 * var(--edge-x) - 10vw); }
+  .hero.hero--glass .hero-enquiry { width: auto; }
+  .hero-count { font-size: clamp(96px, 26vw, 170px); }
+}

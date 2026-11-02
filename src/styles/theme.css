@@ -1,0 +1,142 @@
+/* ==========================================================================
+   Black and metallic gold, everywhere
+   The colour tokens in base.css already set the black palette. This file, loaded
+   last, darkens the surfaces the other stylesheets paint in light colours, and
+   keeps a few "light islands" (illustration panels) readable on purpose.
+   ========================================================================== */
+
+/* ---------- Gold: metallic, light to deep ---------- */
+
+.button--gold { background: var(--gold-grad); color: var(--on-gold); }
+.button--gold:hover { background: linear-gradient(115deg, #fff3cf 0%, #ecc66b 38%, #cf9a35 72%, #9a6c24 100%); box-shadow: 0 8px 28px -14px rgba(228, 187, 87, .8); }
+.hero h1 em, .closing h2 em {
+  padding-right: .06em;
+  background: var(--gold-grad); -webkit-background-clip: text; background-clip: text; color: transparent;
+}
+
+/* ---------- Page heroes, sections, closing banner ---------- */
+
+.page-hero {
+  background:
+    radial-gradient(65% 90% at 90% 40%, rgba(var(--accent-rgb), .16) 0%, transparent 75%),
+    radial-gradient(45% 55% at 5% 100%, rgba(214, 168, 67, .08) 0%, transparent 70%),
+    var(--bg);
+}
+.closing {
+  background:
+    radial-gradient(ellipse at 95% 10%, rgba(var(--accent-rgb), .16), transparent 65%),
+    linear-gradient(115deg, #15110a 0%, #0b0a08 45%, var(--bg) 100%);
+}
+
+/* Home sections that were cream or mint */
+body[data-page='home'] #seller-app {
+  --accent: #e0b453; --accent-rgb: 224, 180, 83; --accent-bright: #f1d38a; --accent-soft: rgba(224, 180, 83, .12);
+  background: radial-gradient(ellipse at 83% 32%, rgba(214, 168, 67, .16) 0%, transparent 52%), var(--bg);
+}
+body[data-page='home'] #what-we-collect {
+  background:
+    linear-gradient(180deg, rgba(7, 8, 10, .9) 0%, rgba(7, 8, 10, .78) 24%, rgba(7, 8, 10, .55) 38%, rgba(7, 8, 10, .55) 72%, rgba(7, 8, 10, .8) 88%, rgba(7, 8, 10, .92) 100%),
+    #07080a url('assets/about-refinery.webp') center 65% / cover no-repeat;
+}
+body[data-page='home'] #what-we-collect .home-oil-panel { background: linear-gradient(rgba(var(--tile-rgb), .12), rgba(var(--tile-rgb), .12)), rgba(14, 16, 19, .88); }
+body[data-page='home'] #pickup-process { background-color: var(--bg-2); --accent: #7fcf9c; --accent-rgb: 127, 207, 156; }
+body[data-page='home'] #questions { background-color: var(--bg); --accent: #e0b453; --accent-rgb: 224, 180, 83; }
+.home-help-link { background: var(--bg-3); border-top-color: var(--line-strong); }
+/* "Our promise" keeps its coloured scenes, on black with a gold glow instead of teal. */
+.section.promise-section {
+  background:
+    radial-gradient(ellipse at 4% 8%, rgba(214, 168, 67, .12), transparent 50%),
+    radial-gradient(ellipse at 96% 92%, rgba(214, 168, 67, .07), transparent 55%),
+    var(--bg-2);
+}
+.footer { background: var(--bg); }
+
+/* ---------- Cards: dark surfaces, tints bright enough for black ---------- */
+
+.card { background: radial-gradient(300px circle at var(--mx, 0%) var(--my, 0%), rgba(var(--tile-rgb), .14), transparent 80%), var(--bg-3); }
+.card, .home-steps li, .home-steps li:nth-child(4) { --tile-rgb: 127, 207, 156; }
+.card:nth-child(2), .home-steps li:nth-child(2) { --tile-rgb: 224, 180, 83; }
+.card:nth-child(3), .home-steps li:nth-child(3) { --tile-rgb: 205, 200, 188; }
+
+.home-oil { --tile-rgb: 226, 160, 72; background: radial-gradient(240px circle at var(--mx, 70%) var(--my, 20%), rgba(var(--tile-rgb), .14), transparent 80%), var(--bg-3); }
+.home-oil[data-home-oil='hydraulic'], .home-oil-panel[data-tone='hydraulic'] { --tile-rgb: 127, 207, 156; }
+.home-oil[data-home-oil='transformer'], .home-oil-panel[data-tone='transformer'] { --tile-rgb: 205, 200, 188; }
+.home-oil-panel { --tile-rgb: 226, 160, 72; }
+.home-oil-indicator { background: var(--bg-3); }
+
+/* Pickup route (home) */
+.route-caption, .route--pickup .route-caption { background: rgba(21, 24, 28, .72); }
+.route--pickup[data-step='3'] .route-caption { border-color: rgba(127, 207, 156, .5); background: rgba(127, 207, 156, .12); }
+.pickup-progress { border-color: var(--line-strong); background: rgba(14, 16, 19, .92); }
+.route--pickup .route-track { background: rgba(236, 230, 216, .18); }
+.route--pickup .home-steps li { background: rgba(21, 24, 28, .62); }
+.route--pickup .home-steps li:last-child { --tile-rgb: 127, 207, 156; border-color: rgba(127, 207, 156, .5); background: rgba(127, 207, 156, .1); }
+.route--pickup .home-steps li::before { background: var(--bg-3); }
+.route--pickup .home-steps li:last-child h3, .route--pickup .route-caption-no,
+.route--pickup[data-step='3'] .route-caption-no, .route--pickup[data-step='3'] .route-caption-title,
+.pickup-road-labels li:last-child { color: #7fcf9c; }
+.pickup-journey-hint, .pickup-road-labels, .home-app-platform { color: var(--muted); }
+.home-app-benefit-icon { color: var(--gold); }
+
+/* ---------- Download buttons ---------- */
+
+.store-link { border-color: var(--line-strong); background: var(--bg-3); }
+.store-link[href]:hover { border-color: var(--line-gold); background: #1c2025; }
+.store-links .store-link--apk { border-color: transparent; background: var(--gold-grad); color: var(--on-gold); }
+.store-link--apk small { color: #3a2a0c; }
+.store-links .store-link--apk > svg, .store-links .store-link--apk .store-link-arrow { stroke: var(--on-gold); color: var(--on-gold); }
+.store-links .store-link--apk:hover { background: linear-gradient(115deg, #fff3cf 0%, #ecc66b 38%, #cf9a35 72%, #9a6c24 100%); }
+
+/* ---------- Dialogs and forms ---------- */
+
+dialog { background: #111317; box-shadow: 0 40px 100px -30px #000; }
+.field select {
+  background: var(--bg-3) url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%23f3eee2' stroke-width='2.4' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='m6 9 6 6 6-6'/%3E%3C/svg%3E") no-repeat right 16px center / 20px;
+}
+.field select:invalid { color: var(--muted); }
+/* Browsers that draw the option list themselves (Windows, Linux) use these; phones and macOS use their own picker. */
+.field select option { background: #15181c; color: #f3eee2; }
+dialog::backdrop { background: rgba(0, 0, 0, .66); }
+.form-note { border-left-color: var(--gold); background: rgba(224, 180, 83, .1); color: var(--gold-hi); }
+
+/* ---------- FAQs ---------- */
+
+.faq-search-field { background: var(--bg-3); }
+details[open] .faq-icon { color: var(--bg); }
+
+/* ---------- Seller app page ---------- */
+
+.seller-page-nav { background: var(--bg-2); }
+.seller-page-nav a { color: var(--head); text-decoration-color: rgba(214, 168, 67, .5); }
+.seller-page-nav a:hover { color: var(--gold); }
+.section.seller-features, .section.seller-workflow { background: var(--bg); }
+.section.seller-setup, .section.seller-help { background: var(--bg-2); }
+.seller-app-tabs dt span { background: var(--bg-3); color: var(--gold); }
+.seller-minimum { border-color: var(--line-gold); }
+.seller-minimum > strong { color: var(--gold); }
+.seller-checklist { border-color: var(--line-strong); background: var(--bg-3); box-shadow: none; }
+.seller-checklist li { border-top-color: var(--line); }
+.seller-check { background: rgba(127, 207, 156, .14); color: #7fcf9c; }
+.seller-checklist strong { color: var(--head); }
+.seller-help-list, .seller-help-list details { border-color: var(--line-strong); }
+
+/* The journey's step cards go dark; its illustration panel stays a light island. */
+.seller-journey-step { border-color: var(--line-strong); border-left-color: rgba(214, 168, 67, .55); background: var(--bg-3); }
+.seller-journey-step::after { background: var(--line-strong); }
+.seller-journey-step.is-current { border-color: var(--gold); background: rgba(224, 180, 83, .08); box-shadow: none; }
+.sj-step-number { background: rgba(224, 180, 83, .14); color: var(--gold); }
+.sj-step-role { color: var(--muted); }
+.sj-step-note { border-top-color: var(--line); color: var(--gold); }
+.seller-journey-step--paid { border-left-color: #7fcf9c; background: rgba(127, 207, 156, .08); }
+.seller-journey-step--paid.is-current { border-color: #7fcf9c; background: rgba(127, 207, 156, .12); }
+.seller-journey-step--paid h3, .seller-journey-step--paid .sj-step-number { color: #7fcf9c; }
+.seller-journey-step--paid .sj-step-number { background: rgba(127, 207, 156, .14); }
+
+/* Light islands: illustration panels keep the light palette, so their text stays dark. */
+.sj-panel {
+  --bg: #fffdf8; --bg-2: #f6f4ef; --bg-3: #ffffff;
+  --line: #e4e0d6; --line-strong: #ccc6b7;
+  --head: #1e262d; --text: #454b4e; --muted: #6b675e;
+  --gold: #8a6a0f; --gold-hi: #6a5208;
+  color: var(--text);
+}

@@ -449,34 +449,19 @@ assert.equal(stillPickup.q('.home-steps .is-highlighted h3').textContent,'Instal
 stillPickup.click('#pickup-process [data-route-step="3"]'); stillPickup.flush();
 assert.equal(stillPickup.q('.home-steps .is-highlighted h3').textContent,'Get paid. Keep the receipt.');
 
-const flowState = {created:0, playing:false, rendered:false};
-const flowing = load('index.html',false,'en',(canvas,options) => {
-  flowState.created++;
-  assert.equal(options.mode,'pour');
-  assert.equal(options.parallax,0);
-  return {
-    renderOnce() { flowState.rendered = true; canvas.classList.add('is-ready'); },
-    play() { flowState.playing = true; },
-    pause() { flowState.playing = false; }
-  };
-});
-assert.equal(flowState.created,1); assert.equal(flowState.rendered,true); assert.equal(flowState.playing,true);
-flowing.click('[data-motion]'); assert.equal(flowState.playing,false);
-flowing.click('[data-motion]'); assert.equal(flowState.playing,true);
-flowing.doc.hidden = true; flowing.doc.fire('visibilitychange'); assert.equal(flowState.playing,false);
-flowing.doc.hidden = false; flowing.doc.fire('visibilitychange'); assert.equal(flowState.playing,true);
-flowing.setReduced(true); assert.equal(flowState.playing,false);
-flowing.setReduced(false); assert.equal(flowState.playing,true);
-assert.equal(flowState.created,1,'Reuse the surface when resuming motion');
-let stillCreated = 0;
-const still = load('index.html',true,'en',() => { stillCreated++; return null; });
-assert.equal(stillCreated,0,'Reduced motion must keep the poster without creating a surface');
+// Home hero: the glass barrel is an ES module (glass-hero.js) that the browser loads on its own.
+// Without it the hero keeps "Black Gold." as text and hides the rotate arrows; the page's own
+// buttons and the Pause motion switch (which the barrel follows) still work.
+const glassHome = load('index.html',false);
+assert.ok(glassHome.q('.hero .hero-words'),'The hero shows the words as text until the 3D scene is ready');
+assert.ok(glassHome.q('[data-glass-turn]').hasAttribute('hidden'),'The rotate arrows wait for the 3D scene');
+glassHome.click('.hero-bottom [data-motion]');
+assert.ok(glassHome.doc.documentElement.classList.contains('motion-paused'),'Pause motion sets the class the barrel watches');
+glassHome.click('.hero-bottom [data-motion]');
+assert.ok(!glassHome.doc.documentElement.classList.contains('motion-paused'));
+const still = load('index.html',true);
 still.click('[data-home-oil="transformer"]'); assert.equal(still.q('#home-oil-panel').dataset.tone,'transformer');
-for (const factory of [() => null, () => { throw new Error('No WebGL'); }]) {
-  const fallback = load('index.html',false,'en',factory);
-  assert.equal(fallback.q('#oil-flow').classList.contains('is-ready'),false);
-  fallback.click('[data-home-enquire]'); assert.equal(fallback.q('#pickup-dialog').open,true);
-}
+still.click('[data-home-enquire]'); assert.equal(still.q('#pickup-dialog').open,true);
 
 const autoplay = load('seller-app.html');
 autoplay.advance(4700); assert.ok(autoplay.q('.screen.s2').classList.contains('is-active'));

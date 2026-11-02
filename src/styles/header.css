@@ -27,7 +27,7 @@
 .brand-logo { display: block; width: auto; border-radius: 10px; transition: height .6s var(--ease), background-color .6s var(--ease); }
 .header .brand-logo { height: 70px; }
 .header.is-scrolled .brand-logo { height: 60px; }
-.header.on-light:not(.menu-open) .brand-logo { background-color: #1e262d; }
+.header.on-light:not(.menu-open) .brand-logo { background-color: transparent; }
 .footer .brand-logo { height: 92px; }
 
 .nav { margin-left: auto; display: flex; align-items: center; gap: 24px; }
