@@ -64,7 +64,7 @@ legend { padding: 0; margin-bottom: 12px; }
 /* A small sample jar per oil, in the same colours as the home page jars. */
 .oil-option--engine { --sample-top: #615039; --sample-bottom: #1e1c16; --sample-cap: #3c4037; }
 .oil-option--hydraulic { --sample-top: #d59a41; --sample-bottom: #8c4714; --sample-cap: #205f4c; }
-.oil-option--transfer { --sample-top: #c7a256; --sample-bottom: #6c461b; --sample-cap: #1e262d; }
+.oil-option--transformer { --sample-top: #c7a256; --sample-bottom: #6c461b; --sample-cap: #1e262d; }
 .enquiry-jar { display: block; width: 66px; height: 88px; margin: 0 0 8px -6px; overflow: visible; transition: transform .3s var(--ease); }
 .choice-grid input:checked + span .enquiry-jar { transform: translateY(-2px) scale(1.06); }
 .enquiry-jar-shadow { fill: rgba(30, 38, 45, .12); }

@@ -25,7 +25,7 @@
   var OILS = {
     engine: { value: 'Used engine oil', title: 'Used engine oil', name: 'Engine oil', label: 'ENGINE', sample: 'SAMPLE · 01' },
     hydraulic: { value: 'Used hydraulic oil', title: 'Used hydraulic oil', name: 'Hydraulic oil', label: 'HYDRAULIC', sample: 'SAMPLE · 02' },
-    transfer: { value: 'Used transfer oil', title: 'Used transfer oil', name: 'Transfer oil', label: 'TRANSFER', sample: 'SAMPLE · 03' }
+    transformer: { value: 'Used transformer oil', title: 'Used transformer oil', name: 'Transformer oil', label: 'TRANSFORMER', sample: 'SAMPLE · 03' }
   };
   var OIL_KEYS = Object.keys(OILS);
   function oilText(key, field) { return OILS[key][field]; }

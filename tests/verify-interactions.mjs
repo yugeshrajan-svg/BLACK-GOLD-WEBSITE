@@ -251,9 +251,9 @@ for (const reduced of [false,true]) {
     assert.equal(home.q('input[value="Used hydraulic oil"]').checked,true);
     assert.equal(home.q('#pickup-dialog').open,true);
     home.q('[data-home-oil="hydraulic"]').fire('keydown',{key:'End'});
-    assert.equal(home.q('[data-home-oil="transfer"]').getAttribute('aria-selected'),'true');
-    assert.equal(home.q('#home-oil-panel').dataset.tone,'transfer');
-    assert.equal(home.q('[data-home-oil="transfer"]').getAttribute('aria-selected'),'true');
+    assert.equal(home.q('[data-home-oil="transformer"]').getAttribute('aria-selected'),'true');
+    assert.equal(home.q('#home-oil-panel').dataset.tone,'transformer');
+    assert.equal(home.q('[data-home-oil="transformer"]').getAttribute('aria-selected'),'true');
 
     const about = load('about.html',reduced,browserLanguage);
     about.click('[data-refinery-stage="2"]'); about.flush();
@@ -277,13 +277,13 @@ for (const reduced of [false,true]) {
     const collect = load('collect.html',reduced,browserLanguage);
     assert.ok(collect.q('#serve-title'),'Business eligibility belongs on What We Collect');
     assert.equal(collect.qa('.mini-jar').length,0,'Use one interactive jar presentation on this page');
-    collect.click('[data-oil-preview="transfer"]'); collect.flush();
+    collect.click('[data-oil-preview="transformer"]'); collect.flush();
     collect.advance(15000);
-    assert.equal(collect.q('.oil-stage').dataset.tone,'transfer');
-    assert.equal(collect.q('.oil-card.is-selected').dataset.oil,'transfer');
+    assert.equal(collect.q('.oil-stage').dataset.tone,'transformer');
+    assert.equal(collect.q('.oil-card.is-selected').dataset.oil,'transformer');
     assert.equal(collect.q('[data-oil-description]').textContent,'From industrial operations');
     collect.click('.page-hero-copy [data-pickup]');
-    assert.equal(collect.q('input[value="Used transfer oil"]').checked,true);
+    assert.equal(collect.q('input[value="Used transformer oil"]').checked,true);
 
     const app = load('seller-app.html',reduced,browserLanguage);
     assert.equal(app.qa('#app-workflow .seller-journey-step').length,8,'The Seller App journey keeps all eight readable steps');
@@ -471,7 +471,7 @@ assert.equal(flowState.created,1,'Reuse the surface when resuming motion');
 let stillCreated = 0;
 const still = load('index.html',true,'en',() => { stillCreated++; return null; });
 assert.equal(stillCreated,0,'Reduced motion must keep the poster without creating a surface');
-still.click('[data-home-oil="transfer"]'); assert.equal(still.q('#home-oil-panel').dataset.tone,'transfer');
+still.click('[data-home-oil="transformer"]'); assert.equal(still.q('#home-oil-panel').dataset.tone,'transformer');
 for (const factory of [() => null, () => { throw new Error('No WebGL'); }]) {
   const fallback = load('index.html',false,'en',factory);
   assert.equal(fallback.q('#oil-flow').classList.contains('is-ready'),false);
