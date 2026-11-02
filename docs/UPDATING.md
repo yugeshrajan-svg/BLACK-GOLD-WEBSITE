@@ -65,7 +65,7 @@ The download buttons are configured in `src/config/app-downloads.json`:
 ```json
 {
   "googlePlay": "",
-  "apk": "assets/black-gold-seller.apk"
+  "apk": ""
 }
 ```
 
@@ -73,15 +73,17 @@ When the seller app is public on Google Play, set `googlePlay` to `https://play.
 
 ### Direct APK download
 
-The “Tap to download” button serves **`public/assets/black-gold-seller.apk`**: the **Google-signed universal APK** of version 1.0.0 (SHA-256 `ea62ad0107c5143e3b9b6381422156665eceb41f067757917d91b07b0410c3ce`). It carries the same signature as the Google Play app, so Google Play can update phones that installed it from the website, and it runs on every Android 8.0+ phone (all four CPU types).
+The website's “Tap to download” button is **off** for now (`"apk": ""`). Version 1.0.0's Google-signed APK was tried on 2 November 2026 and removed the same day: Play Console's **automatic protection** was on, so Google added a check (`com.pairip.licensecheck`) that stops the app opening unless Google Play installed it. Website installs showed “Something went wrong. Check that Google Play is enabled…”.
 
-Only ever publish that kind of file. Android only updates an installed app with a build signed by the same key: a debug build (the website's first APK, removed on 2 November 2026) or an APK signed with the upload key would block the Google Play version until the user uninstalls it. Website installs also don't count towards Google Play's closed-testing requirement, so testers still join through the Play test link.
+The file to publish is the **Google-signed universal APK of a release made with automatic protection turned off**. It carries the same signature as the Google Play app, so Google Play can update phones that installed it from the website, and it runs on every Android 8.0+ phone. Never publish a debug build or an APK signed with the upload key: Android only updates an installed app with a build signed by the same key, so those would block the Google Play version until the user uninstalls them. Website installs don't count towards Google Play's closed-testing requirement, so testers still join through the Play test link.
 
-To update the download for a new release:
+To turn the download on (and to update it for each new release):
 
-1. Play Console → **Test and release → Latest releases and bundles** → click the new version's app bundle (this opens **App bundle explorer**) → **Downloads** → **Signed, universal APK**.
-2. Replace **`public/assets/black-gold-seller.apk`** with it, keeping that name.
-3. Run `npm run check`, then commit and push. An empty `apk` value in `src/config/app-downloads.json` hides the button and the APK install steps again.
+1. Play Console → **Test and release → App integrity** → **Automatic protection**: make sure it's **off** before the release is uploaded. It only changes releases made afterwards.
+2. Play Console → **Test and release → Latest releases and bundles** → click that version's app bundle (this opens **App bundle explorer**) → **Downloads** → **Signed, universal APK**.
+3. Install it on a phone from a download (not from Play) and check that the app opens.
+4. Copy it to **`public/assets/black-gold-seller.apk`** and set `"apk": "assets/black-gold-seller.apk"` in `src/config/app-downloads.json`.
+5. Run `npm run check`, then commit and push. An empty `apk` value hides the button and the APK install steps again.
 
 ## Change images or branding
 

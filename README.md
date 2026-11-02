@@ -76,7 +76,7 @@ After a successful check, commit and push, including `dist/`. The live site at m
 
 ## Current download and enquiry behaviour
 
-The gold “Tap to download” button gives Android phones the seller app directly: the Google-signed universal APK from Play Console, so Google Play can update it later (see [the update guide](docs/UPDATING.md#direct-apk-download) before replacing it). The Google Play button displays “Coming soon” until its official URL is configured; the app is in closed testing until production approval. A smaller iOS button with an Apple symbol also displays “Coming soon”. Both coming-soon options are inactive. The Play Store animation and app screens are labelled illustrations.
+The direct “Tap to download” button is off until a version is released with Play's automatic protection turned off (see [the update guide](docs/UPDATING.md#direct-apk-download)); the download section asks visitors to contact Black Gold meanwhile. The Google Play button displays “Coming soon” until its official URL is configured; the app is in closed testing until production approval. A smaller iOS button with an Apple symbol also displays “Coming soon”. Both coming-soon options are inactive. The Play Store animation and app screens are labelled illustrations.
 
 The footer links to the privacy policy and account deletion pages, which the Black Gold server serves at `https://myblackgold.app/privacy` and `/delete-account`.
 
