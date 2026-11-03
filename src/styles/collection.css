@@ -59,39 +59,19 @@
 .refinery-progress { height: 3px; overflow: hidden; border-radius: 2px; background: #2c4334; }
 .refinery-progress span { display: block; height: 100%; background: linear-gradient(90deg, #edbf78, #b5dec5); transform: scaleX(var(--journey-progress)); transform-origin: left; transition: transform .7s var(--ease); }
 
-/* ---------- What we collect: the sample jar (changes oil on its own) ---------- */
+/* ---------- What we collect: a photo of each oil's source (changes on its own) ---------- */
 
-.oil-stage {
-  --oil-top: #3d2c14; --oil-bottom: #0c0905; --oil-glow: rgba(201, 150, 70, .32); --level: 112px;
-  width: min(100%, 460px); display: grid; justify-items: center; gap: 22px;
-}
-.oil-stage[data-tone='hydraulic'] { --oil-top: #9b6521; --oil-bottom: #3b1e07; --oil-glow: rgba(214, 140, 50, .38); --level: 138px; }
-.oil-stage[data-tone='transformer'] { --oil-top: #c38d30; --oil-bottom: #5b380c; --oil-glow: rgba(230, 186, 96, .42); --level: 124px; }
-.jar-art { position: relative; width: 100%; min-height: 360px; display: grid; place-items: center; }
-.jar-glow { position: absolute; width: 360px; height: 360px; max-width: 100%; border-radius: 50%; background: radial-gradient(circle, var(--oil-glow) 0%, transparent 62%); filter: blur(10px); transition: background 1s var(--ease); }
-.jar { position: relative; width: min(240px, 72%); height: auto; overflow: visible; filter: drop-shadow(0 40px 40px rgba(0, 0, 0, .55)); }
-.jar-shadow { fill: rgba(0, 0, 0, .7); filter: blur(5px); }
-.jar-body { fill: rgba(255, 255, 255, .035); stroke: rgba(238, 232, 218, .3); stroke-width: 1.2; }
-.jar-shine { fill: #fff; opacity: .35; }
-.jar-neck { fill: #26231d; }
-.jar-lid { fill: #141310; stroke: rgba(201, 164, 92, .35); stroke-width: 1; }
-.jar-ridges { stroke: rgba(201, 164, 92, .3); stroke-width: 1.5; }
-.jar-label rect { fill: #eee6d3; stroke: rgba(0, 0, 0, .1); }
-.jar-label line { stroke: #b8954f; stroke-width: 1; }
-.jar-label-brand { font: 600 10px var(--serif); letter-spacing: 2.4px; fill: #16130d; }
-.jar-label-type { font: italic 500 16px var(--serif); letter-spacing: .5px; fill: #8c6a2b; }
-.oil-stage[data-tone='transformer'] .jar-label-type { font-size: 11px; letter-spacing: .15px; }
-.jar-label-no { font: 600 6.5px var(--sans); letter-spacing: 2px; fill: #7a7468; }
-.jar-liquid { transform: translateY(var(--level)); transition: transform 1.6s var(--ease); }
-.oil-stop-top { stop-color: var(--oil-top); transition: stop-color 1s var(--ease); }
-.oil-stop-bottom { stop-color: var(--oil-bottom); transition: stop-color 1s var(--ease); }
-.wave { fill: url(#oil-fill); }
-.wave-back { opacity: .5; animation: wave-120 6s linear infinite; }
-.wave-front { animation: wave-160 4.5s linear infinite; }
-.jar .bubble { fill: rgba(255, 228, 170, .4); animation: bubble 5s ease-in infinite; }
-.b2 { animation-delay: 1.4s; animation-duration: 6s; }
-.b3 { animation-delay: 2.6s; }
-.b4 { animation-delay: 3.5s; animation-duration: 4.2s; }
+.oil-stage { width: min(100%, 460px); display: grid; justify-items: center; gap: 22px; }
+.oil-photos { position: relative; width: 100%; aspect-ratio: 4 / 3; overflow: hidden; border-radius: 18px; background: rgba(255, 255, 255, .04); box-shadow: 0 40px 60px -42px rgba(0, 0, 0, .9); }
+.oil-photos::after { content: ''; position: absolute; inset: 0; border-radius: inherit; box-shadow: inset 0 0 0 1px rgba(255, 255, 255, .08); pointer-events: none; }
+/* The chosen oil's photo fades in and settles slowly from slightly closer. */
+.oil-photo { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; opacity: 0; transform: scale(1.06); transition: opacity .9s var(--ease), transform 4.5s var(--ease); }
+.oil-stage[data-tone='engine'] [data-oil-photo='engine'],
+.oil-stage[data-tone='hydraulic'] [data-oil-photo='hydraulic'],
+.oil-stage[data-tone='transformer'] [data-oil-photo='transformer'] { opacity: 1; transform: none; }
+[data-oil-photo='engine'] { object-position: 40% 82%; }
+[data-oil-photo='hydraulic'] { object-position: 40% 50%; }
+[data-oil-photo='transformer'] { object-position: 45% 55%; }
 .oil-stage-caption { display: flex; align-items: center; gap: 18px; }
 .oil-stage-name { font: 500 22px/1 var(--serif); color: var(--head); transition: opacity .35s var(--ease); }
 .oil-stage.is-swapping .oil-stage-name { opacity: 0; }

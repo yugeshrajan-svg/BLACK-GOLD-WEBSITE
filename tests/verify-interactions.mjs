@@ -234,7 +234,7 @@ for (const reduced of [false,true]) {
     assert.equal(home.q('.app-teaser-art'),null,'The old home phone illustration has been replaced');
     assert.equal(home.q('.chennai-scene'),null,'The old Chennai install animation has been replaced');
     assert.equal(home.qa('[data-app-feature]').length,0,'The homepage has a compact app introduction');
-    assert.equal(home.qa('.home-jar').length,3,'Keep the three homepage oil jars');
+    assert.equal(home.qa('.home-oil-photo').length,3,'Keep the three homepage oil photos (engine, hydraulic, transformer)');
     assert.equal(home.qa('.faq-list').length,0,'Full answers belong on the FAQ page');
     assert.equal(home.q('#promise-title').textContent,'Our promise.');
     assert.equal(home.qa('#our-promises [data-promise-stage]').length,4,'The home page presents all four promises');
@@ -276,7 +276,7 @@ for (const reduced of [false,true]) {
 
     const collect = load('collect.html',reduced,browserLanguage);
     assert.ok(collect.q('#serve-title'),'Business eligibility belongs on What We Collect');
-    assert.equal(collect.qa('.mini-jar').length,0,'Use one interactive jar presentation on this page');
+    assert.equal(collect.qa('.oil-stage .oil-photo').length,3,'One photo for each oil in the sample');
     collect.click('[data-oil-preview="transformer"]'); collect.flush();
     collect.advance(15000);
     assert.equal(collect.q('.oil-stage').dataset.tone,'transformer');
@@ -449,19 +449,70 @@ assert.equal(stillPickup.q('.home-steps .is-highlighted h3').textContent,'Instal
 stillPickup.click('#pickup-process [data-route-step="3"]'); stillPickup.flush();
 assert.equal(stillPickup.q('.home-steps .is-highlighted h3').textContent,'Get paid. Keep the receipt.');
 
-// Home hero: the glass barrel is an ES module (glass-hero.js) that the browser loads on its own.
-// Without it the hero keeps "Black Gold." as text and hides the rotate arrows; the page's own
-// buttons and the Pause motion switch (which the barrel follows) still work.
-const glassHome = load('index.html',false);
-assert.ok(glassHome.q('.hero .hero-words'),'The hero shows the words as text until the 3D scene is ready');
-assert.ok(glassHome.q('[data-glass-turn]').hasAttribute('hidden'),'The rotate arrows wait for the 3D scene');
-glassHome.click('.hero-bottom [data-motion]');
-assert.ok(glassHome.doc.documentElement.classList.contains('motion-paused'),'Pause motion sets the class the barrel watches');
-glassHome.click('.hero-bottom [data-motion]');
-assert.ok(!glassHome.doc.documentElement.classList.contains('motion-paused'));
-const still = load('index.html',true);
+const flowState = {created:0, playing:false, rendered:false};
+const flowing = load('index.html',false,'en',(canvas,options) => {
+  flowState.created++;
+  assert.equal(options.mode,'pour');
+  assert.equal(options.parallax,0);
+  assert.equal(options.startTime,6,'Start on the frame oil-poster.webp shows');
+  assert.equal(options.quality,undefined,'Draw at the full screen resolution');
+  return {
+    renderOnce() { flowState.rendered = true; canvas.classList.add('is-ready'); },
+    play() { flowState.playing = true; },
+    pause() { flowState.playing = false; }
+  };
+});
+assert.equal(flowState.created,1); assert.equal(flowState.rendered,true); assert.equal(flowState.playing,true);
+flowing.click('[data-motion]'); assert.equal(flowState.playing,false);
+flowing.click('[data-motion]'); assert.equal(flowState.playing,true);
+flowing.doc.hidden = true; flowing.doc.fire('visibilitychange'); assert.equal(flowState.playing,false);
+flowing.doc.hidden = false; flowing.doc.fire('visibilitychange'); assert.equal(flowState.playing,true);
+flowing.setReduced(true); assert.equal(flowState.playing,false);
+flowing.setReduced(false); assert.equal(flowState.playing,true);
+assert.equal(flowState.created,1,'Reuse the surface when resuming motion');
+let stillCreated = 0;
+const still = load('index.html',true,'en',() => { stillCreated++; return null; });
+assert.equal(stillCreated,0,'Reduced motion must keep the poster without creating a surface');
 still.click('[data-home-oil="transformer"]'); assert.equal(still.q('#home-oil-panel').dataset.tone,'transformer');
-still.click('[data-home-enquire]'); assert.equal(still.q('#pickup-dialog').open,true);
+for (const factory of [() => null, () => { throw new Error('No WebGL'); }]) {
+  const fallback = load('index.html',false,'en',factory);
+  assert.equal(fallback.q('#oil-flow').classList.contains('is-ready'),false);
+  fallback.click('[data-home-enquire]'); assert.equal(fallback.q('#pickup-dialog').open,true);
+}
+
+// The oil surface itself, with a stand-in WebGL context: it draws at the screen's own resolution
+// (up to 2 device pixels per CSS pixel and a 4K frame), and lowers it only while frames run slow.
+function oilRig(width, height, dpr) {
+  const rig = {frames:new Map(), seq:0, now:0, events:{}};
+  const gl = new Proxy({}, {get:(_,k) => /^get(Shader|Program)Parameter$/.test(k) ? () => true : /^[A-Z_]+$/.test(k) ? 0 : () => ({})});
+  rig.canvas = {clientWidth:width, clientHeight:height, width:300, height:150, getContext:() => gl, addEventListener() {},
+    classList:{contains:() => false, add() {}, remove() {}}, getBoundingClientRect:() => ({top:0, height})};
+  const sandbox = {window:{devicePixelRatio:dpr, addEventListener:(type,fn) => (rig.events[type] ||= []).push(fn)}, document:{hidden:false, addEventListener() {}}, console,
+    requestAnimationFrame:fn => { rig.frames.set(++rig.seq,fn); return rig.seq; }, cancelAnimationFrame:id => rig.frames.delete(id)};
+  vm.runInContext(readFileSync('dist/oil-surface.js','utf8'),vm.createContext(sandbox),{filename:'oil-surface.js'});
+  rig.oil = sandbox.window.OilSurface(rig.canvas,{mode:'pour', interactive:false, parallax:0});
+  // Runs `count` frames; `ms` is the time between them, or a repeating pattern of times.
+  rig.run = (count,ms) => { for (let i = 0; i < count; i++) { rig.now += [].concat(ms)[i % [].concat(ms).length]; const jobs = [...rig.frames.values()]; rig.frames.clear(); jobs.forEach(fn => fn(rig.now)); } };
+  return rig;
+}
+for (const [width,height,dpr,expected] of [[1366,827,1,'1366x827'],[1920,1080,2,'3840x2160'],[2560,1440,2,'3840x2160'],[390,810,3,'780x1620']]) {
+  const rig = oilRig(width,height,dpr); rig.oil.renderOnce();
+  assert.equal(rig.canvas.width+'x'+rig.canvas.height,expected,`Oil canvas at ${width}x${height} on a ${dpr}x screen`);
+}
+const smoothOil = oilRig(1920,1080,1); smoothOil.oil.play(); smoothOil.run(180,16.7);
+assert.equal(smoothOil.canvas.width,1920,'A device holding 60 fps keeps the full resolution');
+const slowOil = oilRig(1920,1080,1); slowOil.oil.play(); slowOil.run(40,50);
+assert.ok(slowOil.canvas.width < 1920 && slowOil.canvas.width >= 1920 * .35,'A slow device draws fewer pixels to stay smooth');
+const loadingOil = oilRig(1920,1080,1); loadingOil.oil.play(); loadingOil.run(20,100); loadingOil.run(120,16.7);
+assert.equal(loadingOil.canvas.width,1920,'Slow frames while the page loads do not lower the resolution');
+const scrollingOil = oilRig(1920,1080,1); scrollingOil.oil.play();
+for (let i = 0; i < 80; i++) { scrollingOil.events.scroll.forEach(fn => fn()); scrollingOil.run(1,50); }
+scrollingOil.run(60,16.7);
+assert.equal(scrollingOil.canvas.width,1920,'Slow frames while the page scrolls do not lower the resolution');
+const stutterOil = oilRig(1280,800,2); stutterOil.oil.play(); stutterOil.run(60,[13.3,13.3,26.7]);
+assert.ok(stutterOil.canvas.width < 2560,'Every third frame missed lowers the resolution, though the 18 ms average is under the 24 ms limit');
+const fastOil = oilRig(1280,800,2); fastOil.oil.play(); fastOil.run(150,[8.3,8.3,16.7]);
+assert.equal(fastOil.canvas.width,2560,'80 fps on a 120 Hz screen keeps the full resolution');
 
 const autoplay = load('seller-app.html');
 autoplay.advance(4700); assert.ok(autoplay.q('.screen.s2').classList.contains('is-active'));

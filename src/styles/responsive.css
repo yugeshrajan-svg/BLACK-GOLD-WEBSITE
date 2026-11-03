@@ -71,7 +71,8 @@
   .hero-bottom { padding-block: 8px 0; flex-wrap: wrap; row-gap: 4px; }
   /* Too narrow for one row: the enquiry button spans the width above Pause motion and the arrow. */
   .hero-enquiry { order: -1; width: 100%; }
-  .hero-background { background-position: 75% center; }
+  /* The phone poster is the phone's first frame of the oil (it lands lower right), pinned at that spot. */
+  .hero-background { background-image: url('assets/oil-poster-phone.webp'); background-position: 78% 77%; }
   .hero-shade { background: linear-gradient(90deg, rgba(7, 7, 6, .83), rgba(7, 7, 6, .42)), linear-gradient(0deg, rgba(7, 7, 6, .8), transparent 70%); }
 
   .page-hero { padding-top: calc(var(--header-h) + 20px); padding-bottom: var(--section-y); }
@@ -80,7 +81,6 @@
   .home-oils { grid-template-columns: 1fr; gap: 16px; }
   .home-oil { display: grid; grid-template-columns: 108px minmax(0, 1fr); gap: 10px 18px; padding: 18px; align-items: center; }
   .home-oil-visual { grid-row: 1 / 4; height: 160px; margin-bottom: 0; }
-  .home-jar { width: 108px; height: 144px; }
   .home-oil-title { margin: 0; font-size: 24px; padding-right: 22px; align-self: end; }
   .home-oil-text { grid-column: 2; font-size: 15px; }
   .home-oil-action { grid-column: 2; align-self: start; margin-top: 0; padding-top: 10px; }
@@ -113,10 +113,6 @@
 
   .refinery { padding: 16px; border-radius: 18px; }
   .refinery-caption-title { font-size: 22px; }
-
-  .jar-art { min-height: 280px; }
-  .jar { width: 190px; }
-  .jar-glow { width: 280px; height: 280px; }
 
   .route { gap: 20px; }
   .route-icon { width: 54px; height: 54px; }
@@ -160,14 +156,12 @@
   .menu { padding: 10px 0; }
   .home-oil { grid-template-columns: 88px minmax(0, 1fr); gap: 10px 14px; padding: 16px; }
   .home-oil-visual { height: 156px; }
-  .home-jar { width: 88px; height: 128px; }
 }
 
 @media (prefers-reduced-motion: reduce) {
   html { scroll-behavior: auto; }
   *, *::before, *::after { animation-duration: .01ms !important; animation-iteration-count: 1 !important; transition-duration: .01ms !important; transition-delay: 0s !important; }
   .hero-oil.is-ready { opacity: 0; }
-  .home-oil[aria-selected='true'] .home-jar-wave { animation: none; }
   .home-oil:hover, .card:hover { translate: none; }
   .motion-toggle { display: none; }
 }

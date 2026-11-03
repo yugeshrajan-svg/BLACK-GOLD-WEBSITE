@@ -52,29 +52,19 @@ body[data-page='home'] #questions { background-color: #f7edcc; --accent: #8a6a0f
 .home-section-head > .text-link { flex: none; }
 .home-oils-hint { margin: -8px 0 20px; font-size: 14px; color: var(--muted); }
 .home-oils { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 20px; }
-.home-oil { --tile-rgb: 164, 99, 29; --sample-top: #615039; --sample-bottom: #1e1c16; --sample-cap: #3c4037; position: relative; display: flex; flex-direction: column; align-items: flex-start; gap: 12px; width: 100%; padding: var(--card-pad); border: 1px solid rgba(var(--tile-rgb), .2); border-radius: var(--radius-card); text-align: left; background: radial-gradient(240px circle at var(--mx, 70%) var(--my, 20%), rgba(var(--tile-rgb), .12), transparent 80%), #fffdf9; transition: border-color .25s, box-shadow .25s, translate .25s; }
-.home-oil[data-home-oil='hydraulic'] { --tile-rgb: 46, 125, 79; --sample-top: #d59a41; --sample-bottom: #8c4714; --sample-cap: #205f4c; }
-.home-oil[data-home-oil='transformer'] { --tile-rgb: 30, 38, 45; --sample-top: #c7a256; --sample-bottom: #6c461b; --sample-cap: #1e262d; }
+.home-oil { --tile-rgb: 164, 99, 29; position: relative; display: flex; flex-direction: column; align-items: flex-start; gap: 12px; width: 100%; padding: var(--card-pad); border: 1px solid rgba(var(--tile-rgb), .2); border-radius: var(--radius-card); text-align: left; background: radial-gradient(240px circle at var(--mx, 70%) var(--my, 20%), rgba(var(--tile-rgb), .12), transparent 80%), #fffdf9; transition: border-color .25s, box-shadow .25s, translate .25s; }
+.home-oil[data-home-oil='hydraulic'] { --tile-rgb: 46, 125, 79; }
+.home-oil[data-home-oil='transformer'] { --tile-rgb: 30, 38, 45; }
 .home-oil[aria-selected='true'] { border-color: rgb(var(--tile-rgb)); box-shadow: inset 0 0 0 1px rgb(var(--tile-rgb)), 0 14px 34px -28px rgba(var(--tile-rgb), .6); }
-.home-oil-visual { display: grid; place-items: center; width: 100%; height: 204px; margin-bottom: 6px; border-radius: 12px; background: radial-gradient(ellipse at 50% 48%, rgba(255, 255, 255, .9), transparent 70%), rgba(var(--tile-rgb), .08); }
-.home-jar { width: 150px; height: 200px; overflow: visible; }
-.home-jar-shadow { fill: rgba(var(--tile-rgb), .16); }
-.home-jar-back { fill: #f8fcf7; }
-.home-jar-oil-top { stop-color: var(--sample-top); }
-.home-jar-oil-bottom { stop-color: var(--sample-bottom); }
-.home-jar-body { fill: none; stroke: #7a9281; stroke-width: 2; }
-.home-jar-shoulder { fill: #e0e9dd; stroke: #7a9281; stroke-width: 2; }
-.home-jar-lid { fill: var(--sample-cap); stroke: rgba(20, 38, 27, .4); stroke-width: 1.5; }
-.home-jar-ridges { fill: none; stroke: #fff; stroke-width: 2; opacity: .25; }
-.home-jar-shine { fill: none; stroke: #fff; stroke-width: 7; stroke-linecap: round; opacity: .6; }
-.home-jar-ticks { fill: none; stroke: #fff; stroke-width: 2; stroke-linecap: round; opacity: .7; }
-.home-jar-label rect { fill: #fffdf6; stroke: rgba(var(--tile-rgb), .3); stroke-width: 1.5; }
-.home-jar-label-type { fill: rgb(var(--tile-rgb)); font: 700 14px var(--sans); letter-spacing: .6px; }
-.home-oil[data-home-oil='transformer'] .home-jar-label-type { font-size: 11px; letter-spacing: .3px; }
-.home-jar-label-note { fill: #596453; font: 600 10px var(--sans); letter-spacing: 2px; }
-.home-oil[aria-selected='true'] .home-jar-wave { animation: home-jar-wave 5s linear infinite; }
-.motion-paused .home-jar-wave, .tab-hidden .home-jar-wave, #what-we-collect.is-offscreen .home-jar-wave { animation-play-state: paused; }
-@keyframes home-jar-wave { to { transform: translateX(120px); } }
+.home-oil-visual { position: relative; display: block; width: 100%; height: 204px; margin-bottom: 6px; overflow: hidden; border-radius: 12px; background: rgba(255, 255, 255, .04); }
+.home-oil-visual::after { content: ''; position: absolute; inset: 0; border-radius: inherit; box-shadow: inset 0 0 0 1px rgba(255, 255, 255, .07); pointer-events: none; }
+/* A photo of where each oil comes from. The chosen oil's photo is brighter and moves in a little. */
+.home-oil-photo { display: block; width: 100%; height: 100%; object-fit: cover; opacity: .72; transition: opacity .5s var(--ease), transform .9s var(--ease); }
+.home-oil[aria-selected='true'] .home-oil-photo, .home-oil:hover .home-oil-photo { opacity: 1; }
+.home-oil[aria-selected='true'] .home-oil-photo { transform: scale(1.05); }
+.home-oil[data-home-oil='engine'] .home-oil-photo { object-position: 40% 82%; }
+.home-oil[data-home-oil='hydraulic'] .home-oil-photo { object-position: 40% 50%; }
+.home-oil[data-home-oil='transformer'] .home-oil-photo { object-position: 45% 55%; }
 .home-oil-title { display: block; font: 500 clamp(25px, 2.3vw, 32px)/1.25 var(--serif); color: var(--head); }
 .home-oil-text { display: block; max-width: 26em; font-size: 15px; }
 .home-oil-action { width: 100%; margin-top: auto; padding-top: 15px; border-top: 1px solid rgba(var(--tile-rgb), .18); font-size: 12px; font-weight: 600; color: rgb(var(--tile-rgb)); }

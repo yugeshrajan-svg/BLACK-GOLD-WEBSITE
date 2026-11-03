@@ -23,9 +23,9 @@
   }
 
   var OILS = {
-    engine: { value: 'Used engine oil', title: 'Used engine oil', name: 'Engine oil', label: 'ENGINE', sample: 'SAMPLE · 01' },
-    hydraulic: { value: 'Used hydraulic oil', title: 'Used hydraulic oil', name: 'Hydraulic oil', label: 'HYDRAULIC', sample: 'SAMPLE · 02' },
-    transformer: { value: 'Used transformer oil', title: 'Used transformer oil', name: 'Transformer oil', label: 'TRANSFORMER', sample: 'SAMPLE · 03' }
+    engine: { value: 'Used engine oil', title: 'Used engine oil', name: 'Engine oil' },
+    hydraulic: { value: 'Used hydraulic oil', title: 'Used hydraulic oil', name: 'Hydraulic oil' },
+    transformer: { value: 'Used transformer oil', title: 'Used transformer oil', name: 'Transformer oil' }
   };
   var OIL_KEYS = Object.keys(OILS);
   function oilText(key, field) { return OILS[key][field]; }
@@ -161,9 +161,11 @@
       var play = !reduce.matches && !document.hidden && !doc.classList.contains('motion-paused');
       if (!oil && !failed && play) {
         try {
+          // Full screen resolution; it starts on the frame oil-poster.webp shows (t = 6 s),
+          // so the fade from the poster into the moving oil has no jump.
           oil = window.OilSurface(oilCanvas, {
             mode: 'pour', impact: [.7, .42], impactNarrow: [.78, .23],
-            quality: .6, interactive: false, parallax: 0
+            startTime: 6, interactive: false, parallax: 0
           });
           if (oil) oil.renderOnce();
           else failed = true;
@@ -419,7 +421,7 @@
     });
   })();
 
-  /* ---------- What we collect: the sample jar changes oil on its own ---------- */
+  /* ---------- What we collect: the oil photo changes on its own ---------- */
 
   var oilStage = $('.oil-stage');
   if (oilStage) (function () {
@@ -436,8 +438,6 @@
       index = i;
       var key = OIL_KEYS[i];
       oilStage.dataset.tone = key;
-      $('.jar-label-type', oilStage).textContent = OILS[key].label;
-      $('.jar-label-no', oilStage).textContent = OILS[key].sample;
       dots.forEach(function (d, j) { d.classList.toggle('is-on', j === i); });
       cards.forEach(function (card, j) { card.classList.toggle('is-selected', j === i); });
       pressChoice(buttons, i);

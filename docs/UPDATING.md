@@ -91,7 +91,11 @@ To update the download for each new release (or to turn it back on):
 
 Replace files in `public/assets/`. Keeping a filename preserves all references to it. If you use a new name, update every HTML/CSS reference; `npm run check` reports missing local files.
 
-The main files are `black-gold-logo.webp`, `black-gold-app-icon.webp`, `about-refinery.webp`, `oil-poster.webp`, and the favicon / touch icons. `public/og-image.jpg` is the social sharing image. The refinery image and app screens are labelled illustrations; update their captions if real approved images replace them.
+The main files are `black-gold-logo.webp`, `black-gold-app-icon.webp`, `about-refinery.webp`, the home hero posters, and the favicon / touch icons. `public/og-image.jpg` is the social sharing image. The refinery image and app screens are labelled illustrations; update their captions if real approved images replace them. `about-refinery.webp` is 1774 px wide; a larger original (3840 px) would make the About hero sharp on big and high-resolution screens.
+
+The oil photos (`oil-engine.webp`, `oil-hydraulic.webp`, `oil-transformer.webp`), shown under "What can I sell?" on the home page and at the top of What we collect, are free Unsplash photos (Unsplash License: free for business use, no credit required), cropped and colour-graded darker and warmer to match the site: used oil draining during an oil change by [Jimmy Nilsson Masth](https://unsplash.com/photos/uhuTo7u8VXk), an excavator by [Gerold Hinzen](https://unsplash.com/photos/VCnw5s0Y9Ew) and a substation transformer from the [American Public Power Association](https://unsplash.com/photos/VuR4oHZ3ucc). Your own photos can replace them under the same file names; each card crops its photo to fit, so keep the subject near the middle.
+
+The home hero posters are still frames of the oil animation in `oil-surface.js`, taken at 6 seconds, which is where the animation starts, so the page fades from the poster into the moving oil without a jump: `oil-poster.webp` (1920 × 1080), `oil-poster-4k.webp` (3840 × 2160, for sharp and extra-wide screens) and `oil-poster-phone.webp` (1290 × 2632, the phone layout, where the oil lands lower right). If the animation's look changes, render new frames at the same sizes so the posters still match.
 
 ## Change the design
 

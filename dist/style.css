@@ -16,7 +16,7 @@
 @font-face { font-family: 'Inter'; font-style: normal; font-weight: 300 700; font-display: swap; src: url('fonts/inter-latin-ext.woff2') format('woff2'); unicode-range: U+0100-02BA, U+02BD-02C5, U+02C7-02CC, U+02CE-02D7, U+02DD-02FF, U+0304, U+0308, U+0329, U+1D00-1DBF, U+1E00-1E9F, U+1EF2-1EFF, U+2020, U+20A0-20AB, U+20AD-20C4, U+2113, U+2C60-2C7F, U+A720-A7FF; }
 
 /* ---------- Colour tokens ----------
-   Black and metallic gold on every page, matching the home page's glass barrel: near-black
+   Black and metallic gold on every page, like the oil on the home page: near-black
    pages, warm paper text, bright gold for small accents. The app's own screens (phone
    mock-ups) stay light. Dark areas re-declare the same tokens below. */
 
@@ -102,6 +102,11 @@ html {
   background: var(--bg);
 }
 html.menu-locked { overflow: hidden; }
+
+/* Moving between pages cross-fades instead of flashing (browsers without this just load the page). */
+@media (prefers-reduced-motion: no-preference) {
+  @view-transition { navigation: auto; }
+}
 
 body {
   margin: 0;
@@ -305,10 +310,14 @@ h1 em, h2 em {
   row-gap: 12px;
 }
 .hero-background, .hero-shade { position: absolute; inset: 0; width: 100%; height: 100%; }
+/* The poster is the oil animation's first frame (t = 6 s): 1920 x 1080, and 3840 x 2160 for
+   high-resolution screens and anything wider than 1920 CSS pixels. Phones get a tall one (responsive.css). */
 .hero-background {
   z-index: -2;
   background: #070706 url('assets/oil-poster.webp') 70% center / cover no-repeat;
+  background-image: image-set(url('assets/oil-poster.webp') 1x, url('assets/oil-poster-4k.webp') 2x);
 }
+@media (min-width: 1921px) { .hero-background { background-image: url('assets/oil-poster-4k.webp'); } }
 .hero-oil {
   position: absolute; inset: 0; width: 100%; height: 100%;
   pointer-events: none; opacity: 0; transition: opacity .6s;
@@ -460,54 +469,6 @@ body[data-page='home'] #seller-app { overflow: hidden; }
 .closing-actions { display: flex; align-items: center; flex-wrap: wrap; gap: 12px 20px; }
 #app-dialog .app-download-options { margin: 26px 0; }
 
-/* ---------- Home hero: a glass oil barrel in front of "Black Gold." ----------
-   glass-hero.js draws the barrel and the words with WebGL over the whole hero (laptops)
-   or the top of it (phones and portrait screens). Until it's ready, or without WebGL,
-   .hero-words shows the same words as text in the same place. */
-
-.hero.hero--glass { background: var(--bg); }
-.hero-stage { position: absolute; inset: 0; z-index: -1; overflow: hidden; }
-.hero-glass { position: absolute; inset: 0; width: 100%; height: 100%; opacity: 0; transition: opacity .8s var(--ease); cursor: grab; touch-action: pan-y; }
-.hero-glass.dragging { cursor: grabbing; }
-.hero-stage.is-ready .hero-glass { opacity: 1; }
-.hero-words {
-  position: absolute; left: 64.5%; top: 47%; transform: translate(-50%, -50%);
-  text-align: center; white-space: nowrap; pointer-events: none;
-  font: 700 min(27vh, 13.5vw)/1.02 var(--serif); letter-spacing: 0; color: var(--head);
-  transition: opacity .8s var(--ease);
-}
-.hero-words span, .hero-words em { display: block; }
-.hero-words em { font-weight: 600; padding-right: .06em; background: var(--gold-grad); -webkit-background-clip: text; background-clip: text; color: transparent; }
-.hero-stage.is-ready .hero-words { opacity: 0; }
-
-.hero.hero--glass .hero-inner { max-width: min(37vw, 560px); }
-.hero.hero--glass .hero-title { font-size: clamp(40px, 3.7vw, 60px); }
-
-.hero-turn { position: absolute; top: calc(var(--header-h) + 18px); right: var(--edge-x); display: flex; gap: 14px; }
-.hero-turn[hidden] { display: none; }
-.hero-turn-button { display: grid; place-items: center; width: 42px; height: 42px; border: 2px solid var(--head); border-radius: 50%; color: var(--head); transition: background-color .25s, color .25s; }
-.hero-turn-button svg { width: 18px; height: 18px; }
-.hero-turn-button:hover { background: var(--head); color: var(--bg); }
-
-/* Bottom right: the enquiry button, a line, then a huge outlined 50 L (the minimum pickup) off the edge. */
-.hero-cta { display: flex; align-items: center; flex: 0 1 54%; min-width: 0; margin-right: calc(-1 * var(--edge-x) - 2vw); }
-.hero-cta-line { flex: 1; min-width: 32px; height: 1.5px; background: rgba(236, 230, 216, .55); }
-.hero-count { flex: none; font: 500 clamp(120px, 15vw, 280px)/.8 var(--serif); letter-spacing: -.03em; text-transform: none; color: transparent; -webkit-text-stroke: 1.5px rgba(228, 187, 87, .85); transform: translateY(16%); user-select: none; }
-.hero-count small { font-size: .42em; letter-spacing: 0; }
-
-@media (max-width: 1024px), (max-aspect-ratio: 1/1) {
-  .hero.hero--glass { padding-top: calc(var(--header-h) + min(52svh, 118vw)); }
-  .hero-stage { bottom: auto; height: calc(var(--header-h) + min(52svh, 118vw)); }
-  .hero-words { left: 50%; top: 58%; font-size: min(15svh, 25vw); }
-  .hero.hero--glass .hero-inner { max-width: none; }
-  .hero.hero--glass .hero-title { font-size: clamp(38px, 9vw, 56px); }
-  .hero-turn { top: calc(var(--header-h) + 6px); }
-  .hero.hero--glass .hero-bottom { flex-wrap: wrap; row-gap: 4px; }
-  .hero-cta { order: -1; flex: 1 0 100%; margin-right: calc(-1 * var(--edge-x) - 10vw); }
-  .hero.hero--glass .hero-enquiry { width: auto; }
-  .hero-count { font-size: clamp(96px, 26vw, 170px); }
-}
-
 /* Source: src/styles/components.css */
 /* ---------- Page heroes: title, bullets and one live visual ---------- */
 
@@ -563,29 +524,19 @@ body[data-page='home'] #questions { background-color: #f7edcc; --accent: #8a6a0f
 .home-section-head > .text-link { flex: none; }
 .home-oils-hint { margin: -8px 0 20px; font-size: 14px; color: var(--muted); }
 .home-oils { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 20px; }
-.home-oil { --tile-rgb: 164, 99, 29; --sample-top: #615039; --sample-bottom: #1e1c16; --sample-cap: #3c4037; position: relative; display: flex; flex-direction: column; align-items: flex-start; gap: 12px; width: 100%; padding: var(--card-pad); border: 1px solid rgba(var(--tile-rgb), .2); border-radius: var(--radius-card); text-align: left; background: radial-gradient(240px circle at var(--mx, 70%) var(--my, 20%), rgba(var(--tile-rgb), .12), transparent 80%), #fffdf9; transition: border-color .25s, box-shadow .25s, translate .25s; }
-.home-oil[data-home-oil='hydraulic'] { --tile-rgb: 46, 125, 79; --sample-top: #d59a41; --sample-bottom: #8c4714; --sample-cap: #205f4c; }
-.home-oil[data-home-oil='transformer'] { --tile-rgb: 30, 38, 45; --sample-top: #c7a256; --sample-bottom: #6c461b; --sample-cap: #1e262d; }
+.home-oil { --tile-rgb: 164, 99, 29; position: relative; display: flex; flex-direction: column; align-items: flex-start; gap: 12px; width: 100%; padding: var(--card-pad); border: 1px solid rgba(var(--tile-rgb), .2); border-radius: var(--radius-card); text-align: left; background: radial-gradient(240px circle at var(--mx, 70%) var(--my, 20%), rgba(var(--tile-rgb), .12), transparent 80%), #fffdf9; transition: border-color .25s, box-shadow .25s, translate .25s; }
+.home-oil[data-home-oil='hydraulic'] { --tile-rgb: 46, 125, 79; }
+.home-oil[data-home-oil='transformer'] { --tile-rgb: 30, 38, 45; }
 .home-oil[aria-selected='true'] { border-color: rgb(var(--tile-rgb)); box-shadow: inset 0 0 0 1px rgb(var(--tile-rgb)), 0 14px 34px -28px rgba(var(--tile-rgb), .6); }
-.home-oil-visual { display: grid; place-items: center; width: 100%; height: 204px; margin-bottom: 6px; border-radius: 12px; background: radial-gradient(ellipse at 50% 48%, rgba(255, 255, 255, .9), transparent 70%), rgba(var(--tile-rgb), .08); }
-.home-jar { width: 150px; height: 200px; overflow: visible; }
-.home-jar-shadow { fill: rgba(var(--tile-rgb), .16); }
-.home-jar-back { fill: #f8fcf7; }
-.home-jar-oil-top { stop-color: var(--sample-top); }
-.home-jar-oil-bottom { stop-color: var(--sample-bottom); }
-.home-jar-body { fill: none; stroke: #7a9281; stroke-width: 2; }
-.home-jar-shoulder { fill: #e0e9dd; stroke: #7a9281; stroke-width: 2; }
-.home-jar-lid { fill: var(--sample-cap); stroke: rgba(20, 38, 27, .4); stroke-width: 1.5; }
-.home-jar-ridges { fill: none; stroke: #fff; stroke-width: 2; opacity: .25; }
-.home-jar-shine { fill: none; stroke: #fff; stroke-width: 7; stroke-linecap: round; opacity: .6; }
-.home-jar-ticks { fill: none; stroke: #fff; stroke-width: 2; stroke-linecap: round; opacity: .7; }
-.home-jar-label rect { fill: #fffdf6; stroke: rgba(var(--tile-rgb), .3); stroke-width: 1.5; }
-.home-jar-label-type { fill: rgb(var(--tile-rgb)); font: 700 14px var(--sans); letter-spacing: .6px; }
-.home-oil[data-home-oil='transformer'] .home-jar-label-type { font-size: 11px; letter-spacing: .3px; }
-.home-jar-label-note { fill: #596453; font: 600 10px var(--sans); letter-spacing: 2px; }
-.home-oil[aria-selected='true'] .home-jar-wave { animation: home-jar-wave 5s linear infinite; }
-.motion-paused .home-jar-wave, .tab-hidden .home-jar-wave, #what-we-collect.is-offscreen .home-jar-wave { animation-play-state: paused; }
-@keyframes home-jar-wave { to { transform: translateX(120px); } }
+.home-oil-visual { position: relative; display: block; width: 100%; height: 204px; margin-bottom: 6px; overflow: hidden; border-radius: 12px; background: rgba(255, 255, 255, .04); }
+.home-oil-visual::after { content: ''; position: absolute; inset: 0; border-radius: inherit; box-shadow: inset 0 0 0 1px rgba(255, 255, 255, .07); pointer-events: none; }
+/* A photo of where each oil comes from. The chosen oil's photo is brighter and moves in a little. */
+.home-oil-photo { display: block; width: 100%; height: 100%; object-fit: cover; opacity: .72; transition: opacity .5s var(--ease), transform .9s var(--ease); }
+.home-oil[aria-selected='true'] .home-oil-photo, .home-oil:hover .home-oil-photo { opacity: 1; }
+.home-oil[aria-selected='true'] .home-oil-photo { transform: scale(1.05); }
+.home-oil[data-home-oil='engine'] .home-oil-photo { object-position: 40% 82%; }
+.home-oil[data-home-oil='hydraulic'] .home-oil-photo { object-position: 40% 50%; }
+.home-oil[data-home-oil='transformer'] .home-oil-photo { object-position: 45% 55%; }
 .home-oil-title { display: block; font: 500 clamp(25px, 2.3vw, 32px)/1.25 var(--serif); color: var(--head); }
 .home-oil-text { display: block; max-width: 26em; font-size: 15px; }
 .home-oil-action { width: 100%; margin-top: auto; padding-top: 15px; border-top: 1px solid rgba(var(--tile-rgb), .18); font-size: 12px; font-weight: 600; color: rgb(var(--tile-rgb)); }
@@ -824,39 +775,19 @@ html:not(.js) .visual-tools { display: none; }
 .refinery-progress { height: 3px; overflow: hidden; border-radius: 2px; background: #2c4334; }
 .refinery-progress span { display: block; height: 100%; background: linear-gradient(90deg, #edbf78, #b5dec5); transform: scaleX(var(--journey-progress)); transform-origin: left; transition: transform .7s var(--ease); }
 
-/* ---------- What we collect: the sample jar (changes oil on its own) ---------- */
+/* ---------- What we collect: a photo of each oil's source (changes on its own) ---------- */
 
-.oil-stage {
-  --oil-top: #3d2c14; --oil-bottom: #0c0905; --oil-glow: rgba(201, 150, 70, .32); --level: 112px;
-  width: min(100%, 460px); display: grid; justify-items: center; gap: 22px;
-}
-.oil-stage[data-tone='hydraulic'] { --oil-top: #9b6521; --oil-bottom: #3b1e07; --oil-glow: rgba(214, 140, 50, .38); --level: 138px; }
-.oil-stage[data-tone='transformer'] { --oil-top: #c38d30; --oil-bottom: #5b380c; --oil-glow: rgba(230, 186, 96, .42); --level: 124px; }
-.jar-art { position: relative; width: 100%; min-height: 360px; display: grid; place-items: center; }
-.jar-glow { position: absolute; width: 360px; height: 360px; max-width: 100%; border-radius: 50%; background: radial-gradient(circle, var(--oil-glow) 0%, transparent 62%); filter: blur(10px); transition: background 1s var(--ease); }
-.jar { position: relative; width: min(240px, 72%); height: auto; overflow: visible; filter: drop-shadow(0 40px 40px rgba(0, 0, 0, .55)); }
-.jar-shadow { fill: rgba(0, 0, 0, .7); filter: blur(5px); }
-.jar-body { fill: rgba(255, 255, 255, .035); stroke: rgba(238, 232, 218, .3); stroke-width: 1.2; }
-.jar-shine { fill: #fff; opacity: .35; }
-.jar-neck { fill: #26231d; }
-.jar-lid { fill: #141310; stroke: rgba(201, 164, 92, .35); stroke-width: 1; }
-.jar-ridges { stroke: rgba(201, 164, 92, .3); stroke-width: 1.5; }
-.jar-label rect { fill: #eee6d3; stroke: rgba(0, 0, 0, .1); }
-.jar-label line { stroke: #b8954f; stroke-width: 1; }
-.jar-label-brand { font: 600 10px var(--serif); letter-spacing: 2.4px; fill: #16130d; }
-.jar-label-type { font: italic 500 16px var(--serif); letter-spacing: .5px; fill: #8c6a2b; }
-.oil-stage[data-tone='transformer'] .jar-label-type { font-size: 11px; letter-spacing: .15px; }
-.jar-label-no { font: 600 6.5px var(--sans); letter-spacing: 2px; fill: #7a7468; }
-.jar-liquid { transform: translateY(var(--level)); transition: transform 1.6s var(--ease); }
-.oil-stop-top { stop-color: var(--oil-top); transition: stop-color 1s var(--ease); }
-.oil-stop-bottom { stop-color: var(--oil-bottom); transition: stop-color 1s var(--ease); }
-.wave { fill: url(#oil-fill); }
-.wave-back { opacity: .5; animation: wave-120 6s linear infinite; }
-.wave-front { animation: wave-160 4.5s linear infinite; }
-.jar .bubble { fill: rgba(255, 228, 170, .4); animation: bubble 5s ease-in infinite; }
-.b2 { animation-delay: 1.4s; animation-duration: 6s; }
-.b3 { animation-delay: 2.6s; }
-.b4 { animation-delay: 3.5s; animation-duration: 4.2s; }
+.oil-stage { width: min(100%, 460px); display: grid; justify-items: center; gap: 22px; }
+.oil-photos { position: relative; width: 100%; aspect-ratio: 4 / 3; overflow: hidden; border-radius: 18px; background: rgba(255, 255, 255, .04); box-shadow: 0 40px 60px -42px rgba(0, 0, 0, .9); }
+.oil-photos::after { content: ''; position: absolute; inset: 0; border-radius: inherit; box-shadow: inset 0 0 0 1px rgba(255, 255, 255, .08); pointer-events: none; }
+/* The chosen oil's photo fades in and settles slowly from slightly closer. */
+.oil-photo { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; opacity: 0; transform: scale(1.06); transition: opacity .9s var(--ease), transform 4.5s var(--ease); }
+.oil-stage[data-tone='engine'] [data-oil-photo='engine'],
+.oil-stage[data-tone='hydraulic'] [data-oil-photo='hydraulic'],
+.oil-stage[data-tone='transformer'] [data-oil-photo='transformer'] { opacity: 1; transform: none; }
+[data-oil-photo='engine'] { object-position: 40% 82%; }
+[data-oil-photo='hydraulic'] { object-position: 40% 50%; }
+[data-oil-photo='transformer'] { object-position: 45% 55%; }
 .oil-stage-caption { display: flex; align-items: center; gap: 18px; }
 .oil-stage-name { font: 500 22px/1 var(--serif); color: var(--head); transition: opacity .35s var(--ease); }
 .oil-stage.is-swapping .oil-stage-name { opacity: 0; }
@@ -1518,9 +1449,6 @@ pre { margin: 20px 0; padding: 22px; white-space: pre-wrap; font: 500 14px/1.85 
 @keyframes refinery-fill { 0%, 100% { transform: scaleY(.4); } 55% { transform: scaleY(.86); } }
 
 @keyframes spin { to { transform: rotate(360deg); } }
-@keyframes wave-120 { to { transform: translateX(-120px); } }
-@keyframes wave-160 { to { transform: translateX(-160px); } }
-@keyframes bubble { 0% { transform: translateY(0); opacity: 0; } 15% { opacity: 1; } 100% { transform: translateY(-150px); opacity: 0; } }
 @keyframes screen {
   0% { opacity: 0; transform: translateY(16px); }
   5%, 31% { opacity: 1; transform: none; }
@@ -1534,7 +1462,7 @@ pre { margin: 20px 0; padding: 22px; white-space: pre-wrap; font: 500 14px/1.85 
 @keyframes ripple { 0% { opacity: 0; transform: scale(.2); } 15% { opacity: .7; } 100% { opacity: 0; transform: scale(1); } }
 
 /* The pause control stops every looping animation, not just the oil. */
-.motion-paused .page-hero-visual::before, .motion-paused .route-icon::after, .motion-paused .jar, .motion-paused .wave, .motion-paused .screen {
+.motion-paused .page-hero-visual::before, .motion-paused .route-icon::after, .motion-paused .screen {
   animation-play-state: paused;
 }
 
@@ -1612,7 +1540,8 @@ pre { margin: 20px 0; padding: 22px; white-space: pre-wrap; font: 500 14px/1.85 
   .hero-bottom { padding-block: 8px 0; flex-wrap: wrap; row-gap: 4px; }
   /* Too narrow for one row: the enquiry button spans the width above Pause motion and the arrow. */
   .hero-enquiry { order: -1; width: 100%; }
-  .hero-background { background-position: 75% center; }
+  /* The phone poster is the phone's first frame of the oil (it lands lower right), pinned at that spot. */
+  .hero-background { background-image: url('assets/oil-poster-phone.webp'); background-position: 78% 77%; }
   .hero-shade { background: linear-gradient(90deg, rgba(7, 7, 6, .83), rgba(7, 7, 6, .42)), linear-gradient(0deg, rgba(7, 7, 6, .8), transparent 70%); }
 
   .page-hero { padding-top: calc(var(--header-h) + 20px); padding-bottom: var(--section-y); }
@@ -1621,7 +1550,6 @@ pre { margin: 20px 0; padding: 22px; white-space: pre-wrap; font: 500 14px/1.85 
   .home-oils { grid-template-columns: 1fr; gap: 16px; }
   .home-oil { display: grid; grid-template-columns: 108px minmax(0, 1fr); gap: 10px 18px; padding: 18px; align-items: center; }
   .home-oil-visual { grid-row: 1 / 4; height: 160px; margin-bottom: 0; }
-  .home-jar { width: 108px; height: 144px; }
   .home-oil-title { margin: 0; font-size: 24px; padding-right: 22px; align-self: end; }
   .home-oil-text { grid-column: 2; font-size: 15px; }
   .home-oil-action { grid-column: 2; align-self: start; margin-top: 0; padding-top: 10px; }
@@ -1654,10 +1582,6 @@ pre { margin: 20px 0; padding: 22px; white-space: pre-wrap; font: 500 14px/1.85 
 
   .refinery { padding: 16px; border-radius: 18px; }
   .refinery-caption-title { font-size: 22px; }
-
-  .jar-art { min-height: 280px; }
-  .jar { width: 190px; }
-  .jar-glow { width: 280px; height: 280px; }
 
   .route { gap: 20px; }
   .route-icon { width: 54px; height: 54px; }
@@ -1701,14 +1625,12 @@ pre { margin: 20px 0; padding: 22px; white-space: pre-wrap; font: 500 14px/1.85 
   .menu { padding: 10px 0; }
   .home-oil { grid-template-columns: 88px minmax(0, 1fr); gap: 10px 14px; padding: 16px; }
   .home-oil-visual { height: 156px; }
-  .home-jar { width: 88px; height: 128px; }
 }
 
 @media (prefers-reduced-motion: reduce) {
   html { scroll-behavior: auto; }
   *, *::before, *::after { animation-duration: .01ms !important; animation-iteration-count: 1 !important; transition-duration: .01ms !important; transition-delay: 0s !important; }
   .hero-oil.is-ready { opacity: 0; }
-  .home-oil[aria-selected='true'] .home-jar-wave { animation: none; }
   .home-oil:hover, .card:hover { translate: none; }
   .motion-toggle { display: none; }
 }

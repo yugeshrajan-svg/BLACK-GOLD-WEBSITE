@@ -59,7 +59,7 @@ BLACK-GOLD-WEBSITE/
 | Final website URL and generated search/share URLs | `src/config/site.json` |
 | Colours, spacing, page styles | `src/styles/` |
 | Black-and-gold theme: colour tokens, then the overrides for light surfaces | `src/styles/base.css` (tokens), `src/styles/theme.css` (loaded last) |
-| Home hero: the glass oil barrel and the words behind it | `src/scripts/glass-hero.js` (3D, loads three.js from jsDelivr), `.hero-words` in `src/styles/home.css` (text fallback) |
+| Home hero: the oil pour over the oil poster | `src/scripts/oil-surface.js` (WebGL pour, drawn at the screen's own resolution up to 4K), `public/assets/oil-poster*.webp` (still frames shown before it starts, when motion is off or without WebGL; see the update guide) |
 | Interactions and animation logic | `src/scripts/` |
 
 Read [the update guide](docs/UPDATING.md) for examples and a map of the shared sections and stylesheets.

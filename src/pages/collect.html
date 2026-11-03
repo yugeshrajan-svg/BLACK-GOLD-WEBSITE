@@ -23,59 +23,15 @@ closingDescription: Choose the oil type and share your approximate quantity when
     </div>
     <div class="page-hero-visual">
       <div class="oil-stage" data-tone="engine" aria-hidden="true">
-        <div class="jar-art">
-          <div class="jar-glow"></div>
-          <svg class="jar" viewBox="0 0 240 320">
-            <defs>
-              <clipPath id="jar-clip"><rect x="44" y="70" width="152" height="224" rx="24"/></clipPath>
-              <linearGradient id="oil-fill" x1="0" y1="0" x2="0" y2="1">
-                <stop class="oil-stop-top" offset="0"/>
-                <stop class="oil-stop-bottom" offset="1"/>
-              </linearGradient>
-              <linearGradient id="jar-depth" x1="0" y1="0" x2="1" y2="0">
-                <stop offset="0" stop-color="#000" stop-opacity=".45"/>
-                <stop offset=".25" stop-color="#000" stop-opacity="0"/>
-                <stop offset=".62" stop-color="#000" stop-opacity="0"/>
-                <stop offset="1" stop-color="#000" stop-opacity=".5"/>
-              </linearGradient>
-              <linearGradient id="glass" x1="0" y1="0" x2="1" y2="0">
-                <stop offset="0" stop-color="#fff" stop-opacity=".42"/>
-                <stop offset=".16" stop-color="#fff" stop-opacity=".06"/>
-                <stop offset=".8" stop-color="#fff" stop-opacity="0"/>
-                <stop offset="1" stop-color="#fff" stop-opacity=".22"/>
-              </linearGradient>
-            </defs>
-            <ellipse class="jar-shadow" cx="120" cy="304" rx="92" ry="9"/>
-            <g clip-path="url(#jar-clip)">
-              <g class="jar-liquid">
-                <path class="wave wave-back" d="M0 12 Q30 2 60 12 T120 12 T180 12 T240 12 T300 12 T360 12 T420 12 T480 12 V320 H0 Z"/>
-                <path class="wave wave-front" d="M0 14 Q40 4 80 14 T160 14 T240 14 T320 14 T400 14 T480 14 V320 H0 Z"/>
-                <circle class="bubble b1" cx="88" cy="250" r="3"/>
-                <circle class="bubble b2" cx="140" cy="270" r="2.2"/>
-                <circle class="bubble b3" cx="112" cy="285" r="2.6"/>
-                <circle class="bubble b4" cx="162" cy="240" r="1.8"/>
-                <rect x="44" y="13" width="152" height="300" fill="url(#jar-depth)"/>
-              </g>
-            </g>
-            <rect class="jar-body" x="44" y="70" width="152" height="224" rx="24"/>
-            <rect x="44" y="70" width="152" height="224" rx="24" fill="url(#glass)"/>
-            <rect class="jar-shine" x="58" y="92" width="9" height="150" rx="4.5"/>
-            <rect class="jar-neck" x="66" y="56" width="108" height="18" rx="4"/>
-            <rect class="jar-lid" x="58" y="22" width="124" height="38" rx="7"/>
-            <path class="jar-ridges" d="M74 28v26M90 28v26M106 28v26M122 28v26M138 28v26M154 28v26M170 28v26"/>
-            <g class="jar-label">
-              <rect x="68" y="150" width="104" height="86" rx="3"/>
-              <text class="jar-label-brand" x="120" y="174" text-anchor="middle">BLACK GOLD</text>
-              <line x1="80" y1="184" x2="160" y2="184"/>
-              <text class="jar-label-type" x="120" y="205" text-anchor="middle">ENGINE</text>
-              <text class="jar-label-no" x="120" y="224" text-anchor="middle">SAMPLE · 01</text>
-            </g>
-          </svg>
+        <div class="oil-photos">
+          <img class="oil-photo" data-oil-photo="engine" src="assets/oil-engine.webp" alt="" width="900" height="804" decoding="async" fetchpriority="high">
+          <img class="oil-photo" data-oil-photo="hydraulic" src="assets/oil-hydraulic.webp" alt="" width="960" height="639" decoding="async">
+          <img class="oil-photo" data-oil-photo="transformer" src="assets/oil-transformer.webp" alt="" width="960" height="742" decoding="async">
         </div>
         <div class="oil-stage-caption"><span class="oil-stage-name">Engine oil</span><span class="oil-dots"><i class="is-on"></i><i></i><i></i></span></div>
       </div>
       <div class="visual-tools">
-        <p class="visual-hint">Choose an oil to explore the sample</p>
+        <p class="visual-hint">Choose an oil to see where it comes from</p>
         <div class="preview-controls preview-controls--oils" role="group" aria-label="Choose an oil">
           <button type="button" data-oil-preview="engine" aria-pressed="true">Engine oil</button>
           <button type="button" data-oil-preview="hydraulic" aria-pressed="false">Hydraulic oil</button>

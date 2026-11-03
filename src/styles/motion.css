@@ -6,9 +6,6 @@
 @keyframes refinery-fill { 0%, 100% { transform: scaleY(.4); } 55% { transform: scaleY(.86); } }
 
 @keyframes spin { to { transform: rotate(360deg); } }
-@keyframes wave-120 { to { transform: translateX(-120px); } }
-@keyframes wave-160 { to { transform: translateX(-160px); } }
-@keyframes bubble { 0% { transform: translateY(0); opacity: 0; } 15% { opacity: 1; } 100% { transform: translateY(-150px); opacity: 0; } }
 @keyframes screen {
   0% { opacity: 0; transform: translateY(16px); }
   5%, 31% { opacity: 1; transform: none; }
@@ -22,6 +19,6 @@
 @keyframes ripple { 0% { opacity: 0; transform: scale(.2); } 15% { opacity: .7; } 100% { opacity: 0; transform: scale(1); } }
 
 /* The pause control stops every looping animation, not just the oil. */
-.motion-paused .page-hero-visual::before, .motion-paused .route-icon::after, .motion-paused .jar, .motion-paused .wave, .motion-paused .screen {
+.motion-paused .page-hero-visual::before, .motion-paused .route-icon::after, .motion-paused .screen {
   animation-play-state: paused;
 }
