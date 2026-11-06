@@ -39,10 +39,23 @@
   --on-gold: #1b1408;
   --glass: rgba(7, 8, 10, .9);
   --chip-bg: rgba(21, 19, 15, .92);
-  --accent: #7fcf9c;
-  --accent-rgb: 127, 207, 156;
-  --accent-bright: #b5dec5;
-  --accent-soft: rgba(127, 207, 156, .12);
+  /* The default accent is the brand's gold. Pages may re-point it, never to a stray hex. */
+  --accent: #e0b453;
+  --accent-rgb: 224, 180, 83;
+  --accent-bright: #f1d38a;
+  --accent-soft: rgba(224, 180, 83, .12);
+
+  /* Success is the one colour that is not gold. It means money received or a pickup
+     completed — nothing decorative is allowed to use it. */
+  --success: #7fcf9c;
+  --success-rgb: 127, 207, 156;
+  --success-bright: #b5dec5;
+
+  /* Tints for a row of sibling cards or steps: one warm scale, declared once here. */
+  --tint-1: 226, 160, 72;
+  --tint-2: 224, 180, 83;
+  --tint-3: 205, 200, 188;
+  --tint-4: 193, 142, 58;
 
   --serif: 'Fraunces', Georgia, 'Times New Roman', serif;
   --sans: 'Inter', system-ui, -apple-system, 'Segoe UI', Arial, sans-serif;
@@ -64,8 +77,8 @@
   interpolate-size: allow-keywords;
 }
 
-/* Page accents stay within the gold, green and paper palette, bright enough for black. */
-body[data-page='about'] { --accent: #7fcf9c; --accent-rgb: 127, 207, 156; --accent-bright: #b5dec5; --accent-soft: rgba(127, 207, 156, .12); }
+/* Page accents stay within the gold and paper palette, bright enough for black. */
+body[data-page='about'] { --accent: #e0b453; --accent-rgb: 224, 180, 83; --accent-bright: #f1d38a; --accent-soft: rgba(224, 180, 83, .12); }
 body[data-page='collect'] { --accent: #e0b453; --accent-rgb: 224, 180, 83; --accent-bright: #f1d38a; --accent-soft: rgba(224, 180, 83, .12); }
 body[data-page='app'] { --accent: #e0b453; --accent-rgb: 224, 180, 83; --accent-bright: #f1d38a; --accent-soft: rgba(224, 180, 83, .12); }
 body[data-page='faq'] { --accent: #e6dfcf; --accent-rgb: 230, 223, 207; --accent-bright: #f1d38a; --accent-soft: rgba(230, 223, 207, .08); }
@@ -179,14 +192,21 @@ h1 em, h2 em {
 /* Bullet points: the site's main way of saying things. */
 .points { list-style: none; margin: 0; padding: 0; display: grid; gap: 10px; }
 .points li { position: relative; padding-left: 22px; line-height: 1.5; }
+/* Gold markers, not faded text. Every point is a point; the closing one is the
+   one that leads somewhere, so it gains a ring rather than the others losing contrast. */
 .points li::before {
   content: ''; position: absolute; left: 1px; top: .52em;
   width: 7px; height: 7px; border-radius: 50%;
-  background: currentColor; opacity: .45;
+  background: var(--gold); opacity: .7;
 }
-.points--hero { gap: 10px; margin-bottom: 24px; }
+.points--hero { gap: 12px; margin-bottom: 26px; }
 .points--hero li { font-size: clamp(16px, 1.2vw, 18.5px); color: var(--text); }
-.page-hero .points--hero li:last-child { color: var(--accent-bright); font-weight: 600; }
+.points--hero li::before { opacity: .8; }
+.points--hero li:last-child { color: var(--head); font-weight: 600; }
+.points--hero li:last-child::before {
+  opacity: 1;
+  box-shadow: 0 0 0 4px rgba(var(--accent-rgb), .16);
+}
 
 /* ---------- Buttons & links ---------- */
 
@@ -481,6 +501,26 @@ body[data-page='home'] #seller-app { overflow: hidden; }
     radial-gradient(45% 55% at 5% 100%, rgba(201, 164, 92, .08) 0%, transparent 70%),
     #1e262d;
 }
+/* The same oil surface as the home hero, used as a backdrop on the pages whose hero
+   has no photograph of its own. Dimmer and calmer, and it sits under the decorative
+   layers those heroes already paint. */
+.page-oil {
+  position: absolute; z-index: -2; inset: 0; width: 100%; height: 100%;
+  pointer-events: none;
+  opacity: 0; transition: opacity 1.4s var(--ease);
+}
+.page-oil.is-ready { opacity: .8; }
+/* The oil keeps moving under the words, so its brightness is never the same twice.
+   This holds the reading side dark and lets the pool come through where the page's
+   own visual sits, the way the home hero's shade does. */
+.page-oil-shade {
+  position: absolute; z-index: -1; inset: 0; pointer-events: none;
+  background:
+    linear-gradient(90deg, rgba(7, 8, 10, .93) 0%, rgba(7, 8, 10, .74) 36%, rgba(7, 8, 10, .22) 74%, rgba(7, 8, 10, .1) 100%),
+    linear-gradient(0deg, rgba(7, 8, 10, .8) 0%, rgba(7, 8, 10, 0) 32%);
+}
+@media (prefers-reduced-motion: reduce) { .page-oil, .page-oil-shade { display: none; } }
+
 .page-hero-inner { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); align-items: center; gap: var(--layout-gap); min-height: 0; }
 .page-hero h1 { margin: 14px 0 20px; font-size: clamp(42px, 5vw, 76px); line-height: 1.05; letter-spacing: -.015em; }
 /* The accent phrase always starts its own line: "A resource. / Not a waste." */
@@ -567,16 +607,17 @@ body[data-page='home'] #questions { background-color: #f7edcc; --accent: #8a6a0f
 .cards--3 { grid-template-columns: repeat(3, minmax(0, 1fr)); }
 .cards--4 { grid-template-columns: repeat(4, minmax(0, 1fr)); }
 .card {
-  --tile-rgb: 46, 125, 79;
+  --tile-rgb: var(--tint-1);
   position: relative;
   display: flex; flex-direction: column; align-items: flex-start; gap: 14px;
   padding: var(--card-pad);
   background: radial-gradient(300px circle at var(--mx, 0%) var(--my, 0%), rgba(var(--tile-rgb), .1), transparent 80%), #fffdf9; border: 1px solid rgba(var(--tile-rgb), .18); border-top: 2px solid rgba(var(--tile-rgb), .6); border-radius: var(--radius-card);
   transition: transform .6s var(--ease), box-shadow .6s var(--ease), border-color .6s var(--ease), opacity 1.2s var(--ease);
 }
-.card:nth-child(2), .home-steps li:nth-child(2) { --tile-rgb: 138, 106, 15; }
-.card:nth-child(3), .home-steps li:nth-child(3) { --tile-rgb: 30, 38, 45; }
-.card:nth-child(4), .home-steps li:nth-child(4) { --tile-rgb: 46, 125, 79; }
+/* Tint values live in base.css; theme.css re-points them for the dark pages. */
+.card:nth-child(2), .home-steps li:nth-child(2) { --tile-rgb: var(--tint-2); }
+.card:nth-child(3), .home-steps li:nth-child(3) { --tile-rgb: var(--tint-3); }
+.card:nth-child(4), .home-steps li:nth-child(4) { --tile-rgb: var(--tint-4); }
 .card h3 { font-size: clamp(22px, 1.8vw, 27px); line-height: 1.15; letter-spacing: -.015em; }
 .card .points { gap: 8px; }
 .card .points li { font-size: 15.5px; color: var(--text); }
@@ -590,7 +631,16 @@ body[data-page='home'] #questions { background-color: #f7edcc; --accent: #8a6a0f
 .card.is-current .card-no, .card.is-current .card-tag { color: rgb(var(--tile-rgb)); }
 
 /* The shared promise story appears on Home and About. */
-.section.promise-section { --head: #f7f4eb; --text: #d5dfe1; --muted: #acbdc4; --accent: #a9ddc8; --accent-rgb: 169, 221, 200; --gold: #e7c85c; background: radial-gradient(ellipse at 4% 8%, rgba(52, 125, 107, .24), transparent 50%), radial-gradient(ellipse at 96% 80%, rgba(108, 77, 151, .18), transparent 50%), #142129; }
+/* "Our promise": black with a gold glow, declared once here rather than painted
+   teal and darkened again later. Its illustrated scenes keep their own colours. */
+.section.promise-section {
+  --head: #f3eee2; --text: #d9d3c4; --muted: #a8a294;
+  --accent: #e0b453; --accent-rgb: 224, 180, 83; --accent-bright: #f1d38a; --gold: #e0b453;
+  background:
+    radial-gradient(ellipse at 4% 8%, rgba(214, 168, 67, .12), transparent 50%),
+    radial-gradient(ellipse at 96% 92%, rgba(214, 168, 67, .07), transparent 55%),
+    var(--bg-2);
+}
 .promise-heading { display: flex; align-items: center; justify-content: space-between; gap: 24px; margin-bottom: var(--section-gap); }
 .promise-heading .section-head { margin-bottom: 0; }
 .promise-heading .motion-toggle { flex: none; }
@@ -667,6 +717,9 @@ body[data-page='home'] #questions { background-color: #f7edcc; --accent: #8a6a0f
 .promise-caption-detail { min-height: 3.2em; font-size: 14px; line-height: 1.6; }
 .promise-announcement { position: absolute; width: 1px; height: 1px; padding: 0; margin: -1px; overflow: hidden; clip-path: inset(50%); white-space: nowrap; }
 .promise-choices { min-width: 0; }
+/* Each card already carries its own 01–04, so the list's own markers counted twice.
+   Dropping the indent as well lines the cards up with the hint above them. */
+.promises { list-style: none; margin: 0; padding: 0; }
 .promise-choice[data-promise-stage='0'] { --promise-ui: #f7c46a; --promise-ui-rgb: 247, 196, 106; --promise-ui-ink: #4d3214; }
 .promise-choice[data-promise-stage='1'] { --promise-ui: #83cff7; --promise-ui-rgb: 131, 207, 247; --promise-ui-ink: #163e67; }
 .promise-choice[data-promise-stage='2'] { --promise-ui: #77dfbd; --promise-ui-rgb: 119, 223, 189; --promise-ui-ink: #0d483a; }
@@ -676,11 +729,18 @@ body[data-page='home'] #questions { background-color: #f7edcc; --accent: #8a6a0f
 .promise-choice-copy { flex: 1; min-width: 0; }
 .promise-choice-label { display: block; font: 500 clamp(19px, 1.6vw, 23px)/1.25 var(--serif); }
 .promise-choice-detail { display: block; margin-top: 6px; color: #c7d3d9; font: 400 14px/1.6 var(--sans); }
-.promise-choice-arrow { flex: none; color: var(--promise-ui); font-size: 18px; transition: transform .3s; }
+/* The arrow marks which promise is showing. Dim and still when it is not the one,
+   leaning forward on hover, fully lit and moved across once chosen. */
+.promise-choice-arrow { flex: none; color: var(--promise-ui); font-size: 18px; opacity: .3; transition: transform .3s var(--ease), opacity .3s; }
+.promise-choice:hover .promise-choice-arrow { opacity: .65; transform: translateX(4px); }
 .promise-choice:hover, .promise-choice[aria-pressed='true'] { border-color: var(--promise-ui); background: linear-gradient(100deg, rgba(var(--promise-ui-rgb), .12), rgba(var(--promise-ui-rgb), .03)), #1d3039; }
 .promise-choice[aria-pressed='true'] { box-shadow: inset 3px 0 0 var(--promise-ui), 0 10px 24px -22px rgba(0, 0, 0, .6); }
 .promise-choice[aria-pressed='true'] .promise-choice-no { background: var(--promise-ui); color: var(--promise-ui-ink); }
-.promise-choice[aria-pressed='true'] .promise-choice-arrow { transform: translateX(3px); }
+.promise-choice[aria-pressed='true'] .promise-choice-arrow { opacity: 1; transform: translateX(7px); }
+/* Clicked, not merely hovered: the card is pinned while the scenes stay put, so it
+   gets a full ring and the arrow steps out — the one thing hover never does. */
+.promise-choice.is-held { box-shadow: inset 3px 0 0 var(--promise-ui), 0 0 0 1px var(--promise-ui), 0 14px 30px -20px rgba(0, 0, 0, .7); }
+.promise-choice.is-held .promise-choice-arrow { transform: translateX(12px) scale(1.2); }
 
 /* Controls change the illustrations; they are outside decorative aria-hidden art. */
 .visual-tools { width: min(100%, 580px); text-align: center; }
@@ -690,18 +750,26 @@ body[data-page='home'] #questions { background-color: #f7edcc; --accent: #8a6a0f
 .preview-controls button:hover { border-color: var(--accent-bright); background: rgba(var(--accent-rgb), .15); }
 .preview-controls button[aria-pressed='true'] { background: var(--accent-bright); border-color: var(--accent-bright); color: #141b18; box-shadow: 0 5px 24px -15px var(--accent-bright); }
 .preview-controls--oils [data-oil-preview='engine'] { --choice: #f0c17d; }
-.preview-controls--oils [data-oil-preview='hydraulic'] { --choice: #b5dec5; }
+.preview-controls--oils [data-oil-preview='hydraulic'] { --choice: #e7d7a8; }
 .preview-controls--oils [data-oil-preview='transformer'] { --choice: #e7c85c; }
 .preview-controls--oils button[aria-pressed='true'] { background: var(--choice); border-color: var(--choice); }
 .preview-description { max-width: 38em; min-height: 3.3em; margin: 16px auto 0; color: var(--text); font-size: 14px; line-height: 1.65; text-wrap: pretty; }
 .visual-tools--app { margin-top: 0; }
 html:not(.js) .visual-tools { display: none; }
-.entrance { animation: content-arrival .55s var(--ease) both; }
+/* Siblings in a row arrive one after another rather than all at once; the delay is
+   set per element as it enters, and capped so a long row never lags behind the scroll. */
+.entrance { animation: content-arrival .6s var(--ease) both; animation-delay: calc(var(--arrive, 0) * 75ms); }
 .motion-paused .entrance { animation: none; }
 
 @media (hover: hover) and (pointer: fine) {
+  /* On black, a lift alone is invisible: the edge brightens and the card casts its
+     own tint, so the card reads as picked up rather than merely nudged. */
   .home-oil:hover, .card:hover { translate: 0 -4px; }
   .home-oil:hover { border-color: rgb(var(--tile-rgb)); }
+  .card:hover {
+    border-color: rgba(var(--tile-rgb), .5);
+    box-shadow: 0 22px 46px -30px rgba(var(--tile-rgb), .5);
+  }
 }
 
 /* Oil descriptions sit below the single interactive sample jar. */
@@ -749,7 +817,7 @@ html:not(.js) .visual-tools { display: none; }
 .refinery { --journey-progress: .25; width: min(100%, 620px); padding: 22px; border: 1px solid rgba(141, 225, 196, .22); border-radius: 24px; background: linear-gradient(150deg, #172b25, #0b1713 65%); box-shadow: 0 28px 70px -48px #000; }
 .refinery-label { color: var(--accent-bright); font: 500 11px/1.5 var(--sans); letter-spacing: .1em; text-transform: uppercase; }
 .refinery-svg { width: 100%; height: auto; margin: 18px 0 4px; overflow: visible; }
-.refinery-grid { fill: none; stroke: #b5dec5; stroke-width: .6; opacity: .08; }
+.refinery-grid { fill: none; stroke: var(--gold-hi); stroke-width: .6; opacity: .08; }
 .refinery-platform { fill: #243e33; }
 .refinery-pipe { fill: none; stroke: #3c5144; stroke-width: 13; stroke-linejoin: round; }
 .refinery-flow { fill: none; stroke: #ecc174; stroke-width: 5; stroke-linecap: round; stroke-dasharray: 10 14; animation: refinery-flow 2.4s linear infinite; }
@@ -770,10 +838,10 @@ html:not(.js) .visual-tools { display: none; }
 .refinery-stage.is-current .refinery-number { fill: var(--station); }
 .refinery-stage.is-current .refinery-sensor { fill: var(--station); filter: drop-shadow(0 0 5px var(--station)); }
 .refinery-caption { display: flex; align-items: center; gap: 14px; padding: 18px 0; border-top: 1px solid rgba(141, 225, 196, .18); }
-.refinery-step { display: grid; place-items: center; flex: none; width: 42px; height: 42px; border-radius: 12px; background: #b5dec5; color: #123e2e; font: 600 14px/1 var(--sans); }
+.refinery-step { display: grid; place-items: center; flex: none; width: 42px; height: 42px; border-radius: 12px; background: var(--gold-hi); color: var(--on-gold); font: 600 14px/1 var(--sans); }
 .refinery-caption-title { font: 500 25px/1.3 var(--serif); color: #f2ede1; }
 .refinery-progress { height: 3px; overflow: hidden; border-radius: 2px; background: #2c4334; }
-.refinery-progress span { display: block; height: 100%; background: linear-gradient(90deg, #edbf78, #b5dec5); transform: scaleX(var(--journey-progress)); transform-origin: left; transition: transform .7s var(--ease); }
+.refinery-progress span { display: block; height: 100%; background: linear-gradient(90deg, #c48f2e, #f8e7b0); transform: scaleX(var(--journey-progress)); transform-origin: left; transition: transform .7s var(--ease); }
 
 /* ---------- What we collect: a photo of each oil's source (changes on its own) ---------- */
 
@@ -800,7 +868,7 @@ html:not(.js) .visual-tools { display: none; }
 .route { width: min(100%, 580px); display: grid; gap: 36px; }
 .route-board { position: relative; }
 .route-track { position: absolute; left: 12.5%; right: 12.5%; top: 32px; height: 4px; border-radius: 2px; background: #2a2620; overflow: hidden; }
-.route-fill { position: absolute; inset: 0; background: linear-gradient(90deg, #b5dec5, var(--accent-bright)); transform: scaleX(0); transform-origin: left; }
+.route-fill { position: absolute; inset: 0; background: linear-gradient(90deg, #c48f2e, var(--accent-bright)); transform: scaleX(0); transform-origin: left; }
 .route-drop { position: absolute; top: 34px; left: 12.5%; width: 18px; height: 22px; transform: translate(-50%, -50%) rotate(-90deg); }
 .route-drop svg { width: 100%; height: 100%; fill: var(--accent-bright); filter: drop-shadow(0 0 8px rgba(var(--accent-rgb), .6)); }
 .route-nodes { position: relative; display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); list-style: none; margin: 0; padding: 0; }
@@ -824,7 +892,8 @@ html:not(.js) .route-icon, .route.is-static .route-icon { background: var(--gold
 .route--pickup .route-board { padding-top: 0; }
 .pickup-progress { position: sticky; top: calc(var(--header-h) + 12px); z-index: 3; height: 78px; margin-bottom: 16px; border: 1px solid #d8cfb4; border-radius: 14px; background: rgba(246, 244, 239, .97); -webkit-backdrop-filter: blur(8px); backdrop-filter: blur(8px); }
 .route--pickup .route-track { top: 39px; height: 4px; background: #d5cfbf; }
-.route--pickup .route-fill { background: linear-gradient(90deg, #2e7d4f, #2e7d4f); }
+/* Progress is not completion: the bar fills gold and only its last step turns green. */
+.route--pickup .route-fill { background: linear-gradient(90deg, #c48f2e, var(--gold-hi)); }
 .route--pickup .route-drop { top: 25px; z-index: 2; width: 48px; height: 32px; transform: translate(-50%, -50%); }
 .route--pickup .route-drop svg { fill: none; filter: drop-shadow(0 3px 3px rgba(27, 47, 70, .18)); }
 .pickup-road-labels { position: absolute; top: 50px; left: 0; right: 0; display: grid; grid-template-columns: repeat(4, 1fr); list-style: none; margin: 0; padding: 0; text-align: center; font: 600 11px/1.4 var(--sans); color: #6b675e; }
@@ -1023,10 +1092,10 @@ html:not(.js) .route-icon, .route.is-static .route-icon { background: var(--gold
 .install-story li { padding-top: 7px; border-top: 2px solid #657066; color: #c1c9c2; font-size: 11px; line-height: 1.4; transition: color .3s, border-color .3s; }
 .install-story li > span { display: block; margin-bottom: 3px; font-size: 9px; opacity: .75; }
 .install-story li.is-current { border-color: #e7c85c; color: #e7c85c; }
-.install-preview[data-phase='3'] .install-story li.is-current { border-color: #b5dec5; color: #b5dec5; }
+.install-preview[data-phase='3'] .install-story li.is-current { border-color: var(--success-bright); color: var(--success-bright); }
 .install-status { display: flex; align-items: center; justify-content: center; gap: 7px; min-height: 18px; margin-top: 8px; color: #d4ded5; font-size: 11px; line-height: 1.5; text-align: center; }
 .install-status-dot { flex: none; width: 5px; height: 5px; border-radius: 50%; background: #e7c85c; }
-.install-preview[data-phase='3'] .install-status-dot { background: #b5dec5; }
+.install-preview[data-phase='3'] .install-status-dot { background: var(--success-bright); }
 .install-preview-label { margin-top: 7px; color: #c1c9c2; text-align: center; font-size: 10px; line-height: 1.5; }
 .motion-paused .install-preview *, .tab-hidden .install-preview *, .install-preview.is-offscreen * { animation-play-state: paused !important; }
 .motion-paused .install-preview *, .tab-hidden .install-preview *, .install-preview.is-offscreen * { transition: none !important; }
@@ -1225,7 +1294,7 @@ html:not(.js) .route-icon, .route.is-static .route-icon { background: var(--gold
 .faq-aside li { font-size: 15.5px; color: var(--muted); }
 .faq-search { margin: 20px 0 12px; }
 .faq-search label { display: block; margin-bottom: 12px; font-size: 14px; font-weight: 600; color: var(--accent); }
-.faq-search-field { display: flex; align-items: center; gap: 12px; padding: 14px 16px; background: #fffdf9; border: 1px solid rgba(var(--accent-rgb), .3); border-radius: 12px; transition: box-shadow .2s, border-color .2s; }
+.faq-search-field { display: flex; align-items: center; gap: 12px; padding: 14px 16px; background: var(--bg-3); border: 1px solid rgba(var(--accent-rgb), .3); border-radius: 12px; transition: box-shadow .2s, border-color .2s; }
 .faq-search-field:focus-within { border-color: var(--accent); box-shadow: 0 0 0 3px rgba(var(--accent-rgb), .1); }
 .faq-search-field svg { width: 20px; height: 20px; flex: none; fill: none; stroke: var(--accent); stroke-width: 1.5; stroke-linecap: round; }
 .faq-search input { width: 100%; min-width: 0; padding: 0; border: 0; outline: none; background: transparent; font-size: 16px; line-height: 1.5; color: var(--head); }
@@ -1254,43 +1323,43 @@ details[open] .faq-icon { transform: rotate(45deg); background: var(--accent); b
 /* ---------- FAQs hero: ask a question, get the matching published answer ---------- */
 
 .faq-hero .page-hero-visual::before { background: radial-gradient(ellipse, rgba(201, 162, 39, .17), transparent 65%); }
-.faq-chat { width: min(100%, 500px); display: flex; flex-direction: column; overflow: hidden; border: 1px solid rgba(255, 255, 255, .5); border-radius: 24px; background: #f6f4ef; color: #454b4e; box-shadow: 0 34px 80px -35px #000, 0 0 0 8px rgba(255, 255, 255, .035); text-align: left; }
+.faq-chat { width: min(100%, 500px); display: flex; flex-direction: column; overflow: hidden; border: 1px solid var(--line-gold); border-radius: 24px; background: #0f1215; color: var(--text); box-shadow: 0 34px 80px -35px #000, 0 0 0 8px rgba(201, 162, 39, .05); text-align: left; }
 .faq-chat[hidden] { display: none; }
-.faq-chat-head { display: flex; align-items: center; gap: 12px; padding: 16px 20px; border-bottom: 1px solid #e4e0d6; background: #fff; }
+.faq-chat-head { display: flex; align-items: center; gap: 12px; padding: 16px 20px; border-bottom: 1px solid var(--line); background: #171b1f; }
 .faq-chat-head img { width: 44px; height: 44px; flex: none; }
-.faq-chat-head h2 { margin: 0; font: 700 17px/1.2 var(--sans); letter-spacing: -.01em; color: #1e262d; }
-.faq-chat-head p { margin-top: 3px; font-size: 12px; line-height: 1.4; color: #6b675e; }
+.faq-chat-head h2 { margin: 0; font: 700 17px/1.2 var(--sans); letter-spacing: -.01em; color: var(--head); }
+.faq-chat-head p { margin-top: 3px; font-size: 12px; line-height: 1.4; color: var(--muted); }
 .faq-chat-log { height: 320px; overflow-y: auto; overscroll-behavior: contain; display: flex; flex-direction: column; gap: 12px; padding: 20px; scroll-behavior: smooth; }
 .faq-chat-log:focus-visible { outline-offset: -4px; }
 .faq-msg { max-width: 88%; padding: 12px 15px; border-radius: 16px; font-size: 14px; line-height: 1.55; animation: chat-in .3s var(--ease) both; }
 /* Messages are content: with motion paused they appear at once instead of freezing before their fade-in. */
 .motion-paused .faq-msg { animation: none; }
-.faq-msg--bot { align-self: flex-start; border: 1px solid #e4e0d6; border-bottom-left-radius: 5px; background: #fff; color: #2c3338; }
-.faq-msg--user { align-self: flex-end; border-bottom-right-radius: 5px; background: #1e262d; color: #f6f4ef; overflow-wrap: anywhere; }
+.faq-msg--bot { align-self: flex-start; border: 1px solid var(--line); border-bottom-left-radius: 5px; background: #1b2025; color: var(--text); }
+.faq-msg--user { align-self: flex-end; border-bottom-right-radius: 5px; background: var(--gold-grad); color: var(--on-gold); font-weight: 500; overflow-wrap: anywhere; }
 .faq-msg p + p, .faq-msg ul + p { margin-top: 6px; }
-.faq-msg-title { margin-bottom: 4px; font-weight: 700; color: #1e262d; }
+.faq-msg-title { margin-bottom: 4px; font-weight: 700; color: var(--head); }
 .faq-msg ul { margin: 0; padding-left: 18px; }
 .faq-msg li + li { margin-top: 2px; }
-.faq-msg-link { display: inline-block; margin-top: 8px; font-size: 12.5px; font-weight: 600; color: #8a6a0f; text-decoration: underline; text-underline-offset: 3px; }
-.faq-msg-action { display: block; min-height: 44px; margin-top: 12px; padding: 12px 16px; border-radius: var(--radius); background: #c9a227; color: #1e262d; font: 600 14px/1.4 var(--sans); }
-.faq-msg-action:hover { background: #dec28a; }
-.faq-chat-typing { display: flex; gap: 4px; width: fit-content; margin: -4px 20px 14px; padding: 13px 15px; border: 1px solid #e4e0d6; border-radius: 16px; border-bottom-left-radius: 5px; background: #fff; }
+.faq-msg-link { display: inline-block; margin-top: 8px; font-size: 12.5px; font-weight: 600; color: var(--gold); text-decoration: underline; text-underline-offset: 3px; }
+.faq-msg-action { display: block; min-height: 44px; margin-top: 12px; padding: 12px 16px; border-radius: var(--radius); background: var(--gold-grad); color: var(--on-gold); font: 600 14px/1.4 var(--sans); }
+.faq-msg-action:hover { background: linear-gradient(115deg, #fff3cf 0%, #ecc66b 38%, #cf9a35 72%, #9a6c24 100%); }
+.faq-chat-typing { display: flex; gap: 4px; width: fit-content; margin: -4px 20px 14px; padding: 13px 15px; border: 1px solid var(--line); border-radius: 16px; border-bottom-left-radius: 5px; background: #1b2025; }
 .faq-chat-typing[hidden] { display: none; }
-.faq-chat-typing i { width: 6px; height: 6px; border-radius: 50%; background: #8a6a0f; animation: chat-dot 1s ease-in-out infinite; }
+.faq-chat-typing i { width: 6px; height: 6px; border-radius: 50%; background: var(--gold); animation: chat-dot 1s ease-in-out infinite; }
 .faq-chat-typing i:nth-child(2) { animation-delay: .15s; }
 .faq-chat-typing i:nth-child(3) { animation-delay: .3s; }
 .faq-chat-suggest { display: flex; flex-wrap: wrap; gap: 8px; padding: 0 20px 14px; }
 .faq-chat-suggest:empty { display: none; }
-.faq-chat-suggest button { min-height: 44px; padding: 10px 14px; border: 1px solid #d8cfb4; border-radius: var(--radius); background: #fff; color: #1e262d; font: 500 14px/1.4 var(--sans); text-align: left; transition: border-color .2s, background-color .2s; }
-.faq-chat-suggest button:hover { border-color: #c9a227; background: #fbf6e6; }
-.faq-chat-form { display: flex; align-items: center; gap: 8px; margin: 0 16px; padding: 6px 6px 6px 16px; border: 1px solid #cfc5a8; border-radius: 14px; background: #fff; box-shadow: 0 3px 14px -10px #8a6a0f; transition: border-color .2s, box-shadow .2s; }
-.faq-chat-form:focus-within { border-color: #8a6a0f; box-shadow: 0 0 0 3px rgba(201, 162, 39, .22); }
-.faq-chat-form input { flex: 1; min-width: 0; padding: 8px 0; border: 0; outline: none; background: transparent; font: 400 15px/1.4 var(--sans); color: #1e262d; }
-.faq-chat-form input::placeholder { color: #8a857a; }
-.faq-chat-form button { display: grid; place-items: center; flex: none; width: 44px; height: 44px; border-radius: var(--radius); background: #c9a227; color: #1e262d; transition: background-color .2s; }
-.faq-chat-form button:hover { background: #dec28a; }
+.faq-chat-suggest button { min-height: 44px; padding: 10px 14px; border: 1px solid var(--line-strong); border-radius: var(--radius); background: #1b2025; color: var(--head); font: 500 14px/1.4 var(--sans); text-align: left; transition: border-color .2s, background-color .2s; }
+.faq-chat-suggest button:hover { border-color: var(--gold); background: rgba(201, 162, 39, .12); }
+.faq-chat-form { display: flex; align-items: center; gap: 8px; margin: 0 16px; padding: 6px 6px 6px 16px; border: 1px solid var(--line-strong); border-radius: 14px; background: #1b2025; transition: border-color .2s, box-shadow .2s; }
+.faq-chat-form:focus-within { border-color: var(--gold); box-shadow: 0 0 0 3px rgba(201, 162, 39, .22); }
+.faq-chat-form input { flex: 1; min-width: 0; padding: 8px 0; border: 0; outline: none; background: transparent; font: 400 15px/1.4 var(--sans); color: var(--head); }
+.faq-chat-form input::placeholder { color: var(--muted); }
+.faq-chat-form button { display: grid; place-items: center; flex: none; width: 44px; height: 44px; border-radius: var(--radius); background: var(--gold-grad); color: var(--on-gold); transition: filter .2s; }
+.faq-chat-form button:hover { filter: brightness(1.12); }
 .faq-chat-form button svg { width: 18px; height: 18px; fill: none; stroke: currentColor; stroke-width: 2; stroke-linecap: round; stroke-linejoin: round; }
-.faq-chat-note { padding: 12px 20px 16px; font-size: 13px; color: #6b675e; }
+.faq-chat-note { padding: 12px 20px 16px; font-size: 13px; color: var(--muted); }
 @media (max-width: 760px) {
   .faq-chat-log { height: 300px; padding: 16px; }
   .faq-chat-suggest { padding-inline: 16px; }
@@ -1538,8 +1607,15 @@ pre { margin: 20px 0; padding: 22px; white-space: pre-wrap; font: 500 14px/1.85 
   .hero--app .hero-title { font-size: clamp(40px, 10vw, 68px); }
   .hero-actions { gap: 12px 20px; }
   .hero-bottom { padding-block: 8px 0; flex-wrap: wrap; row-gap: 4px; }
-  /* Too narrow for one row: the enquiry button spans the width above Pause motion and the arrow. */
+  /* Too narrow for one row: the enquiry button spans the width above Pause motion and the arrow.
+     The app download already owns the gold on this screen, so the enquiry steps back to an
+     outline — two full-width gold buttons in one view read as two primary actions. */
   .hero-enquiry { order: -1; width: 100%; }
+  .hero-enquiry.button--gold {
+    background: transparent; color: var(--head);
+    border: 1px solid var(--line-gold); box-shadow: none;
+  }
+  .hero-enquiry.button--gold:hover { background: rgba(201, 162, 39, .1); border-color: var(--gold); box-shadow: none; }
   /* The phone poster is the phone's first frame of the oil (it lands lower right), pinned at that spot. */
   .hero-background { background-image: url('assets/oil-poster-phone.webp'); background-position: 78% 77%; }
   .hero-shade { background: linear-gradient(90deg, rgba(7, 7, 6, .83), rgba(7, 7, 6, .42)), linear-gradient(0deg, rgba(7, 7, 6, .8), transparent 70%); }
@@ -1677,42 +1753,37 @@ body[data-page='home'] #what-we-collect {
     #07080a url('assets/about-refinery.webp') center 65% / cover no-repeat;
 }
 body[data-page='home'] #what-we-collect .home-oil-panel { background: linear-gradient(rgba(var(--tile-rgb), .12), rgba(var(--tile-rgb), .12)), rgba(14, 16, 19, .88); }
-body[data-page='home'] #pickup-process { background-color: var(--bg-2); --accent: #7fcf9c; --accent-rgb: 127, 207, 156; }
+/* The journey is gold like every other section; only its final, paid step turns green. */
+body[data-page='home'] #pickup-process { background-color: var(--bg-2); --accent: #e0b453; --accent-rgb: 224, 180, 83; --accent-bright: #f1d38a; }
 body[data-page='home'] #questions { background-color: var(--bg); --accent: #e0b453; --accent-rgb: 224, 180, 83; }
 .home-help-link { background: var(--bg-3); border-top-color: var(--line-strong); }
-/* "Our promise" keeps its coloured scenes, on black with a gold glow instead of teal. */
-.section.promise-section {
-  background:
-    radial-gradient(ellipse at 4% 8%, rgba(214, 168, 67, .12), transparent 50%),
-    radial-gradient(ellipse at 96% 92%, rgba(214, 168, 67, .07), transparent 55%),
-    var(--bg-2);
-}
 .footer { background: var(--bg); }
 
 /* ---------- Cards: dark surfaces, tints bright enough for black ---------- */
 
 .card { background: radial-gradient(300px circle at var(--mx, 0%) var(--my, 0%), rgba(var(--tile-rgb), .14), transparent 80%), var(--bg-3); }
-.card, .home-steps li, .home-steps li:nth-child(4) { --tile-rgb: 127, 207, 156; }
-.card:nth-child(2), .home-steps li:nth-child(2) { --tile-rgb: 224, 180, 83; }
-.card:nth-child(3), .home-steps li:nth-child(3) { --tile-rgb: 205, 200, 188; }
+.card, .home-steps li { --tile-rgb: var(--tint-1); }
+.card:nth-child(2), .home-steps li:nth-child(2) { --tile-rgb: var(--tint-2); }
+.card:nth-child(3), .home-steps li:nth-child(3) { --tile-rgb: var(--tint-3); }
+.card:nth-child(4), .home-steps li:nth-child(4) { --tile-rgb: var(--tint-4); }
 
 .home-oil { --tile-rgb: 226, 160, 72; background: radial-gradient(240px circle at var(--mx, 70%) var(--my, 20%), rgba(var(--tile-rgb), .14), transparent 80%), var(--bg-3); }
-.home-oil[data-home-oil='hydraulic'], .home-oil-panel[data-tone='hydraulic'] { --tile-rgb: 127, 207, 156; }
+.home-oil[data-home-oil='hydraulic'], .home-oil-panel[data-tone='hydraulic'] { --tile-rgb: 224, 180, 83; }
 .home-oil[data-home-oil='transformer'], .home-oil-panel[data-tone='transformer'] { --tile-rgb: 205, 200, 188; }
 .home-oil-panel { --tile-rgb: 226, 160, 72; }
 .home-oil-indicator { background: var(--bg-3); }
 
 /* Pickup route (home) */
 .route-caption, .route--pickup .route-caption { background: rgba(21, 24, 28, .72); }
-.route--pickup[data-step='3'] .route-caption { border-color: rgba(127, 207, 156, .5); background: rgba(127, 207, 156, .12); }
+.route--pickup[data-step='3'] .route-caption { border-color: rgba(var(--success-rgb), .5); background: rgba(var(--success-rgb), .12); }
 .pickup-progress { border-color: var(--line-strong); background: rgba(14, 16, 19, .92); }
 .route--pickup .route-track { background: rgba(236, 230, 216, .18); }
 .route--pickup .home-steps li { background: rgba(21, 24, 28, .62); }
-.route--pickup .home-steps li:last-child { --tile-rgb: 127, 207, 156; border-color: rgba(127, 207, 156, .5); background: rgba(127, 207, 156, .1); }
+.route--pickup .home-steps li:last-child { --tile-rgb: var(--success-rgb); border-color: rgba(var(--success-rgb), .5); background: rgba(var(--success-rgb), .1); }
 .route--pickup .home-steps li::before { background: var(--bg-3); }
 .route--pickup .home-steps li:last-child h3, .route--pickup .route-caption-no,
 .route--pickup[data-step='3'] .route-caption-no, .route--pickup[data-step='3'] .route-caption-title,
-.pickup-road-labels li:last-child { color: #7fcf9c; }
+.pickup-road-labels li:last-child { color: var(--success); }
 .pickup-journey-hint, .pickup-road-labels, .home-app-platform { color: var(--muted); }
 .home-app-benefit-icon { color: var(--gold); }
 
@@ -1754,7 +1825,7 @@ details[open] .faq-icon { color: var(--bg); }
 .seller-minimum > strong { color: var(--gold); }
 .seller-checklist { border-color: var(--line-strong); background: var(--bg-3); box-shadow: none; }
 .seller-checklist li { border-top-color: var(--line); }
-.seller-check { background: rgba(127, 207, 156, .14); color: #7fcf9c; }
+.seller-check { background: rgba(var(--success-rgb), .14); color: var(--success); }
 .seller-checklist strong { color: var(--head); }
 .seller-help-list, .seller-help-list details { border-color: var(--line-strong); }
 
@@ -1765,10 +1836,10 @@ details[open] .faq-icon { color: var(--bg); }
 .sj-step-number { background: rgba(224, 180, 83, .14); color: var(--gold); }
 .sj-step-role { color: var(--muted); }
 .sj-step-note { border-top-color: var(--line); color: var(--gold); }
-.seller-journey-step--paid { border-left-color: #7fcf9c; background: rgba(127, 207, 156, .08); }
-.seller-journey-step--paid.is-current { border-color: #7fcf9c; background: rgba(127, 207, 156, .12); }
-.seller-journey-step--paid h3, .seller-journey-step--paid .sj-step-number { color: #7fcf9c; }
-.seller-journey-step--paid .sj-step-number { background: rgba(127, 207, 156, .14); }
+.seller-journey-step--paid { border-left-color: var(--success); background: rgba(var(--success-rgb), .08); }
+.seller-journey-step--paid.is-current { border-color: var(--success); background: rgba(var(--success-rgb), .12); }
+.seller-journey-step--paid h3, .seller-journey-step--paid .sj-step-number { color: var(--success); }
+.seller-journey-step--paid .sj-step-number { background: rgba(var(--success-rgb), .14); }
 
 /* Light islands: illustration panels keep the light palette, so their text stays dark. */
 .sj-panel {

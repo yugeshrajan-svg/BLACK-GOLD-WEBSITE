@@ -39,42 +39,37 @@ body[data-page='home'] #what-we-collect {
     #07080a url('assets/about-refinery.webp') center 65% / cover no-repeat;
 }
 body[data-page='home'] #what-we-collect .home-oil-panel { background: linear-gradient(rgba(var(--tile-rgb), .12), rgba(var(--tile-rgb), .12)), rgba(14, 16, 19, .88); }
-body[data-page='home'] #pickup-process { background-color: var(--bg-2); --accent: #7fcf9c; --accent-rgb: 127, 207, 156; }
+/* The journey is gold like every other section; only its final, paid step turns green. */
+body[data-page='home'] #pickup-process { background-color: var(--bg-2); --accent: #e0b453; --accent-rgb: 224, 180, 83; --accent-bright: #f1d38a; }
 body[data-page='home'] #questions { background-color: var(--bg); --accent: #e0b453; --accent-rgb: 224, 180, 83; }
 .home-help-link { background: var(--bg-3); border-top-color: var(--line-strong); }
-/* "Our promise" keeps its coloured scenes, on black with a gold glow instead of teal. */
-.section.promise-section {
-  background:
-    radial-gradient(ellipse at 4% 8%, rgba(214, 168, 67, .12), transparent 50%),
-    radial-gradient(ellipse at 96% 92%, rgba(214, 168, 67, .07), transparent 55%),
-    var(--bg-2);
-}
 .footer { background: var(--bg); }
 
 /* ---------- Cards: dark surfaces, tints bright enough for black ---------- */
 
 .card { background: radial-gradient(300px circle at var(--mx, 0%) var(--my, 0%), rgba(var(--tile-rgb), .14), transparent 80%), var(--bg-3); }
-.card, .home-steps li, .home-steps li:nth-child(4) { --tile-rgb: 127, 207, 156; }
-.card:nth-child(2), .home-steps li:nth-child(2) { --tile-rgb: 224, 180, 83; }
-.card:nth-child(3), .home-steps li:nth-child(3) { --tile-rgb: 205, 200, 188; }
+.card, .home-steps li { --tile-rgb: var(--tint-1); }
+.card:nth-child(2), .home-steps li:nth-child(2) { --tile-rgb: var(--tint-2); }
+.card:nth-child(3), .home-steps li:nth-child(3) { --tile-rgb: var(--tint-3); }
+.card:nth-child(4), .home-steps li:nth-child(4) { --tile-rgb: var(--tint-4); }
 
 .home-oil { --tile-rgb: 226, 160, 72; background: radial-gradient(240px circle at var(--mx, 70%) var(--my, 20%), rgba(var(--tile-rgb), .14), transparent 80%), var(--bg-3); }
-.home-oil[data-home-oil='hydraulic'], .home-oil-panel[data-tone='hydraulic'] { --tile-rgb: 127, 207, 156; }
+.home-oil[data-home-oil='hydraulic'], .home-oil-panel[data-tone='hydraulic'] { --tile-rgb: 224, 180, 83; }
 .home-oil[data-home-oil='transformer'], .home-oil-panel[data-tone='transformer'] { --tile-rgb: 205, 200, 188; }
 .home-oil-panel { --tile-rgb: 226, 160, 72; }
 .home-oil-indicator { background: var(--bg-3); }
 
 /* Pickup route (home) */
 .route-caption, .route--pickup .route-caption { background: rgba(21, 24, 28, .72); }
-.route--pickup[data-step='3'] .route-caption { border-color: rgba(127, 207, 156, .5); background: rgba(127, 207, 156, .12); }
+.route--pickup[data-step='3'] .route-caption { border-color: rgba(var(--success-rgb), .5); background: rgba(var(--success-rgb), .12); }
 .pickup-progress { border-color: var(--line-strong); background: rgba(14, 16, 19, .92); }
 .route--pickup .route-track { background: rgba(236, 230, 216, .18); }
 .route--pickup .home-steps li { background: rgba(21, 24, 28, .62); }
-.route--pickup .home-steps li:last-child { --tile-rgb: 127, 207, 156; border-color: rgba(127, 207, 156, .5); background: rgba(127, 207, 156, .1); }
+.route--pickup .home-steps li:last-child { --tile-rgb: var(--success-rgb); border-color: rgba(var(--success-rgb), .5); background: rgba(var(--success-rgb), .1); }
 .route--pickup .home-steps li::before { background: var(--bg-3); }
 .route--pickup .home-steps li:last-child h3, .route--pickup .route-caption-no,
 .route--pickup[data-step='3'] .route-caption-no, .route--pickup[data-step='3'] .route-caption-title,
-.pickup-road-labels li:last-child { color: #7fcf9c; }
+.pickup-road-labels li:last-child { color: var(--success); }
 .pickup-journey-hint, .pickup-road-labels, .home-app-platform { color: var(--muted); }
 .home-app-benefit-icon { color: var(--gold); }
 
@@ -116,7 +111,7 @@ details[open] .faq-icon { color: var(--bg); }
 .seller-minimum > strong { color: var(--gold); }
 .seller-checklist { border-color: var(--line-strong); background: var(--bg-3); box-shadow: none; }
 .seller-checklist li { border-top-color: var(--line); }
-.seller-check { background: rgba(127, 207, 156, .14); color: #7fcf9c; }
+.seller-check { background: rgba(var(--success-rgb), .14); color: var(--success); }
 .seller-checklist strong { color: var(--head); }
 .seller-help-list, .seller-help-list details { border-color: var(--line-strong); }
 
@@ -127,10 +122,10 @@ details[open] .faq-icon { color: var(--bg); }
 .sj-step-number { background: rgba(224, 180, 83, .14); color: var(--gold); }
 .sj-step-role { color: var(--muted); }
 .sj-step-note { border-top-color: var(--line); color: var(--gold); }
-.seller-journey-step--paid { border-left-color: #7fcf9c; background: rgba(127, 207, 156, .08); }
-.seller-journey-step--paid.is-current { border-color: #7fcf9c; background: rgba(127, 207, 156, .12); }
-.seller-journey-step--paid h3, .seller-journey-step--paid .sj-step-number { color: #7fcf9c; }
-.seller-journey-step--paid .sj-step-number { background: rgba(127, 207, 156, .14); }
+.seller-journey-step--paid { border-left-color: var(--success); background: rgba(var(--success-rgb), .08); }
+.seller-journey-step--paid.is-current { border-color: var(--success); background: rgba(var(--success-rgb), .12); }
+.seller-journey-step--paid h3, .seller-journey-step--paid .sj-step-number { color: var(--success); }
+.seller-journey-step--paid .sj-step-number { background: rgba(var(--success-rgb), .14); }
 
 /* Light islands: illustration panels keep the light palette, so their text stays dark. */
 .sj-panel {

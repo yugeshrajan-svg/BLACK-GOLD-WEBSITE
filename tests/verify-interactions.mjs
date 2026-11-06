@@ -281,7 +281,7 @@ for (const reduced of [false,true]) {
     collect.advance(15000);
     assert.equal(collect.q('.oil-stage').dataset.tone,'transformer');
     assert.equal(collect.q('.oil-card.is-selected').dataset.oil,'transformer');
-    assert.equal(collect.q('[data-oil-description]').textContent,'From industrial operations');
+    assert.equal(collect.q('[data-oil-description]').textContent,'Used and waste oil from operations');
     collect.click('.page-hero-copy [data-pickup]');
     assert.equal(collect.q('input[value="Used transformer oil"]').checked,true);
 
@@ -453,7 +453,9 @@ const flowState = {created:0, playing:false, rendered:false};
 const flowing = load('index.html',false,'en',(canvas,options) => {
   flowState.created++;
   assert.equal(options.mode,'pour');
-  assert.equal(options.parallax,0);
+  assert.equal(options.parallax,1,'The camera tilts as the hero scrolls away');
+  assert.equal(options.interactive,true,'Touching the hero ripples the oil');
+  assert.ok(options.eventTarget,'Ripples listen on the hero, not the covered canvas');
   assert.equal(options.startTime,6,'Start on the frame oil-poster.webp shows');
   assert.equal(options.quality,undefined,'Draw at the full screen resolution');
   return {

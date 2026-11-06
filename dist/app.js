@@ -23,9 +23,9 @@
   }
 
   var OILS = {
-    engine: { value: 'Used engine oil', title: 'Used engine oil', name: 'Engine oil' },
-    hydraulic: { value: 'Used hydraulic oil', title: 'Used hydraulic oil', name: 'Hydraulic oil' },
-    transformer: { value: 'Used transformer oil', title: 'Used transformer oil', name: 'Transformer oil' }
+    engine: { value: 'Used engine oil', title: 'Used engine oil', name: 'Used engine oil' },
+    hydraulic: { value: 'Used hydraulic oil', title: 'Used hydraulic oil', name: 'Used hydraulic oil' },
+    transformer: { value: 'Used transformer oil', title: 'Used transformer oil', name: 'Used transformer oil' }
   };
   var OIL_KEYS = Object.keys(OILS);
   function oilText(key, field) { return OILS[key][field]; }
@@ -154,8 +154,9 @@
 
   /* ---------- Home: a continuous oil pour and spreading surface ripples ---------- */
 
-  var oilCanvas = $('#oil-flow');
-  if (oilCanvas && window.OilSurface) (function () {
+  /* One lifecycle for every oil surface on the page: built on first use, paused with the
+     rest of the motion, and abandoned quietly if WebGL is unavailable. */
+  function mountOil(canvas, options) {
     var oil = null, failed = false;
     function syncOil() {
       var play = !reduce.matches && !document.hidden && !doc.classList.contains('motion-paused');
@@ -163,23 +164,44 @@
         try {
           // Full screen resolution; it starts on the frame oil-poster.webp shows (t = 6 s),
           // so the fade from the poster into the moving oil has no jump.
-          oil = window.OilSurface(oilCanvas, {
-            mode: 'pour', impact: [.7, .42], impactNarrow: [.78, .23],
-            startTime: 6, interactive: false, parallax: 0
-          });
+          oil = window.OilSurface(canvas, options);
           if (oil) oil.renderOnce();
           else failed = true;
         } catch (e) {
           failed = true;
           oil = null;
-          oilCanvas.classList.remove('is-ready');
+          canvas.classList.remove('is-ready');
         }
       }
       if (oil) { if (play) oil.play(); else oil.pause(); }
     }
     liveSyncs.push(syncOil);
     syncOil();
-  })();
+  }
+
+  // Home: the full pour, at the screen's own resolution. It starts on the frame
+  // oil-poster.webp shows (t = 6 s), so the fade from poster to moving oil has no jump.
+  var oilCanvas = $('#oil-flow');
+  if (oilCanvas && window.OilSurface) mountOil(oilCanvas, {
+    mode: 'pour', impact: [.7, .42], impactNarrow: [.78, .23],
+    startTime: 6,
+    // Touch or click the hero and the ripple spreads from that spot; the shade
+    // layer sits over the canvas, so the whole section listens on its behalf.
+    interactive: true, eventTarget: oilCanvas.closest('.hero') || oilCanvas.parentElement,
+    // The camera tilts as the hero scrolls away, so the pool has real depth.
+    parallax: 1
+  });
+
+  // Inner pages: the same pool, kept quiet. A drop every few seconds instead of a pour,
+  // dimmer light, and fewer pixels, because here it is behind the reading.
+  if (window.OilSurface) $$('[data-oil-ambient]').forEach(function (canvas) {
+    mountOil(canvas, {
+      mode: 'drop', impact: [.74, .44], impactNarrow: [.6, .34],
+      light: .6, quality: .72, startTime: 2.4,
+      interactive: true, eventTarget: canvas.closest('.page-hero') || canvas.parentElement,
+      parallax: .85
+    });
+  });
 
   /* ---------- Home: choosing an oil carries through to the enquiry ---------- */
 
@@ -226,7 +248,13 @@
     var arrivals = new IntersectionObserver(function (entries) {
       entries.forEach(function (entry) {
         if (!entry.isIntersecting) return;
-        if (!doc.classList.contains('motion-paused')) entry.target.classList.add('entrance');
+        if (!doc.classList.contains('motion-paused')) {
+          /* Position among its siblings, so a row of cards arrives left to right. */
+          var parent = entry.target.parentElement;
+          var index = parent ? Array.prototype.indexOf.call(parent.children, entry.target) : 0;
+          entry.target.style.setProperty('--arrive', Math.min(index, 5));
+          entry.target.classList.add('entrance');
+        }
         arrivals.unobserve(entry.target);
       });
     }, { threshold: .1 });
@@ -374,16 +402,28 @@
       draw();
     }
 
+    var heldIndex = null;
+    function applyHeld() {
+      buttons.forEach(function (button, i) { button.classList.toggle('is-held', i === heldIndex); });
+    }
+    function releaseHeld() {
+      if (heldIndex === null) return;
+      heldIndex = null;
+      applyHeld();
+    }
     function choose(index) {
       elapsed = doc.classList.contains('motion-paused') ? HOLD : 0;
       manualHold = 7500;
+      heldIndex = index;
       setStage(index, true);
+      applyHeld();
     }
 
     buttons.forEach(function (button, index) {
       button.addEventListener('pointerenter', function (event) {
         if (event.pointerType !== 'mouse') return;
         hovered = index;
+        if (index !== heldIndex) releaseHeld();
         if (current === index) return;
         elapsed = doc.classList.contains('motion-paused') ? HOLD : 0;
         setStage(index);
@@ -413,10 +453,11 @@
       if (hovered !== null) { draw(); return; }
       if (manualHold > 0) {
         manualHold = Math.max(0, manualHold - dt);
+        if (manualHold === 0) releaseHeld();
         draw();
         return;
       }
-      if (elapsed >= HOLD) { elapsed = 0; setStage((current + 1) % scenes.length); }
+      if (elapsed >= HOLD) { elapsed = 0; releaseHeld(); setStage((current + 1) % scenes.length); }
       else draw();
     });
   })();

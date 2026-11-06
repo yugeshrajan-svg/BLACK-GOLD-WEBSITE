@@ -184,6 +184,7 @@ void main() {
       quality: 1,                   // render scale; 1 = the screen's own resolution, up to 4K
       startTime: 3.2,
       interactive: true,            // click / tap to ripple
+      eventTarget: null,            // what to listen on; defaults to the canvas's parent
       parallax: 1                   // camera tilt as the section scrolls
     }, options || {});
 
@@ -246,10 +247,18 @@ void main() {
       }
     }
 
+    // Measuring the canvas forces the browser to work out the page layout, so it is only
+    // done when the page has actually scrolled. Sitting still costs nothing per frame.
+    var lastScroll = NaN, lastOffset = 0;
+    function invalidateScroll() { lastScroll = NaN; }
     function scrollOffset() {
       if (!o.parallax) return 0;
+      var y = window.scrollY || window.pageYOffset || 0;
+      if (y === lastScroll) return lastOffset;
+      lastScroll = y;
       var rect = canvas.getBoundingClientRect();
-      return Math.max(-1, Math.min(1, rect.top / Math.max(rect.height, 1))) * o.parallax;
+      lastOffset = Math.max(-1, Math.min(1, rect.top / Math.max(rect.height, 1))) * o.parallax;
+      return lastOffset;
     }
 
     function draw() {
@@ -314,8 +323,9 @@ void main() {
 
     if (o.interactive) {
       // Listen on the section so clicks pass through the overlay copy;
-      // links, buttons and form controls keep their own behaviour.
-      (canvas.parentElement || canvas).addEventListener('pointerdown', function (e) {
+      // links, buttons and form controls keep their own behaviour. The canvas itself
+      // is usually behind a shade layer, so the caller passes the element that is on top.
+      (o.eventTarget || canvas.parentElement || canvas).addEventListener('pointerdown', function (e) {
         if (!running || e.target.closest('a, button, input, select, textarea, label')) return;
         var r = canvas.getBoundingClientRect();
         var y = 1 - (e.clientY - r.top) / r.height;
@@ -327,7 +337,7 @@ void main() {
     // Scrolling and resizing keep the rest of the page busy too; those slow frames are not the
     // oil's, so measuring starts again once they stop (otherwise every scroll would blur it).
     ['scroll', 'resize'].forEach(function (type) {
-      window.addEventListener(type, function () { warmup = 20; times = []; frameTime = 0; }, { passive: true });
+      window.addEventListener(type, function () { warmup = 20; times = []; frameTime = 0; invalidateScroll(); }, { passive: true });
     });
 
     if ('IntersectionObserver' in window) {
@@ -339,7 +349,7 @@ void main() {
     document.addEventListener('visibilitychange', sync);
 
     if ('ResizeObserver' in window) {
-      new ResizeObserver(function () { if (!running && !contextLost) draw(); }).observe(canvas);
+      new ResizeObserver(function () { invalidateScroll(); if (!running && !contextLost) draw(); }).observe(canvas);
     }
 
     canvas.addEventListener('webglcontextlost', function (e) {

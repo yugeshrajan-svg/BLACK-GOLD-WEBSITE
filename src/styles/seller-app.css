@@ -172,10 +172,10 @@
 .install-story li { padding-top: 7px; border-top: 2px solid #657066; color: #c1c9c2; font-size: 11px; line-height: 1.4; transition: color .3s, border-color .3s; }
 .install-story li > span { display: block; margin-bottom: 3px; font-size: 9px; opacity: .75; }
 .install-story li.is-current { border-color: #e7c85c; color: #e7c85c; }
-.install-preview[data-phase='3'] .install-story li.is-current { border-color: #b5dec5; color: #b5dec5; }
+.install-preview[data-phase='3'] .install-story li.is-current { border-color: var(--success-bright); color: var(--success-bright); }
 .install-status { display: flex; align-items: center; justify-content: center; gap: 7px; min-height: 18px; margin-top: 8px; color: #d4ded5; font-size: 11px; line-height: 1.5; text-align: center; }
 .install-status-dot { flex: none; width: 5px; height: 5px; border-radius: 50%; background: #e7c85c; }
-.install-preview[data-phase='3'] .install-status-dot { background: #b5dec5; }
+.install-preview[data-phase='3'] .install-status-dot { background: var(--success-bright); }
 .install-preview-label { margin-top: 7px; color: #c1c9c2; text-align: center; font-size: 10px; line-height: 1.5; }
 .motion-paused .install-preview *, .tab-hidden .install-preview *, .install-preview.is-offscreen * { animation-play-state: paused !important; }
 .motion-paused .install-preview *, .tab-hidden .install-preview *, .install-preview.is-offscreen * { transition: none !important; }

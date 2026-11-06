@@ -33,7 +33,7 @@
 .refinery { --journey-progress: .25; width: min(100%, 620px); padding: 22px; border: 1px solid rgba(141, 225, 196, .22); border-radius: 24px; background: linear-gradient(150deg, #172b25, #0b1713 65%); box-shadow: 0 28px 70px -48px #000; }
 .refinery-label { color: var(--accent-bright); font: 500 11px/1.5 var(--sans); letter-spacing: .1em; text-transform: uppercase; }
 .refinery-svg { width: 100%; height: auto; margin: 18px 0 4px; overflow: visible; }
-.refinery-grid { fill: none; stroke: #b5dec5; stroke-width: .6; opacity: .08; }
+.refinery-grid { fill: none; stroke: var(--gold-hi); stroke-width: .6; opacity: .08; }
 .refinery-platform { fill: #243e33; }
 .refinery-pipe { fill: none; stroke: #3c5144; stroke-width: 13; stroke-linejoin: round; }
 .refinery-flow { fill: none; stroke: #ecc174; stroke-width: 5; stroke-linecap: round; stroke-dasharray: 10 14; animation: refinery-flow 2.4s linear infinite; }
@@ -54,10 +54,10 @@
 .refinery-stage.is-current .refinery-number { fill: var(--station); }
 .refinery-stage.is-current .refinery-sensor { fill: var(--station); filter: drop-shadow(0 0 5px var(--station)); }
 .refinery-caption { display: flex; align-items: center; gap: 14px; padding: 18px 0; border-top: 1px solid rgba(141, 225, 196, .18); }
-.refinery-step { display: grid; place-items: center; flex: none; width: 42px; height: 42px; border-radius: 12px; background: #b5dec5; color: #123e2e; font: 600 14px/1 var(--sans); }
+.refinery-step { display: grid; place-items: center; flex: none; width: 42px; height: 42px; border-radius: 12px; background: var(--gold-hi); color: var(--on-gold); font: 600 14px/1 var(--sans); }
 .refinery-caption-title { font: 500 25px/1.3 var(--serif); color: #f2ede1; }
 .refinery-progress { height: 3px; overflow: hidden; border-radius: 2px; background: #2c4334; }
-.refinery-progress span { display: block; height: 100%; background: linear-gradient(90deg, #edbf78, #b5dec5); transform: scaleX(var(--journey-progress)); transform-origin: left; transition: transform .7s var(--ease); }
+.refinery-progress span { display: block; height: 100%; background: linear-gradient(90deg, #c48f2e, #f8e7b0); transform: scaleX(var(--journey-progress)); transform-origin: left; transition: transform .7s var(--ease); }
 
 /* ---------- What we collect: a photo of each oil's source (changes on its own) ---------- */
 
@@ -84,7 +84,7 @@
 .route { width: min(100%, 580px); display: grid; gap: 36px; }
 .route-board { position: relative; }
 .route-track { position: absolute; left: 12.5%; right: 12.5%; top: 32px; height: 4px; border-radius: 2px; background: #2a2620; overflow: hidden; }
-.route-fill { position: absolute; inset: 0; background: linear-gradient(90deg, #b5dec5, var(--accent-bright)); transform: scaleX(0); transform-origin: left; }
+.route-fill { position: absolute; inset: 0; background: linear-gradient(90deg, #c48f2e, var(--accent-bright)); transform: scaleX(0); transform-origin: left; }
 .route-drop { position: absolute; top: 34px; left: 12.5%; width: 18px; height: 22px; transform: translate(-50%, -50%) rotate(-90deg); }
 .route-drop svg { width: 100%; height: 100%; fill: var(--accent-bright); filter: drop-shadow(0 0 8px rgba(var(--accent-rgb), .6)); }
 .route-nodes { position: relative; display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); list-style: none; margin: 0; padding: 0; }
@@ -108,7 +108,8 @@ html:not(.js) .route-icon, .route.is-static .route-icon { background: var(--gold
 .route--pickup .route-board { padding-top: 0; }
 .pickup-progress { position: sticky; top: calc(var(--header-h) + 12px); z-index: 3; height: 78px; margin-bottom: 16px; border: 1px solid #d8cfb4; border-radius: 14px; background: rgba(246, 244, 239, .97); -webkit-backdrop-filter: blur(8px); backdrop-filter: blur(8px); }
 .route--pickup .route-track { top: 39px; height: 4px; background: #d5cfbf; }
-.route--pickup .route-fill { background: linear-gradient(90deg, #2e7d4f, #2e7d4f); }
+/* Progress is not completion: the bar fills gold and only its last step turns green. */
+.route--pickup .route-fill { background: linear-gradient(90deg, #c48f2e, var(--gold-hi)); }
 .route--pickup .route-drop { top: 25px; z-index: 2; width: 48px; height: 32px; transform: translate(-50%, -50%); }
 .route--pickup .route-drop svg { fill: none; filter: drop-shadow(0 3px 3px rgba(27, 47, 70, .18)); }
 .pickup-road-labels { position: absolute; top: 50px; left: 0; right: 0; display: grid; grid-template-columns: repeat(4, 1fr); list-style: none; margin: 0; padding: 0; text-align: center; font: 600 11px/1.4 var(--sans); color: #6b675e; }

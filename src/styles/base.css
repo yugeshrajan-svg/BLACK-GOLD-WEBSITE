@@ -37,10 +37,23 @@
   --on-gold: #1b1408;
   --glass: rgba(7, 8, 10, .9);
   --chip-bg: rgba(21, 19, 15, .92);
-  --accent: #7fcf9c;
-  --accent-rgb: 127, 207, 156;
-  --accent-bright: #b5dec5;
-  --accent-soft: rgba(127, 207, 156, .12);
+  /* The default accent is the brand's gold. Pages may re-point it, never to a stray hex. */
+  --accent: #e0b453;
+  --accent-rgb: 224, 180, 83;
+  --accent-bright: #f1d38a;
+  --accent-soft: rgba(224, 180, 83, .12);
+
+  /* Success is the one colour that is not gold. It means money received or a pickup
+     completed — nothing decorative is allowed to use it. */
+  --success: #7fcf9c;
+  --success-rgb: 127, 207, 156;
+  --success-bright: #b5dec5;
+
+  /* Tints for a row of sibling cards or steps: one warm scale, declared once here. */
+  --tint-1: 226, 160, 72;
+  --tint-2: 224, 180, 83;
+  --tint-3: 205, 200, 188;
+  --tint-4: 193, 142, 58;
 
   --serif: 'Fraunces', Georgia, 'Times New Roman', serif;
   --sans: 'Inter', system-ui, -apple-system, 'Segoe UI', Arial, sans-serif;
@@ -62,8 +75,8 @@
   interpolate-size: allow-keywords;
 }
 
-/* Page accents stay within the gold, green and paper palette, bright enough for black. */
-body[data-page='about'] { --accent: #7fcf9c; --accent-rgb: 127, 207, 156; --accent-bright: #b5dec5; --accent-soft: rgba(127, 207, 156, .12); }
+/* Page accents stay within the gold and paper palette, bright enough for black. */
+body[data-page='about'] { --accent: #e0b453; --accent-rgb: 224, 180, 83; --accent-bright: #f1d38a; --accent-soft: rgba(224, 180, 83, .12); }
 body[data-page='collect'] { --accent: #e0b453; --accent-rgb: 224, 180, 83; --accent-bright: #f1d38a; --accent-soft: rgba(224, 180, 83, .12); }
 body[data-page='app'] { --accent: #e0b453; --accent-rgb: 224, 180, 83; --accent-bright: #f1d38a; --accent-soft: rgba(224, 180, 83, .12); }
 body[data-page='faq'] { --accent: #e6dfcf; --accent-rgb: 230, 223, 207; --accent-bright: #f1d38a; --accent-soft: rgba(230, 223, 207, .08); }
@@ -177,14 +190,21 @@ h1 em, h2 em {
 /* Bullet points: the site's main way of saying things. */
 .points { list-style: none; margin: 0; padding: 0; display: grid; gap: 10px; }
 .points li { position: relative; padding-left: 22px; line-height: 1.5; }
+/* Gold markers, not faded text. Every point is a point; the closing one is the
+   one that leads somewhere, so it gains a ring rather than the others losing contrast. */
 .points li::before {
   content: ''; position: absolute; left: 1px; top: .52em;
   width: 7px; height: 7px; border-radius: 50%;
-  background: currentColor; opacity: .45;
+  background: var(--gold); opacity: .7;
 }
-.points--hero { gap: 10px; margin-bottom: 24px; }
+.points--hero { gap: 12px; margin-bottom: 26px; }
 .points--hero li { font-size: clamp(16px, 1.2vw, 18.5px); color: var(--text); }
-.page-hero .points--hero li:last-child { color: var(--accent-bright); font-weight: 600; }
+.points--hero li::before { opacity: .8; }
+.points--hero li:last-child { color: var(--head); font-weight: 600; }
+.points--hero li:last-child::before {
+  opacity: 1;
+  box-shadow: 0 0 0 4px rgba(var(--accent-rgb), .16);
+}
 
 /* ---------- Buttons & links ---------- */
 

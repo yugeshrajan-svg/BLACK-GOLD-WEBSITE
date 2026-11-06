@@ -5,7 +5,7 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <title>FAQs — Black Gold</title>
-<meta name="description" content="Short answers about selling used oil to Black Gold: which oils, who can register, how prices are set, measuring, service areas and minimum quantity.">
+<meta name="description" content="Short answers about selling used and waste oil to Black Gold: which oils we collect, who can register, how prices are set, measuring, service areas and minimum quantity.">
 <link rel="canonical" href="https://myblackgold.app/faq.html">
 <meta property="og:url" content="https://myblackgold.app/faq.html">
 <meta name="theme-color" content="#07080a">
@@ -13,7 +13,7 @@
 <meta property="og:site_name" content="Black Gold">
 <meta property="og:locale" content="en_IN">
 <meta property="og:title" content="FAQs — Black Gold">
-<meta property="og:description" content="Short answers about selling used oil to Black Gold: which oils, who can register, how prices are set, measuring, service areas and minimum quantity.">
+<meta property="og:description" content="Short answers about selling used and waste oil to Black Gold: which oils we collect, who can register, how prices are set, measuring, service areas and minimum quantity.">
 <meta property="og:image" content="https://myblackgold.app/og-image.jpg">
 <meta property="og:image:type" content="image/jpeg">
 <meta property="og:image:width" content="1200">
@@ -53,6 +53,8 @@
 
 <main id="main">
 <section class="page-hero faq-hero" id="top" aria-labelledby="page-title">
+  <canvas class="page-oil" data-oil-ambient aria-hidden="true"></canvas>
+  <div class="page-oil-shade" aria-hidden="true"></div>
   <div class="page-hero-inner">
     <div class="page-hero-copy">
       <p class="eyebrow">FAQs</p>
@@ -74,7 +76,7 @@
           <div><h2 id="faq-chat-title">Ask Black Gold</h2><p>Instant answers from the FAQs on this page</p></div>
         </header>
         <div class="faq-chat-log" role="log" aria-live="polite" aria-label="Conversation" tabindex="0" data-chat-log>
-          <div class="faq-msg faq-msg--bot"><p>Hello! Ask me anything about selling your used oil: prices, the 50-litre minimum, payment or your pickup code.</p></div>
+          <div class="faq-msg faq-msg--bot"><p>Hello! Ask me anything about selling your used and waste oil: prices, the 50-litre minimum, payment or your pickup code.</p></div>
         </div>
         <div class="faq-chat-typing" aria-hidden="true" data-chat-typing hidden><i></i><i></i><i></i></div>
         <div class="faq-chat-suggest" data-chat-suggest></div>
@@ -107,7 +109,7 @@
   <div class="faq-list" id="faq-answers">
     <details id="faq-oils" data-keywords="type types kind kinds accept accepted engine hydraulic transformer lubricant lube cooking vegetable waste which">
       <summary>What oils can I sell?<span class="faq-icon" aria-hidden="true"></span></summary>
-      <div class="faq-body"><ul class="points"><li>Engine oil</li><li>Hydraulic oil</li><li>Transformer oil</li></ul></div>
+      <div class="faq-body"><p>Black Gold collects used and waste oil only, in three types:</p><ul class="points"><li>Used and waste engine oil</li><li>Used and waste hydraulic oil</li><li>Used and waste transformer oil</li></ul></div>
     </details>
     <details id="faq-register" data-keywords="who register registration signup sign join account eligible eligibility individual household home personal garage workshop gst proof documents">
       <summary>Who can register?<span class="faq-icon" aria-hidden="true"></span></summary>
@@ -157,6 +159,7 @@
   <div class="faq-no-results" hidden><p>No matching answers. Try another word or view all questions.</p><button type="button" class="text-link" data-clear-search>Clear search <span aria-hidden="true">→</span></button></div>
   </div>
 </section>
+<script src="oil-surface.js"></script>
 <section class="closing" aria-labelledby="closing-title">
   <div class="closing-inner">
     <p class="eyebrow">Need more help?</p>
