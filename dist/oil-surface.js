@@ -1,17 +1,31 @@
 /*
- * Black Gold — golden oil pool
+ * Black Gold — one oil pour
  *
- * A real-time WebGL scene: a still, black pool of oil seen in perspective,
- * lit by a warm strip light so every ripple catches a line of gold.
- *   mode 'pour' — a thin stream of golden oil pours into the pool
- *   mode 'drop' — a single drop falls every few seconds
- * Clicking or tapping the pool sends out extra ripples.
+ * A real-time WebGL scene: a still, black pool of oil seen in perspective, lit by
+ * a warm strip light so every ripple catches a line of gold. It plays a single
+ * pour of about four and a half seconds and then stops drawing:
+ *
+ *   0    – 0.4 s  the leading edge of a dense stream comes down into view
+ *   0.4  – 2.6 s  it meets the pool: a shallow dimple, then soft rings move out
+ *   2.6  – 3.0 s  the supply stops and the tail falls in
+ *   3.0  – 4.5 s  the dimple rebounds into a low meniscus and the pool settles
+ *
+ * The pool begins and ends with the faint rings of an earlier, identical pour, so
+ * its first and last frames match the still poster (oil-poster*.webp) shown before
+ * it starts, when motion is off and when WebGL is unavailable.
  *
  * No dependencies. Works from file:// and on any static host.
- * Usage: var oil = OilSurface(canvas, { mode: 'pour' }); oil.play();
+ * Usage: var oil = OilSurface(canvas, { impact: [0.7, 0.42] }); oil.play();
  */
 (function () {
   'use strict';
+
+  // Seconds of visible playback. The shader uses the same values.
+  var TOP = 0.62;      // the stream starts above the top of the frame (screen heights from centre)
+  var V0 = 0.55;       // its speed as it enters
+  var G = 5.4;         // how quickly it gathers speed
+  var CUT = 2.55;      // the supply stops; the tail starts to fall
+  var END = 4.5;       // the pool has settled: the last frame
 
   var VERTEX = 'attribute vec2 aPos;void main(){gl_Position=vec4(aPos,0.0,1.0);}';
 
@@ -19,27 +33,28 @@
 precision highp float;
 
 uniform vec2  uRes;
-uniform float uTime;
-uniform float uMode;       // 0 = drops, 1 = pour
-uniform vec2  uImpact;     // where the oil lands, screen uv
-uniform vec3  uClicks[3];  // xy = screen uv, z = seconds since the click (negative = unused)
-uniform float uScroll;
+uniform float uTime;   // seconds since the pour began
+uniform vec2  uImpact; // where the oil lands, screen uv (y up)
+uniform float uHit;    // when the leading edge reaches the pool
+uniform float uLand;   // when the tail reaches it
 uniform float uLight;
 
 const vec3  RO = vec3(0.0, 1.0, 0.0);
 const float FOCAL = 1.4;
-const float PERIOD = 4.4;
-const float FALL = 0.8;
-float gTilt;
+const float TILT = 0.55;
+const float TOP = ${TOP.toFixed(2)};
+const float V0 = ${V0.toFixed(2)};
+const float G = ${G.toFixed(2)};
+const float CUT = ${CUT.toFixed(2)};
+const float PREV = ${END.toFixed(2)};
 
 vec2 toP(vec2 uv) { return (uv - 0.5) * vec2(uRes.x / uRes.y, 1.0); }
-vec3 rayFromP(vec2 p) { return normalize(vec3(p.x, p.y - gTilt, FOCAL)); }
+vec3 rayFromP(vec2 p) { return normalize(vec3(p.x, p.y - TILT, FOCAL)); }
 vec2 hitPlane(vec3 rd, out float dist) { dist = RO.y / max(-rd.y, 1e-4); return (RO + rd * dist).xz; }
-vec2 projectP(vec2 q) { vec3 v = vec3(q.x, 0.0, q.y) - RO; return vec2(v.x / v.z, v.y / v.z) * FOCAL + vec2(0.0, gTilt); }
-float hash(float n) { return fract(sin(n * 127.1 + 3.7) * 43758.5453); }
+vec2 projectP(vec2 q) { vec3 v = vec3(q.x, 0.0, q.y) - RO; return vec2(v.x / v.z, v.y / v.z) * FOCAL + vec2(0.0, TILT); }
+float fallen(float s) { s = max(s, 0.0); return V0 * s + 0.5 * G * s * s; }
 
 float ring(vec2 q, vec2 c, float age, float amp) {
-  // Unused click slots are ~100 s old; past 30 s a ring has decayed to nothing, so skip the maths.
   if (age <= 0.0 || age > 30.0) return 0.0;
   float r = length(q - c);
   float behind = age * 0.62 - r;
@@ -49,26 +64,35 @@ float ring(vec2 q, vec2 c, float age, float amp) {
   return amp * sin(behind * 30.0) * env * decay;
 }
 
-float height(vec2 q, vec2 c0, vec2 k0, vec2 k1, vec2 k2, float t) {
-  float h = 0.0035 * sin(q.x * 2.1 + t * 0.45) * sin(q.y * 1.7 - t * 0.3)
-          + 0.0025 * sin(q.x * 4.3 - q.y * 3.1 + t * 0.7);
-  if (uMode < 0.5) {
-    for (int i = 0; i < 3; i++) {
-      float n = floor(t / PERIOD) - float(i);
-      vec2 c = c0 + (vec2(hash(n), hash(n + 7.3)) - 0.5) * vec2(0.3, 0.25);
-      float age = t - (n * PERIOD + FALL);
-      h += ring(q, c, age, 0.05);
-      h += ring(q, c, age - 0.95, 0.02);
-    }
-  } else {
-    float r = length(q - c0);
-    h += 0.022 * sin(r * 30.0 - t * 6.5) * exp(-r * 1.1) / (1.0 + r * 3.0);
-    h += 0.008 * sin(r * 47.0 - t * 10.0 + sin(t * 2.3)) * exp(-r * 3.5);
+// How strongly the stream feeds the pool: rising as it lands, falling as the tail lands.
+float feed(float t) {
+  return smoothstep(uHit, uHit + 0.2, t) * (1.0 - smoothstep(uLand - 0.1, uLand + 0.3, t));
+}
+
+// Everything one pour does to the surface, t seconds after it began.
+float pour(vec2 q, vec2 c, float t) {
+  if (t < uHit) return 0.0;
+  float r = length(q - c);
+  // The stream presses a shallow dimple where it lands.
+  float h = -0.010 * feed(t) * exp(-r * r * 900.0);
+  // While it feeds, soft rings travel out, each as strong as the stream was when it left.
+  h += 0.017 * feed(t - r / 0.34) * sin(r * 30.0 - t * 6.5) * exp(-r * 2.2) / (1.0 + r * 3.0);
+  // The first touch sends one clear ring.
+  h += ring(q, c, t - uHit, 0.035);
+  // The tail lands: the dimple rebounds into a low, rounded meniscus and settles.
+  float a = t - uLand;
+  if (a > 0.0) {
+    h += 0.008 * sin(a * 8.0) * exp(-a * 2.4) * exp(-r * r * 500.0);
+    h += ring(q, c, a, 0.016);
   }
-  h += ring(q, k0, uClicks[0].z, 0.045);
-  h += ring(q, k1, uClicks[1].z, 0.045);
-  h += ring(q, k2, uClicks[2].z, 0.045);
   return h;
+}
+
+float height(vec2 q, vec2 c, float t) {
+  // The pool's own slow swell, held still: heavy oil barely moves without a reason.
+  float h = 0.0035 * sin(q.x * 2.1 + 2.7) * sin(q.y * 1.7 - 1.8)
+          + 0.0025 * sin(q.x * 4.3 - q.y * 3.1 + 4.2);
+  return h + pour(q, c, t) + pour(q, c, t + PREV);
 }
 
 vec3 env(vec3 r) {
@@ -80,37 +104,19 @@ vec3 env(vec3 r) {
   return gold * (strip * 2.1 + strip2 * 0.05 + glow) + vec3(1.0, 0.86, 0.6) * spot * 2.5;
 }
 
-vec3 drawDrop(vec3 col, vec2 p, vec2 c, float R, float stretch) {
-  vec2 d = (p - c) / vec2(R, R * stretch);
-  d.x *= 1.0 + 0.6 * max(d.y, 0.0) * (stretch - 1.0);
-  float l = length(d);
-  float aa = 1.5 / (R * uRes.y);
-  float mask = 1.0 - smoothstep(1.0 - aa, 1.0 + aa, l);
-  if (mask <= 0.0) return col;
-  vec3 n = normalize(vec3(d.x, d.y, sqrt(max(1.0 - l * l, 0.0))));
-  float rim = pow(1.0 - n.z, 1.5);
-  float spec = pow(max(dot(n, normalize(vec3(0.45, 0.55, 0.7))), 0.0), 40.0);
-  vec3 dc = vec3(0.03, 0.02, 0.01) + vec3(1.0, 0.66, 0.26) * rim + vec3(1.0, 0.92, 0.72) * spec * 1.8;
-  return mix(col, dc, mask);
-}
-
 void main() {
-  gTilt = 0.55 + uScroll * 0.12;
   vec2 uv = gl_FragCoord.xy / uRes;
   vec2 p = toP(uv);
   float t = uTime;
   float dist;
   vec2 c0 = hitPlane(rayFromP(toP(uImpact)), dist);
-  vec2 k0 = hitPlane(rayFromP(toP(uClicks[0].xy)), dist);
-  vec2 k1 = hitPlane(rayFromP(toP(uClicks[1].xy)), dist);
-  vec2 k2 = hitPlane(rayFromP(toP(uClicks[2].xy)), dist);
 
   vec3 rd = rayFromP(p);
   vec2 q = hitPlane(rd, dist);
   float e = 0.0016 * dist;
-  float h  = height(q, c0, k0, k1, k2, t);
-  float hx = height(q + vec2(e, 0.0), c0, k0, k1, k2, t);
-  float hz = height(q + vec2(0.0, e), c0, k0, k1, k2, t);
+  float h  = height(q, c0, t);
+  float hx = height(q + vec2(e, 0.0), c0, t);
+  float hz = height(q + vec2(0.0, e), c0, t);
   vec3 n = normalize(vec3(h - hx, e, h - hz));
   vec3 r = reflect(rd, n);
   float F = mix(0.14, 1.0, pow(1.0 - max(dot(n, -rd), 0.0), 4.0));
@@ -118,46 +124,38 @@ void main() {
   col *= smoothstep(18.0, 3.0, dist);
   col *= 1.0 - 0.55 * smoothstep(0.35, 0.95, length((uv - vec2(uImpact.x - 0.04, 0.48)) * vec2(1.0, 1.25)));
 
-  float topY = 0.62;
-  if (uMode < 0.5) {
-    float k = floor(t / PERIOD);
-    float local = t - k * PERIOD;
-    vec2 c = c0 + (vec2(hash(k), hash(k + 7.3)) - 0.5) * vec2(0.3, 0.25);
-    vec2 cp = projectP(c);
-    if (local < FALL) {
-      float s = local / FALL;
-      col = drawDrop(col, p, vec2(cp.x, mix(topY, cp.y, s * s)), 0.016, 1.0 + 1.2 * s);
+  // The stream, from its tail (above the frame until the supply stops) to its leading edge.
+  vec2 cp = projectP(c0);
+  float head = max(TOP - fallen(t), cp.y);
+  float tail = TOP - fallen(t - CUT);
+  float falling = step(cp.y + 0.002, head);
+  if (tail > cp.y && p.y > max(head, cp.y - 0.003) - 0.03 && p.y < tail) {
+    float s = clamp((TOP - p.y) / (TOP - cp.y), 0.0, 1.0);
+    float w = mix(0.011, 0.0055, sqrt(s)) * mix(1.0, 0.6, smoothstep(CUT - 0.6, CUT, t));
+    w *= sqrt(smoothstep(0.0, 0.07, tail - p.y));                    // the falling tail narrows to a point
+    w *= 1.0 + 0.3 * falling * exp(-max(p.y - head, 0.0) * 70.0);   // a fuller, rounded leading edge
+    float xc = cp.x + 0.0025 * sin(p.y * 38.0 - t * 4.0) * s;
+    float dx = (p.x - xc) / max(w, 1e-4);
+    float cap = falling * max(w - (p.y - head), 0.0) / max(w, 1e-4);
+    float l = length(vec2(dx, cap));
+    float aa = 1.5 / (max(w, 1e-4) * uRes.y);
+    float mask = (1.0 - smoothstep(1.0 - aa, 1.0 + aa, l)) * smoothstep(0.45, 0.3, p.y) * step(cp.y - 0.003, p.y);
+    if (mask > 0.0) {
+      float nz = sqrt(max(1.0 - l * l, 0.0));
+      float rim = pow(1.0 - nz, 1.5);
+      float streak = exp(-pow((dx + 0.42) * 6.0, 2.0)) * (0.7 + 0.3 * sin(p.y * 90.0 + t * 26.0));
+      vec3 sc = vec3(0.03, 0.02, 0.01) + vec3(1.0, 0.66, 0.26) * (rim * 0.8 + streak * 0.95);
+      col = mix(col, sc, mask);
     }
-    float a = local - FALL;
-    if (a > 0.1 && a < 0.95) {
-      float s = (a - 0.1) / 0.85;
-      col = drawDrop(col, p, vec2(cp.x, cp.y + 0.07 * sin(3.14159 * s)), 0.007, 1.0);
-    }
-  } else {
-    vec2 cp = projectP(c0);
-    if (p.y > cp.y - 0.003 && p.y < topY) {
-      float s = clamp((topY - p.y) / (topY - cp.y), 0.0, 1.0);
-      float w = mix(0.011, 0.0055, sqrt(s));
-      float xc = cp.x + 0.0025 * sin(p.y * 38.0 - t * 4.0) * s;
-      float dx = (p.x - xc) / w;
-      float aa = 1.5 / (w * uRes.y);
-      float mask = (1.0 - smoothstep(1.0 - aa, 1.0 + aa, abs(dx))) * smoothstep(0.45, 0.3, p.y);
-      if (mask > 0.0) {
-        float nz = sqrt(max(1.0 - dx * dx, 0.0));
-        float rim = pow(1.0 - nz, 1.5);
-        float streak = exp(-pow((dx + 0.38) * 4.0, 2.0)) * (0.65 + 0.35 * sin(p.y * 90.0 + t * 26.0));
-        vec3 sc = vec3(0.03, 0.02, 0.01) + vec3(1.0, 0.66, 0.26) * (rim * 0.8 + streak * 0.95);
-        col = mix(col, sc, mask);
-      }
-    }
-    vec2 g = (p - cp) * vec2(1.0, 3.0);
-    col += vec3(1.0, 0.7, 0.3) * exp(-dot(g, g) * 900.0) * 0.3;
   }
+  // A warm glint where the oil meets the pool; it stays faintly after the pour as the focal point.
+  vec2 g = (p - cp) * vec2(1.0, 3.0);
+  col += vec3(1.0, 0.7, 0.3) * exp(-dot(g, g) * 900.0) * 0.3 * (0.35 + 0.65 * feed(t));
 
   col *= uLight;
   col = 1.0 - exp(-col * 1.6);
   col = pow(col, vec3(0.9, 0.97, 1.12));
-  float d = fract(sin(dot(gl_FragCoord.xy, vec2(12.9898, 78.233)) + t) * 43758.5453);
+  float d = fract(sin(dot(gl_FragCoord.xy, vec2(12.9898, 78.233))) * 43758.5453);
   col += (d - 0.5) / 160.0;
   gl_FragColor = vec4(col, 1.0);
 }
@@ -175,17 +173,18 @@ void main() {
     return shader;
   }
 
+  // Seconds for the stream to fall from above the frame to a pool at screen height y (uv, y up).
+  function fallTime(y) {
+    var d = TOP - (y - 0.5);
+    return (-V0 + Math.sqrt(V0 * V0 + 2 * G * d)) / G;
+  }
+
   function OilSurface(canvas, options) {
     var o = Object.assign({
-      mode: 'pour',                 // 'pour' or 'drop'
       impact: [0.7, 0.42],          // landing point on wide screens (screen uv, y up)
       impactNarrow: [0.62, 0.5],    // landing point on portrait screens
       light: 1,
-      quality: 1,                   // render scale; 1 = the screen's own resolution, up to 4K
-      startTime: 3.2,
-      interactive: true,            // click / tap to ripple
-      eventTarget: null,            // what to listen on; defaults to the canvas's parent
-      parallax: 1                   // camera tilt as the section scrolls
+      quality: 1                    // render scale; 1 = the screen's own resolution, within the budget below
     }, options || {});
 
     var gl = canvas.getContext('webgl', {
@@ -196,14 +195,12 @@ void main() {
     if (!gl) return null;
 
     var program, uniforms = {};
-    var time = o.startTime;
+    var time = 0, settled = false;
     var scale = o.quality;
-    var fit = 1;                    // below 1 when the screen has more pixels than a 4K frame
+    var fit = 1;                    // below 1 when the screen has more pixels than the budget
     var running = false, wanted = false, visible = true, contextLost = false;
     var raf = 0, last = 0;
     var warmup = 0, times = [], frameTime = 0;
-    var clicks = [[0.5, 0.3, -100], [0.5, 0.3, -100], [0.5, 0.3, -100]];
-    var nextClick = 0;
 
     function init() {
       var vs = compile(gl, gl.VERTEX_SHADER, VERTEX);
@@ -226,18 +223,25 @@ void main() {
       gl.enableVertexAttribArray(loc);
       gl.vertexAttribPointer(loc, 2, gl.FLOAT, false, 0, 0);
 
-      ['uRes', 'uTime', 'uMode', 'uImpact', 'uClicks', 'uScroll', 'uLight']
+      ['uRes', 'uTime', 'uImpact', 'uHit', 'uLand', 'uLight']
         .forEach(function (name) { uniforms[name] = gl.getUniformLocation(program, name); });
       return true;
     }
 
     if (!init()) return null;
 
-    // Device pixels (up to 2 per CSS pixel), never more than a 4K frame's worth.
+    // Laptops and monitors: device pixels (up to 2 per CSS pixel), never more than a 4K frame.
+    // Phones and tablets have dense but small screens; there the pour reads just as well at
+    // 1.5 device pixels, within a smaller budget, and the GPU keeps up.
+    function compact() {
+      return canvas.clientWidth <= 760 || !!(window.matchMedia && window.matchMedia('(pointer: coarse)').matches);
+    }
     function resize() {
-      var dpr = Math.min(window.devicePixelRatio || 1, 2);
+      var small = compact();
+      var dpr = Math.min(window.devicePixelRatio || 1, small ? 1.5 : 2);
+      var budget = small ? 2.4e6 : 3840 * 2160;
       var cw = canvas.clientWidth * dpr, ch = canvas.clientHeight * dpr;
-      fit = Math.min(1, Math.sqrt(3840 * 2160 / Math.max(cw * ch, 1)));
+      fit = Math.min(1, Math.sqrt(budget / Math.max(cw * ch, 1)));
       var w = Math.max(2, Math.round(cw * Math.min(scale, fit)));
       var h = Math.max(2, Math.round(ch * Math.min(scale, fit)));
       if (canvas.width !== w || canvas.height !== h) {
@@ -247,31 +251,15 @@ void main() {
       }
     }
 
-    // Measuring the canvas forces the browser to work out the page layout, so it is only
-    // done when the page has actually scrolled. Sitting still costs nothing per frame.
-    var lastScroll = NaN, lastOffset = 0;
-    function invalidateScroll() { lastScroll = NaN; }
-    function scrollOffset() {
-      if (!o.parallax) return 0;
-      var y = window.scrollY || window.pageYOffset || 0;
-      if (y === lastScroll) return lastOffset;
-      lastScroll = y;
-      var rect = canvas.getBoundingClientRect();
-      lastOffset = Math.max(-1, Math.min(1, rect.top / Math.max(rect.height, 1))) * o.parallax;
-      return lastOffset;
-    }
-
     function draw() {
       resize();
       var impact = canvas.clientWidth / Math.max(canvas.clientHeight, 1) < 0.9 ? o.impactNarrow : o.impact;
-      var packed = [];
-      clicks.forEach(function (c) { packed.push(c[0], c[1], time - c[2]); });
+      var hit = fallTime(impact[1]);
       gl.uniform2f(uniforms.uRes, canvas.width, canvas.height);
       gl.uniform1f(uniforms.uTime, time);
-      gl.uniform1f(uniforms.uMode, o.mode === 'drop' ? 0 : 1);
       gl.uniform2f(uniforms.uImpact, impact[0], impact[1]);
-      gl.uniform3fv(uniforms.uClicks, packed);
-      gl.uniform1f(uniforms.uScroll, scrollOffset());
+      gl.uniform1f(uniforms.uHit, hit);
+      gl.uniform1f(uniforms.uLand, CUT + hit);
       gl.uniform1f(uniforms.uLight, o.light);
       gl.drawArrays(gl.TRIANGLES, 0, 3);
       if (!canvas.classList.contains('is-ready')) canvas.classList.add('is-ready');
@@ -297,17 +285,26 @@ void main() {
       }
     }
 
+    // Time only moves while the pour is visible and playing. A long frame (a busy page, a
+    // background tab that just returned) counts as at most 1/20 s, so the landing is never skipped.
     function frame(now) {
-      raf = requestAnimationFrame(frame);
-      var dt = last ? Math.min((now - last) / 1000, 0.1) : 1 / 60;
+      var dt = last ? Math.min((now - last) / 1000, 0.05) : 1 / 60;
       last = now;
-      time += dt;
+      time = Math.min(END, time + dt);
       adapt(dt);
       draw();
+      if (time >= END) {
+        // The final, settled frame stays on the canvas; nothing else is scheduled.
+        settled = true;
+        running = false;
+        raf = 0;
+        return;
+      }
+      raf = requestAnimationFrame(frame);
     }
 
     function sync() {
-      var go = wanted && visible && !document.hidden && !contextLost;
+      var go = wanted && visible && !document.hidden && !contextLost && !settled;
       if (go && !running) {
         running = true;
         last = 0;
@@ -321,23 +318,10 @@ void main() {
       }
     }
 
-    if (o.interactive) {
-      // Listen on the section so clicks pass through the overlay copy;
-      // links, buttons and form controls keep their own behaviour. The canvas itself
-      // is usually behind a shade layer, so the caller passes the element that is on top.
-      (o.eventTarget || canvas.parentElement || canvas).addEventListener('pointerdown', function (e) {
-        if (!running || e.target.closest('a, button, input, select, textarea, label')) return;
-        var r = canvas.getBoundingClientRect();
-        var y = 1 - (e.clientY - r.top) / r.height;
-        clicks[nextClick] = [(e.clientX - r.left) / r.width, Math.min(y, 0.92), time];
-        nextClick = (nextClick + 1) % clicks.length;
-      });
-    }
-
     // Scrolling and resizing keep the rest of the page busy too; those slow frames are not the
     // oil's, so measuring starts again once they stop (otherwise every scroll would blur it).
     ['scroll', 'resize'].forEach(function (type) {
-      window.addEventListener(type, function () { warmup = 20; times = []; frameTime = 0; invalidateScroll(); }, { passive: true });
+      window.addEventListener(type, function () { warmup = 20; times = []; frameTime = 0; }, { passive: true });
     });
 
     if ('IntersectionObserver' in window) {
@@ -348,8 +332,9 @@ void main() {
     }
     document.addEventListener('visibilitychange', sync);
 
+    // A new size or orientation redraws the current frame; it never restarts the pour.
     if ('ResizeObserver' in window) {
-      new ResizeObserver(function () { invalidateScroll(); if (!running && !contextLost) draw(); }).observe(canvas);
+      new ResizeObserver(function () { if (!running && !contextLost) draw(); }).observe(canvas);
     }
 
     canvas.addEventListener('webglcontextlost', function (e) {
@@ -367,7 +352,17 @@ void main() {
       play: function () { wanted = true; sync(); },
       pause: function () { wanted = false; sync(); },
       renderOnce: function () { draw(); },
-      get playing() { return wanted; }
+      // Draws the pour at a given moment (seconds); used to make the matching posters.
+      seek: function (t) {
+        time = Math.max(0, Math.min(END, t));
+        settled = time >= END;
+        draw();
+        sync();
+      },
+      get playing() { return wanted; },
+      get settled() { return settled; },
+      get time() { return time; },
+      duration: END
     };
   }
 

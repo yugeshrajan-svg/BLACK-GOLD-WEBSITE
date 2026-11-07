@@ -31,8 +31,11 @@
   --brand-gold: #d6a843;
   --gold: #e0b453;
   --gold-hi: #f1d38a;
-  /* Metallic gold, light to deep, like the logo's foil */
-  --gold-grad: linear-gradient(115deg, #f8e7b0 0%, #e4bb57 36%, #c48f2e 68%, #8c6220 100%);
+  /* Brushed gold for key actions: a narrow, top-lit range, like light along a metal edge.
+     It is kept for the main action on each screen; everything else uses a gold line or text. */
+  --gold-grad: linear-gradient(180deg, #f1d58f 0%, #e2b85a 48%, #cb9b3c 100%);
+  --gold-grad-hover: linear-gradient(180deg, #f6e1a6 0%, #e9c46b 48%, #d4a748 100%);
+  --gold-edge: inset 0 1px 0 rgba(255, 246, 214, .55), inset 0 -1px 0 rgba(96, 64, 14, .3);
   --foil: linear-gradient(100deg, #b08a48 0%, #e3c98a 45%, #f3e2b4 60%, #c9a227 100%);
   --on-gold: #1b1408;
   --glass: rgba(7, 8, 10, .9);
@@ -58,8 +61,18 @@
   --serif: 'Fraunces', Georgia, 'Times New Roman', serif;
   --sans: 'Inter', system-ui, -apple-system, 'Segoe UI', Arial, sans-serif;
 
-  --ease: cubic-bezier(.22, 1, .36, 1);
-  --ease-in-out: cubic-bezier(.65, 0, .35, 1);
+  /* Motion: one vocabulary for every component. The oil is the one cinematic effect;
+     everything else is brief feedback or a short arrival. */
+  --ease: cubic-bezier(.22, 1, .36, 1);          /* quick ease-out: entrances */
+  --ease-out: var(--ease);
+  --ease-in-out: cubic-bezier(.65, 0, .35, 1);   /* controlled: changes between states */
+  --dur-press: 110ms;     /* a button or icon pressed */
+  --dur-hover: 170ms;     /* hover and focus feedback */
+  --dur-ui: 220ms;        /* menu, dialog, accordion */
+  --dur-swap: 280ms;      /* one preview screen to the next */
+  --dur-reveal: 380ms;    /* a section group arriving */
+  --stagger: 50ms;        /* between siblings arriving together */
+  --lift: 10px;           /* how far an arriving group rises */
   --pad-x: max(20px, 4.5vw, calc((100vw - 1280px) / 2));
   /* The header and home hero reach towards the window edges rather than the centred content column. */
   --edge-x: clamp(20px, 3vw, 60px);
@@ -137,7 +150,8 @@ button { cursor: pointer; border: 0; background: none; padding: 0; -webkit-tap-h
 img, svg, canvas { display: block; }
 ::selection { background: #c9a227; color: #15110a; }
 
-:focus-visible { outline: 2px solid #c9a227; outline-offset: 4px; }
+/* The focus ring appears at once (never animated), in the gold of the surface it is on. */
+:focus-visible { outline: 2px solid var(--gold); outline-offset: 4px; }
 [tabindex='-1']:focus { outline: none; }
 
 .skip {
@@ -149,7 +163,8 @@ img, svg, canvas { display: block; }
 
 /* ---------- Type ---------- */
 
-h1, h2, h3 { font-family: var(--serif); font-weight: 500; color: var(--head); font-optical-sizing: auto; }
+/* Headlines wrap into even lines and never split a word, even on a 320 px phone. */
+h1, h2, h3 { font-family: var(--serif); font-weight: 500; color: var(--head); font-optical-sizing: auto; text-wrap: balance; hyphens: manual; overflow-wrap: normal; }
 
 h2 {
   font-size: clamp(34px, 3.8vw, 56px);
@@ -214,27 +229,34 @@ h1 em, h2 em {
   min-height: 52px; max-width: 100%; padding: 14px 24px; border-radius: var(--radius);
   font: 600 14px/1.4 var(--sans); letter-spacing: .01em; text-align: center;
   overflow: hidden; isolation: isolate;
-  transition: background-color .2s, color .2s, border-color .2s, transform .2s, box-shadow .2s;
+  transition: background-color var(--dur-hover), color var(--dur-hover), border-color var(--dur-hover), box-shadow var(--dur-hover), transform var(--dur-press) var(--ease-out);
 }
-.button:active { transform: scale(.98); }
+/* Pressed: a small step down, then back. The arrow leans towards where the button goes. */
+.button:active { transform: translateY(1px) scale(.985); }
 .button .arrow {
   position: relative; flex: none;
   width: 24px; height: 1px; font-size: 0;
   background: currentColor;
+  transition: transform var(--dur-hover) var(--ease-out);
 }
+.button:hover .arrow, .button:focus-visible .arrow { transform: translateX(3px); }
 .button .arrow::after {
   content: ''; position: absolute; right: 0; top: 50%;
   width: 7px; height: 7px;
   border-top: 1px solid currentColor; border-right: 1px solid currentColor;
   transform: translateY(-50%) rotate(45deg);
 }
-/* Flat gold for the primary action; quiet neutral secondary controls. */
-.button--gold { background: #c9a227; color: var(--on-gold); }
-.button--gold:hover { background: #dec28a; box-shadow: 0 8px 28px -14px rgba(226, 191, 117, .8); }
+/* One gold treatment, for the main action; quieter neutral secondary controls. */
+.button--gold { background: var(--gold-grad); color: var(--on-gold); box-shadow: var(--gold-edge); }
+.button--gold:hover { background: var(--gold-grad-hover); box-shadow: var(--gold-edge), 0 10px 26px -16px rgba(226, 184, 90, .75); }
 .button--ink { background: var(--head); color: var(--bg); }
 .button--ink:hover { background: color-mix(in srgb, var(--head) 88%, var(--bg)); }
 .button--outline { color: var(--head); border: 1px solid var(--line-strong); background: transparent; }
 .button--outline:hover { background: var(--bg-2); border-color: var(--muted); }
+/* A secondary action on a dark photograph or the oil: glass with a gold hairline. */
+.button--line { color: var(--head); border: 1px solid var(--line-gold); background: rgba(10, 11, 13, .55); -webkit-backdrop-filter: blur(6px); backdrop-filter: blur(6px); }
+.button--line .arrow { color: var(--gold); }
+.button--line:hover { border-color: var(--gold); background: rgba(224, 180, 83, .1); }
 
 .text-link {
   position: relative;
@@ -251,9 +273,9 @@ h1 em, h2 em {
   content: ''; position: absolute; left: 0; right: 0; bottom: 0; height: 1px; z-index: 1;
   background: var(--accent);
   transform: scaleX(0); transform-origin: right;
-  transition: transform .7s var(--ease);
+  transition: transform calc(var(--dur-hover) + 60ms) var(--ease-out);
 }
-.text-link:hover::before { transform: scaleX(1); transform-origin: left; }
+.text-link:hover::before, .text-link:focus-visible::before { transform: scaleX(1); transform-origin: left; }
 .text-link span { font-size: 15px; letter-spacing: 0; color: inherit; }
 
 /* ---------- Reading progress ---------- */

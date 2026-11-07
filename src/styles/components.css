@@ -9,26 +9,6 @@
     radial-gradient(45% 55% at 5% 100%, rgba(201, 164, 92, .08) 0%, transparent 70%),
     #1e262d;
 }
-/* The same oil surface as the home hero, used as a backdrop on the pages whose hero
-   has no photograph of its own. Dimmer and calmer, and it sits under the decorative
-   layers those heroes already paint. */
-.page-oil {
-  position: absolute; z-index: -2; inset: 0; width: 100%; height: 100%;
-  pointer-events: none;
-  opacity: 0; transition: opacity 1.4s var(--ease);
-}
-.page-oil.is-ready { opacity: .8; }
-/* The oil keeps moving under the words, so its brightness is never the same twice.
-   This holds the reading side dark and lets the pool come through where the page's
-   own visual sits, the way the home hero's shade does. */
-.page-oil-shade {
-  position: absolute; z-index: -1; inset: 0; pointer-events: none;
-  background:
-    linear-gradient(90deg, rgba(7, 8, 10, .93) 0%, rgba(7, 8, 10, .74) 36%, rgba(7, 8, 10, .22) 74%, rgba(7, 8, 10, .1) 100%),
-    linear-gradient(0deg, rgba(7, 8, 10, .8) 0%, rgba(7, 8, 10, 0) 32%);
-}
-@media (prefers-reduced-motion: reduce) { .page-oil, .page-oil-shade { display: none; } }
-
 .page-hero-inner { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); align-items: center; gap: var(--layout-gap); min-height: 0; }
 .page-hero h1 { margin: 14px 0 20px; font-size: clamp(42px, 5vw, 76px); line-height: 1.05; letter-spacing: -.015em; }
 /* The accent phrase always starts its own line: "A resource. / Not a waste." */
@@ -36,7 +16,8 @@
 .page-hero-visual { position: relative; isolation: isolate; display: grid; place-items: center; gap: 20px; min-width: 0; }
 .page-hero::after, .hero::after { content: ''; position: absolute; left: var(--pad-x); right: var(--pad-x); bottom: 0; height: 2px; background: rgba(var(--accent-rgb), .35); pointer-events: none; }
 .hero::after { left: var(--edge-x); right: var(--edge-x); }
-.page-hero-visual::before { content: ''; position: absolute; z-index: -1; inset: 2% -8% 16%; border-radius: 50%; background: radial-gradient(ellipse, rgba(var(--accent-rgb), .23), transparent 65%); filter: blur(20px); animation: ambient-drift 14s ease-in-out infinite alternate; pointer-events: none; }
+/* A still glow behind each page's visual: the oil on the home page is the one moving backdrop. */
+.page-hero-visual::before { content: ''; position: absolute; z-index: -1; inset: 2% -8% 16%; border-radius: 50%; background: radial-gradient(ellipse, rgba(var(--accent-rgb), .2), transparent 65%); filter: blur(20px); pointer-events: none; }
 .page-hero-visual.is-offscreen::before, .tab-hidden .page-hero-visual::before, .page-hero-visual.is-offscreen *, .page-hero-visual.is-offscreen *::before, .page-hero-visual.is-offscreen *::after, .tab-hidden .page-hero-visual *, .tab-hidden .page-hero-visual *::before, .tab-hidden .page-hero-visual *::after, .motion-paused .page-hero-visual::before, .motion-paused .page-hero-visual *, .motion-paused .page-hero-visual *::before, .motion-paused .page-hero-visual *::after { animation-play-state: paused !important; }
 .page-motion { position: absolute; right: var(--pad-x); bottom: 20px; }
 
@@ -72,7 +53,8 @@ body[data-page='home'] #questions { background-color: #f7edcc; --accent: #8a6a0f
 .home-section-head > .text-link { flex: none; }
 .home-oils-hint { margin: -8px 0 20px; font-size: 14px; color: var(--muted); }
 .home-oils { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 20px; }
-.home-oil { --tile-rgb: 164, 99, 29; position: relative; display: flex; flex-direction: column; align-items: flex-start; gap: 12px; width: 100%; padding: var(--card-pad); border: 1px solid rgba(var(--tile-rgb), .2); border-radius: var(--radius-card); text-align: left; background: radial-gradient(240px circle at var(--mx, 70%) var(--my, 20%), rgba(var(--tile-rgb), .12), transparent 80%), #fffdf9; transition: border-color .25s, box-shadow .25s, translate .25s; }
+.home-oil { --tile-rgb: 164, 99, 29; position: relative; display: flex; flex-direction: column; align-items: flex-start; gap: 12px; width: 100%; padding: var(--card-pad); border: 1px solid rgba(var(--tile-rgb), .2); border-radius: var(--radius-card); text-align: left; background: radial-gradient(240px circle at var(--mx, 70%) var(--my, 20%), rgba(var(--tile-rgb), .12), transparent 80%), #fffdf9; transition: border-color var(--dur-hover), box-shadow var(--dur-hover), translate var(--dur-hover) var(--ease-out), scale var(--dur-press) var(--ease-out); }
+.home-oil:active { scale: .99; }
 .home-oil[data-home-oil='hydraulic'] { --tile-rgb: 46, 125, 79; }
 .home-oil[data-home-oil='transformer'] { --tile-rgb: 30, 38, 45; }
 .home-oil[aria-selected='true'] { border-color: rgb(var(--tile-rgb)); box-shadow: inset 0 0 0 1px rgb(var(--tile-rgb)), 0 14px 34px -28px rgba(var(--tile-rgb), .6); }
@@ -120,7 +102,13 @@ body[data-page='home'] #questions { background-color: #f7edcc; --accent: #8a6a0f
   display: flex; flex-direction: column; align-items: flex-start; gap: 14px;
   padding: var(--card-pad);
   background: radial-gradient(300px circle at var(--mx, 0%) var(--my, 0%), rgba(var(--tile-rgb), .1), transparent 80%), #fffdf9; border: 1px solid rgba(var(--tile-rgb), .18); border-top: 2px solid rgba(var(--tile-rgb), .6); border-radius: var(--radius-card);
-  transition: transform .6s var(--ease), box-shadow .6s var(--ease), border-color .6s var(--ease), opacity 1.2s var(--ease);
+  transition: box-shadow var(--dur-hover), border-color var(--dur-hover);
+}
+/* Cards are information, not links, so they never lift. When a card holds an action, the
+   card's edge answers as that action is hovered or focused, tying the two together. */
+.card:has(:is(a, button):focus-visible) { border-color: rgba(var(--tile-rgb), .6); }
+@media (hover: hover) and (pointer: fine) {
+  .card:has(:is(a, button):hover) { border-color: rgba(var(--tile-rgb), .6); }
 }
 /* Tint values live in base.css; theme.css re-points them for the dark pages. */
 .card:nth-child(2), .home-steps li:nth-child(2) { --tile-rgb: var(--tint-2); }
@@ -232,14 +220,15 @@ body[data-page='home'] #questions { background-color: #f7edcc; --accent: #8a6a0f
 .promise-choice[data-promise-stage='1'] { --promise-ui: #83cff7; --promise-ui-rgb: 131, 207, 247; --promise-ui-ink: #163e67; }
 .promise-choice[data-promise-stage='2'] { --promise-ui: #77dfbd; --promise-ui-rgb: 119, 223, 189; --promise-ui-ink: #0d483a; }
 .promise-choice[data-promise-stage='3'] { --promise-ui: #c5a6f7; --promise-ui-rgb: 197, 166, 247; --promise-ui-ink: #42266b; }
-.promise-choice { display: flex; align-items: center; gap: 14px; width: 100%; min-height: 0; padding: 16px; text-align: left; border: 1px solid rgba(var(--promise-ui-rgb), .25); border-radius: var(--radius-card); background: #1d3039; color: var(--head); transition: background-color .3s, border-color .3s, box-shadow .3s; }
-.promise-choice-no { display: grid; place-items: center; width: 36px; height: 36px; flex: none; border-radius: var(--radius); background: rgba(var(--promise-ui-rgb), .1); color: var(--promise-ui); font: 600 12px/1 var(--sans); transition: background-color .3s, color .3s; }
+.promise-choice { display: flex; align-items: center; gap: 14px; width: 100%; min-height: 0; padding: 16px; text-align: left; border: 1px solid rgba(var(--promise-ui-rgb), .25); border-radius: var(--radius-card); background: #1d3039; color: var(--head); transition: background-color var(--dur-ui), border-color var(--dur-ui), box-shadow var(--dur-ui), transform var(--dur-press) var(--ease-out); }
+.promise-choice:active { transform: translateY(1px); }
+.promise-choice-no { display: grid; place-items: center; width: 36px; height: 36px; flex: none; border-radius: var(--radius); background: rgba(var(--promise-ui-rgb), .1); color: var(--promise-ui); font: 600 12px/1 var(--sans); transition: background-color var(--dur-ui), color var(--dur-ui); }
 .promise-choice-copy { flex: 1; min-width: 0; }
 .promise-choice-label { display: block; font: 500 clamp(19px, 1.6vw, 23px)/1.25 var(--serif); }
 .promise-choice-detail { display: block; margin-top: 6px; color: #c7d3d9; font: 400 14px/1.6 var(--sans); }
 /* The arrow marks which promise is showing. Dim and still when it is not the one,
    leaning forward on hover, fully lit and moved across once chosen. */
-.promise-choice-arrow { flex: none; color: var(--promise-ui); font-size: 18px; opacity: .3; transition: transform .3s var(--ease), opacity .3s; }
+.promise-choice-arrow { flex: none; color: var(--promise-ui); font-size: 18px; opacity: .3; transition: transform var(--dur-hover) var(--ease-out), opacity var(--dur-hover); }
 .promise-choice:hover .promise-choice-arrow { opacity: .65; transform: translateX(4px); }
 .promise-choice:hover, .promise-choice[aria-pressed='true'] { border-color: var(--promise-ui); background: linear-gradient(100deg, rgba(var(--promise-ui-rgb), .12), rgba(var(--promise-ui-rgb), .03)), #1d3039; }
 .promise-choice[aria-pressed='true'] { box-shadow: inset 3px 0 0 var(--promise-ui), 0 10px 24px -22px rgba(0, 0, 0, .6); }
@@ -254,7 +243,8 @@ body[data-page='home'] #questions { background-color: #f7edcc; --accent: #8a6a0f
 .visual-tools { width: min(100%, 580px); text-align: center; }
 .visual-hint { margin-bottom: 14px; color: var(--text); font-size: 13px; }
 .preview-controls { display: flex; flex-wrap: wrap; justify-content: center; gap: 8px; }
-.preview-controls button { min-height: 44px; padding: 10px 16px; border: 1px solid rgba(var(--accent-rgb), .4); border-radius: var(--radius); background: rgba(255, 255, 255, .035); color: var(--text); font: 500 14px/1.4 var(--sans); transition: background-color .2s, color .2s, border-color .2s, box-shadow .2s; }
+.preview-controls button { min-height: 44px; padding: 10px 16px; border: 1px solid rgba(var(--accent-rgb), .4); border-radius: var(--radius); background: rgba(255, 255, 255, .035); color: var(--text); font: 500 14px/1.4 var(--sans); transition: background-color var(--dur-hover), color var(--dur-hover), border-color var(--dur-hover), box-shadow var(--dur-hover), transform var(--dur-press) var(--ease-out); }
+.preview-controls button:active { transform: translateY(1px); }
 .preview-controls button:hover { border-color: var(--accent-bright); background: rgba(var(--accent-rgb), .15); }
 .preview-controls button[aria-pressed='true'] { background: var(--accent-bright); border-color: var(--accent-bright); color: #141b18; box-shadow: 0 5px 24px -15px var(--accent-bright); }
 .preview-controls--oils [data-oil-preview='engine'] { --choice: #f0c17d; }
@@ -264,27 +254,15 @@ body[data-page='home'] #questions { background-color: #f7edcc; --accent: #8a6a0f
 .preview-description { max-width: 38em; min-height: 3.3em; margin: 16px auto 0; color: var(--text); font-size: 14px; line-height: 1.65; text-wrap: pretty; }
 .visual-tools--app { margin-top: 0; }
 html:not(.js) .visual-tools { display: none; }
-/* Siblings in a row arrive one after another rather than all at once; the delay is
-   set per element as it enters, and capped so a long row never lags behind the scroll. */
-.entrance { animation: content-arrival .6s var(--ease) both; animation-delay: calc(var(--arrive, 0) * 75ms); }
-.motion-paused .entrance { animation: none; }
-
 @media (hover: hover) and (pointer: fine) {
-  /* On black, a lift alone is invisible: the edge brightens and the card casts its
-     own tint, so the card reads as picked up rather than merely nudged. */
-  .home-oil:hover, .card:hover { translate: 0 -4px; }
-  .home-oil:hover { border-color: rgb(var(--tile-rgb)); }
-  .card:hover {
-    border-color: rgba(var(--tile-rgb), .5);
-    box-shadow: 0 22px 46px -30px rgba(var(--tile-rgb), .5);
-  }
+  /* The home oil choices are buttons: they rise a little and their edge lights up. */
+  .home-oil:hover { translate: 0 -3px; border-color: rgb(var(--tile-rgb)); box-shadow: 0 18px 40px -30px rgba(var(--tile-rgb), .55); }
 }
 
 /* Oil descriptions sit below the single interactive sample jar. */
 .card.oil-card { padding: 0; gap: 0; overflow: hidden; }
 .oil-card-body { flex: 1; width: 100%; display: flex; flex-direction: column; align-items: flex-start; gap: 14px; padding: var(--card-pad); }
 .oil-card-body .button { margin-top: auto; min-height: 46px; padding: 0 20px; }
-.oil-card:hover { border-color: var(--line-gold); box-shadow: 0 26px 50px -30px rgba(23, 21, 15, .35); }
 
 .oil-note { display: flex; align-items: center; justify-content: center; gap: 12px; margin-top: 24px; font-size: 15px; color: var(--muted); text-align: center; }
 .oil-note svg { flex: none; width: 18px; height: 18px; fill: none; stroke: var(--gold); stroke-width: 1.4; stroke-linecap: round; stroke-linejoin: round; }

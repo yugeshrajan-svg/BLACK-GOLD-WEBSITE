@@ -6,6 +6,7 @@
   var $ = function (sel, root) { return (root || document).querySelector(sel); };
   var $$ = function (sel, root) { return Array.prototype.slice.call((root || document).querySelectorAll(sel)); };
   var selectedOilKey = null;
+  var revealHeld = [];   // groups below the fold waiting to arrive (see Reveals)
 
   function pressChoice(buttons, index) {
     buttons.forEach(function (button, i) { button.setAttribute('aria-pressed', String(i === index)); });
@@ -39,6 +40,7 @@
     if (id.length < 2) return;
     var target = document.getElementById(id.slice(1));
     if (!target) return;
+    revealAll();
     if (!target.hasAttribute('tabindex')) target.setAttribute('tabindex', '-1');
     target.focus({ preventScroll: true });
   });
@@ -85,14 +87,16 @@
   document.addEventListener('visibilitychange', syncLive);
 
   // Calls fn(dt) every frame, but only while `el` is on screen, the tab is
-  // visible and motion is on, so nothing runs in the background.
+  // visible and motion is on, so nothing runs in the background. A decorative
+  // sequence plays once: when fn returns false the loop ends and schedules
+  // nothing more, until restart() (a visitor choosing a scene) plays it again.
   function live(el, fn) {
-    var frame = 0, last = 0, inView = !('IntersectionObserver' in window);
-    function playable() { return inView && !document.hidden && !reduce.matches && !doc.classList.contains('motion-paused'); }
+    var frame = 0, last = 0, done = false, inView = !('IntersectionObserver' in window);
+    function playable() { return !done && inView && !document.hidden && !reduce.matches && !doc.classList.contains('motion-paused'); }
     function tick(now) {
       var dt = last ? Math.min(now - last, 100) : 0;
       last = now;
-      fn(dt);
+      if (fn(dt) === false) done = true;
       frame = playable() ? requestAnimationFrame(tick) : 0;
     }
     function sync() {
@@ -111,6 +115,10 @@
     }
     liveSyncs.push(sync);
     sync();
+    return {
+      restart: function () { if (done) { done = false; sync(); } },
+      get finished() { return done; }
+    };
   }
 
   if ('IntersectionObserver' in window) {
@@ -132,6 +140,7 @@
 
   function setMotion(on, remember) {
     doc.classList.toggle('motion-paused', !on);
+    if (!on) revealAll();
     labelMotion();
     syncLive();
     if (remember) store('bg-motion', on ? 'on' : 'off');
@@ -140,6 +149,7 @@
   function applyMotionPreference() {
     if (reduce.matches) {
       doc.classList.add('motion-paused');
+      revealAll();
       labelMotion();
       syncLive();
     } else {
@@ -152,56 +162,33 @@
     btn.addEventListener('click', function () { setMotion(doc.classList.contains('motion-paused'), true); });
   });
 
-  /* ---------- Home: a continuous oil pour and spreading surface ripples ---------- */
+  /* ---------- Home: one oil pour over its still poster ----------
+     The poster is the first thing drawn and the whole fallback. The canvas is created only on
+     the home hero, only when motion is allowed, and fades in on a first frame that matches the
+     poster. It plays one pour of about 4.5 seconds, pausing with the tab, the motion switch or
+     when scrolled away, and then rests on its settled frame. Without WebGL the poster stays. */
 
-  /* One lifecycle for every oil surface on the page: built on first use, paused with the
-     rest of the motion, and abandoned quietly if WebGL is unavailable. */
-  function mountOil(canvas, options) {
+  var oilCanvas = $('#oil-flow');
+  if (oilCanvas && window.OilSurface) (function () {
     var oil = null, failed = false;
     function syncOil() {
       var play = !reduce.matches && !document.hidden && !doc.classList.contains('motion-paused');
       if (!oil && !failed && play) {
         try {
-          // Full screen resolution; it starts on the frame oil-poster.webp shows (t = 6 s),
-          // so the fade from the poster into the moving oil has no jump.
-          oil = window.OilSurface(canvas, options);
+          oil = window.OilSurface(oilCanvas, { impact: [.7, .42], impactNarrow: [.8, .2] });
           if (oil) oil.renderOnce();
           else failed = true;
         } catch (e) {
           failed = true;
           oil = null;
-          canvas.classList.remove('is-ready');
+          oilCanvas.classList.remove('is-ready');
         }
       }
       if (oil) { if (play) oil.play(); else oil.pause(); }
     }
     liveSyncs.push(syncOil);
     syncOil();
-  }
-
-  // Home: the full pour, at the screen's own resolution. It starts on the frame
-  // oil-poster.webp shows (t = 6 s), so the fade from poster to moving oil has no jump.
-  var oilCanvas = $('#oil-flow');
-  if (oilCanvas && window.OilSurface) mountOil(oilCanvas, {
-    mode: 'pour', impact: [.7, .42], impactNarrow: [.78, .23],
-    startTime: 6,
-    // Touch or click the hero and the ripple spreads from that spot; the shade
-    // layer sits over the canvas, so the whole section listens on its behalf.
-    interactive: true, eventTarget: oilCanvas.closest('.hero') || oilCanvas.parentElement,
-    // The camera tilts as the hero scrolls away, so the pool has real depth.
-    parallax: 1
-  });
-
-  // Inner pages: the same pool, kept quiet. A drop every few seconds instead of a pour,
-  // dimmer light, and fewer pixels, because here it is behind the reading.
-  if (window.OilSurface) $$('[data-oil-ambient]').forEach(function (canvas) {
-    mountOil(canvas, {
-      mode: 'drop', impact: [.74, .44], impactNarrow: [.6, .34],
-      light: .6, quality: .72, startTime: 2.4,
-      interactive: true, eventTarget: canvas.closest('.page-hero') || canvas.parentElement,
-      parallax: .85
-    });
-  });
+  })();
 
   /* ---------- Home: choosing an oil carries through to the enquiry ---------- */
 
@@ -243,27 +230,66 @@
     select(0, false);
   })();
 
-  /* A short entrance on arrival; content is visible if scripting is unavailable. */
-  if ('IntersectionObserver' in window && !reduce.matches) {
-    var arrivals = new IntersectionObserver(function (entries) {
-      entries.forEach(function (entry) {
-        if (!entry.isIntersecting) return;
-        if (!doc.classList.contains('motion-paused')) {
-          /* Position among its siblings, so a row of cards arrives left to right. */
-          var parent = entry.target.parentElement;
-          var index = parent ? Array.prototype.indexOf.call(parent.children, entry.target) : 0;
-          entry.target.style.setProperty('--arrive', Math.min(index, 5));
-          entry.target.classList.add('entrance');
-        }
-        arrivals.unobserve(entry.target);
-      });
-    }, { threshold: .1 });
-    $$('.home-section-head, .home-oil, .card, .section-head, .faq-list').forEach(function (element) { arrivals.observe(element); });
-  }
+  /* ---------- Reveals: selected groups arrive once, in reading order ----------
+     Everything is visible by default and without scripting. When the page starts, only the
+     groups still below the fold are held back (faded, 10 px low); each arrives as it scrolls
+     into view, siblings that arrive together a step apart. A held group is shown at once if
+     anything in it receives focus, if a link jumps through the page, or if motion is turned
+     off. Visits that land part-way down (a #link, back/forward, a reload) hold nothing back. */
 
-  // A local wash of colour follows the pointer inside each card.
+  function settleReveal(el) {
+    el.removeAttribute('data-reveal');
+    el.style.removeProperty('--reveal-i');
+  }
+  function revealAll() {
+    revealHeld.forEach(settleReveal);
+    revealHeld = [];
+  }
+  (function () {
+    if (!('IntersectionObserver' in window) || reduce.matches || doc.classList.contains('motion-paused')) return;
+    var nav = window.performance && performance.getEntriesByType ? performance.getEntriesByType('navigation')[0] : null;
+    if (location.hash || window.scrollY > 0 || (nav && nav.type !== 'navigate')) return;
+    var groups = $$('.section-head, .home-section-head, .promise-heading, .home-oils > .home-oil, .home-oil-panel, .cards > .card, .about-cycle-layout > .page-hero-visual, .seller-feature-layout > .page-hero-visual, .seller-navigation-guide, .seller-checklist, .seller-help-list, .faq-list, .closing-inner');
+    var fold = window.innerHeight;
+    revealHeld = groups.filter(function (el) { return el.getBoundingClientRect().top > fold; });
+    if (!revealHeld.length) return;
+
+    var observer = new IntersectionObserver(function (entries) {
+      var batch = new Map();
+      entries.forEach(function (entry) {
+        var el = entry.target;
+        if (!entry.isIntersecting || el.getAttribute('data-reveal') !== 'held') return;
+        observer.unobserve(el);
+        revealHeld = revealHeld.filter(function (held) { return held !== el; });
+        // Siblings arriving together step in left to right (at most three steps); a lone
+        // arrival, such as each card in a phone's single column, goes at once.
+        var step = batch.get(el.parentElement) || 0;
+        batch.set(el.parentElement, step + 1);
+        el.style.setProperty('--reveal-i', String(Math.min(step, 3)));
+        el.setAttribute('data-reveal', 'in');
+        el.addEventListener('animationend', function done(event) {
+          if (event.target !== el) return;
+          el.removeEventListener('animationend', done);
+          settleReveal(el);
+        });
+      });
+    }, { threshold: .06, rootMargin: '0px 0px -4% 0px' });
+
+    revealHeld.forEach(function (el) {
+      el.setAttribute('data-reveal', 'held');
+      observer.observe(el);
+    });
+    document.addEventListener('focusin', function (event) {
+      var held = event.target.closest && event.target.closest('[data-reveal]');
+      if (held) { observer.unobserve(held); revealHeld = revealHeld.filter(function (el) { return el !== held; }); settleReveal(held); }
+    });
+    window.addEventListener('hashchange', revealAll);
+  })();
+
+  // Home's oil choices are buttons: a local wash of colour follows the pointer inside each one.
+  // Informational cards stay still, so they never look clickable.
   if (window.matchMedia('(hover: hover) and (pointer: fine)').matches && !reduce.matches) {
-    $$('.card, .home-oil').forEach(function (card) {
+    $$('.home-oil').forEach(function (card) {
       card.addEventListener('pointermove', function (event) {
         if (reduce.matches || doc.classList.contains('motion-paused')) return;
         var rect = card.getBoundingClientRect();
@@ -327,7 +353,7 @@
     var cards = $$('.stage-card');
     var buttons = $$('[data-refinery-stage]');
     var description = $('[data-refinery-description]');
-    var current = 0, elapsed = 0, manualHold = 0;
+    var current = 0, elapsed = 0;
 
     function setStage(index) {
       current = index;
@@ -344,14 +370,21 @@
       $('.refinery-caption-title', refinery).textContent = cards[index] ? $('h3', cards[index]).textContent : '';
     }
 
+    // One pass through the stages, back to the first, then still. A visitor's choice stays.
+    var resting = false;
+    function rest() { resting = true; refinery.classList.add('is-resting'); }
     buttons.forEach(function (button, index) {
-      button.addEventListener('click', function () { elapsed = 0; manualHold = 7500; setStage(index); });
+      button.addEventListener('click', function () { setStage(index); rest(); });
     });
     setStage(0);
     live(refinery, function (dt) {
-      if (manualHold > 0) { manualHold = Math.max(0, manualHold - dt); return; }
+      if (resting) return false;
       elapsed += dt;
-      if (elapsed >= 4300) { elapsed = 0; setStage((current + 1) % stations.length); }
+      if (elapsed >= 4300) {
+        elapsed = 0;
+        setStage((current + 1) % stations.length);
+        if (current === 0) { rest(); return false; }
+      }
     });
   })();
 
@@ -411,12 +444,17 @@
       heldIndex = null;
       applyHeld();
     }
+    // The promises play through once on their own and come back to the first. A promise the
+    // visitor clicks or chooses with the keyboard plays its scene and stays selected.
+    var autoplay = true, loop = null;
     function choose(index) {
       elapsed = doc.classList.contains('motion-paused') ? HOLD : 0;
       manualHold = 7500;
       heldIndex = index;
+      autoplay = false;
       setStage(index, true);
       applyHeld();
+      if (loop) loop.restart();
     }
 
     buttons.forEach(function (button, index) {
@@ -427,6 +465,7 @@
         if (current === index) return;
         elapsed = doc.classList.contains('motion-paused') ? HOLD : 0;
         setStage(index);
+        if (loop) loop.restart();
       });
       button.addEventListener('pointerleave', function () {
         if (hovered !== index) return;
@@ -448,7 +487,7 @@
     });
     setStage(0);
     reduce.addEventListener('change', draw);
-    live(promiseJourney, function (dt) {
+    loop = live(promiseJourney, function (dt) {
       elapsed += dt;
       if (hovered !== null) { draw(); return; }
       if (manualHold > 0) {
@@ -457,8 +496,13 @@
         draw();
         return;
       }
-      if (elapsed >= HOLD) { elapsed = 0; releaseHeld(); setStage((current + 1) % scenes.length); }
-      else draw();
+      if (elapsed < HOLD) { draw(); return; }
+      // The scene has played; with autoplay over, it rests complete and nothing more is drawn.
+      if (!autoplay) { elapsed = HOLD; draw(); return false; }
+      elapsed = 0;
+      releaseHeld();
+      setStage((current + 1) % scenes.length);
+      if (current === 0) autoplay = false;
     });
   })();
 
@@ -495,11 +539,16 @@
       });
     });
 
+    // One look at each oil, back to the first, then still; a chosen oil stays.
     show(0);
     live(oilStage, function (dt) {
-      if (manualSelection) return;
+      if (manualSelection) return false;
       elapsed += dt;
-      if (elapsed >= HOLD) { elapsed = 0; show((index + 1) % OIL_KEYS.length); }
+      if (elapsed >= HOLD) {
+        elapsed = 0;
+        show((index + 1) % OIL_KEYS.length);
+        if (index === 0) return false;
+      }
     });
   })();
 
@@ -526,6 +575,7 @@
     var lengthOf = function (s) { return s.rest !== undefined ? REST : s.travel !== undefined ? TRAVEL : FADE; };
     var step = 0, stepTime = 0, current = -1;
     var homeControlled = false, homeTarget = 0, visualPosition = 0;
+    var routeLoop = null;
 
     function setStep(i) {
       if (i === current) return;
@@ -562,6 +612,8 @@
 
     function followHome(p) {
       homeControlled = true;
+      route.classList.remove('is-resting');
+      if (routeLoop) routeLoop.restart();
       homeTarget = Math.max(0, Math.min(1, p));
       setStep(Math.round(homeTarget * last));
       if (!reduce.matches && doc.classList.contains('motion-paused')) renderPosition(homeTarget, false, 1, current);
@@ -578,7 +630,16 @@
       stepTime += dt;
       while (stepTime >= lengthOf(STEPS[step])) {
         stepTime -= lengthOf(STEPS[step]);
-        step = STEPS[step].fade ? 0 : step + 1;
+        if (STEPS[step].fade) {
+          // One pass along the route, back at the start, then still.
+          step = 0;
+          stepTime = 0;
+          setStep(0);
+          draw();
+          route.classList.add('is-resting');
+          return false;
+        }
+        step++;
         if (STEPS[step].rest !== undefined) setStep(STEPS[step].rest);
       }
       draw();
@@ -613,7 +674,7 @@
     setStep(0);
     setStatic();
     reduce.addEventListener('change', setStatic);
-    live(route, advance);
+    routeLoop = live(route, advance);
 
     if (homeJourney) {
       // Use native page scrolling; one shared animation frame batches geometry reads.
@@ -694,9 +755,12 @@
       }
     }
 
+    // Search, install and open, once. It ends on the opened app and draws nothing more;
+    // reduced motion shows the completed store screen instead.
+    var last = durations.length - 1, finished = false;
     function applyPreference() {
-      phase = reduce.matches ? 3 : 0;
-      elapsed = 0;
+      phase = reduce.matches || finished ? last : 0;
+      elapsed = finished ? durations[last] : 0;
       render();
     }
 
@@ -705,8 +769,14 @@
     live(installPreview, function (dt) {
       elapsed += dt;
       while (elapsed >= durations[phase]) {
+        if (phase === last) {
+          finished = true;
+          elapsed = durations[last];
+          render();
+          return false;
+        }
         elapsed -= durations[phase];
-        phase = (phase + 1) % durations.length;
+        phase++;
       }
       render();
     });
@@ -806,11 +876,24 @@
     var indicators = $$('.phone-status i', phone);
     var description = $('[data-app-description]');
     var features = $$('[data-app-feature]');
-    var current = 0, elapsed = 0, manualHold = 0;
+    var current = -1, elapsed = 0, chosen = false;
 
+    // Only the screen area moves: the new screen slides in from the side its button is on,
+    // the old one leaves the other way, inside the phone's fixed frame.
     function show(index) {
+      var previous = current;
+      if (index === previous) return;
       current = index;
-      screens.forEach(function (screen, i) { screen.classList.toggle('is-active', i === index); });
+      var incoming = screens[index];
+      phone.dataset.direction = previous >= 0 && index < previous ? 'prev' : 'next';
+      incoming.style.transition = 'none';
+      incoming.classList.remove('is-leaving');
+      void incoming.offsetHeight;   // place it on its starting side before it moves
+      incoming.style.transition = '';
+      screens.forEach(function (screen, i) {
+        screen.classList.toggle('is-active', i === index);
+        screen.classList.toggle('is-leaving', i === previous);
+      });
       indicators.forEach(function (indicator, i) { indicator.classList.toggle('is-on', i === index); });
       features.forEach(function (card, i) { card.classList.toggle('is-current', i === index); });
       $$('.phone-nav > span', phone).forEach(function (tab, i) { tab.classList.toggle('on', i === (index === 0 ? 0 : 1)); });
@@ -818,15 +901,31 @@
       describeCard(features[index], description);
     }
 
+    // On its own it shows each screen once and comes back to the first. A screen the visitor
+    // chooses stays; the arrow keys step between the three choices.
     phone.classList.add('is-controlled');
     buttons.forEach(function (button, index) {
-      button.addEventListener('click', function () { elapsed = 0; manualHold = 8000; show(index); });
+      button.addEventListener('click', function () { chosen = true; show(index); });
+      button.addEventListener('keydown', function (event) {
+        var next;
+        if (event.key === 'ArrowRight') next = Math.min(index + 1, buttons.length - 1);
+        else if (event.key === 'ArrowLeft') next = Math.max(index - 1, 0);
+        else return;
+        event.preventDefault();
+        buttons[next].focus();
+        chosen = true;
+        show(next);
+      });
     });
     show(0);
     live(phone, function (dt) {
-      if (manualHold > 0) { manualHold = Math.max(0, manualHold - dt); return; }
+      if (chosen) return false;
       elapsed += dt;
-      if (elapsed >= 4500) { elapsed = 0; show((current + 1) % screens.length); }
+      if (elapsed >= 4500) {
+        elapsed = 0;
+        show((current + 1) % screens.length);
+        if (current === 0) return false;
+      }
     });
   })();
 

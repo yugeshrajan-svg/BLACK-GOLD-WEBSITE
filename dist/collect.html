@@ -39,6 +39,8 @@
   <a href="index.html" class="brand" aria-label="Black Gold home">
     <img class="brand-logo" src="assets/black-gold-logo.webp" alt="" width="840" height="309">
   </a>
+  <!-- Phones and tablets: Menu comes before the links it opens, so Tab moves from it into them. -->
+  <button class="menu" aria-expanded="false" aria-controls="navigation"><span class="menu-label">Menu</span><span class="menu-icon" aria-hidden="true"><i></i><i></i></span></button>
   <nav id="navigation" class="nav" aria-label="Main navigation">
     <a href="index.html" data-page="home">Home</a>
     <a href="seller-app.html" data-page="app">Seller app</a>
@@ -48,13 +50,10 @@
     <button class="button button--gold nav-mobile-cta" data-app>Get the seller app <span class="arrow" aria-hidden="true">↗</span></button>
   </nav>
   <button class="button button--gold nav-action" data-app>Get seller app <span class="arrow" aria-hidden="true">↗</span></button>
-  <button class="menu" aria-expanded="false" aria-controls="navigation"><span class="menu-label">Menu</span><span class="menu-icon" aria-hidden="true"><i></i><i></i></span></button>
 </header>
 
 <main id="main">
 <section class="page-hero" id="top" aria-labelledby="page-title">
-  <canvas class="page-oil" data-oil-ambient aria-hidden="true"></canvas>
-  <div class="page-oil-shade" aria-hidden="true"></div>
   <div class="page-hero-inner">
     <div class="page-hero-copy">
       <p class="eyebrow">What we collect</p>
@@ -152,7 +151,6 @@
     </article>
   </div>
 </section>
-<script src="oil-surface.js"></script>
 <section class="closing" aria-labelledby="closing-title">
   <div class="closing-inner">
     <p class="eyebrow">Your oil collection</p>

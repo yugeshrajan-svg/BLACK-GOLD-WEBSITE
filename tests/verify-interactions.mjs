@@ -452,11 +452,8 @@ assert.equal(stillPickup.q('.home-steps .is-highlighted h3').textContent,'Get pa
 const flowState = {created:0, playing:false, rendered:false};
 const flowing = load('index.html',false,'en',(canvas,options) => {
   flowState.created++;
-  assert.equal(options.mode,'pour');
-  assert.equal(options.parallax,1,'The camera tilts as the hero scrolls away');
-  assert.equal(options.interactive,true,'Touching the hero ripples the oil');
-  assert.ok(options.eventTarget,'Ripples listen on the hero, not the covered canvas');
-  assert.equal(options.startTime,6,'Start on the frame oil-poster.webp shows');
+  assert.deepEqual([...options.impact],[.7,.42],'The oil lands where oil-poster.webp shows its rings');
+  assert.deepEqual([...options.impactNarrow],[.8,.2],'On phones it lands where oil-poster-phone.webp shows them');
   assert.equal(options.quality,undefined,'Draw at the full screen resolution');
   return {
     renderOnce() { flowState.rendered = true; canvas.classList.add('is-ready'); },
@@ -497,7 +494,7 @@ function oilRig(width, height, dpr) {
   rig.run = (count,ms) => { for (let i = 0; i < count; i++) { rig.now += [].concat(ms)[i % [].concat(ms).length]; const jobs = [...rig.frames.values()]; rig.frames.clear(); jobs.forEach(fn => fn(rig.now)); } };
   return rig;
 }
-for (const [width,height,dpr,expected] of [[1366,827,1,'1366x827'],[1920,1080,2,'3840x2160'],[2560,1440,2,'3840x2160'],[390,810,3,'780x1620']]) {
+for (const [width,height,dpr,expected] of [[1366,827,1,'1366x827'],[1920,1080,2,'3840x2160'],[2560,1440,2,'3840x2160'],[390,810,3,'585x1215']]) {
   const rig = oilRig(width,height,dpr); rig.oil.renderOnce();
   assert.equal(rig.canvas.width+'x'+rig.canvas.height,expected,`Oil canvas at ${width}x${height} on a ${dpr}x screen`);
 }
@@ -798,9 +795,9 @@ for (const [file,motionControl] of [
   assert.equal(installDemo.q('[data-install-preview]').dataset.launched,'false','Open stays visible before the simulated launch');
   installDemo.advance(2300);
   assert.equal(installDemo.q('[data-install-preview]').dataset.launched,'true','The Open tap reveals the Black Gold splash screen');
-  installDemo.advance(1900);
-  assert.equal(installDemo.q('[data-install-preview]').dataset.phase,'0','The installation preview loops back to search');
-  assert.equal(installDemo.q('[data-install-preview]').dataset.launched,'false','The launched app resets before the next search');
+  installDemo.advance(20000);
+  assert.equal(installDemo.q('[data-install-preview]').dataset.phase,'3','The installation preview plays once and rests on the opened app');
+  assert.equal(installDemo.q('[data-install-preview]').dataset.launched,'true','The opened app stays on screen instead of looping back to search');
   assert.equal(installDemo.qa('.seller-install-backdrop button, .seller-install-backdrop a, .seller-install-backdrop input').length,0,'The decorative install animation cannot trigger real downloads or searches');
   installDemo.setReduced(true);
   installDemo.advance(20000);

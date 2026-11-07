@@ -39,6 +39,8 @@
   <a href="index.html" class="brand" aria-label="Black Gold home">
     <img class="brand-logo" src="assets/black-gold-logo.webp" alt="" width="840" height="309">
   </a>
+  <!-- Phones and tablets: Menu comes before the links it opens, so Tab moves from it into them. -->
+  <button class="menu" aria-expanded="false" aria-controls="navigation"><span class="menu-label">Menu</span><span class="menu-icon" aria-hidden="true"><i></i><i></i></span></button>
   <nav id="navigation" class="nav" aria-label="Main navigation">
     <a href="index.html" data-page="home" aria-current="page">Home</a>
     <a href="seller-app.html" data-page="app">Seller app</a>
@@ -48,7 +50,6 @@
     <button class="button button--gold nav-mobile-cta" data-app>Get the seller app <span class="arrow" aria-hidden="true">↗</span></button>
   </nav>
   <button class="button button--gold nav-action" data-app>Get seller app <span class="arrow" aria-hidden="true">↗</span></button>
-  <button class="menu" aria-expanded="false" aria-controls="navigation"><span class="menu-label">Menu</span><span class="menu-icon" aria-hidden="true"><i></i><i></i></span></button>
 </header>
 
 <main id="main">
@@ -117,7 +118,7 @@
   <div class="hero-bottom">
     <button class="motion-toggle" data-motion><span class="motion-icon" aria-hidden="true"></span><span class="motion-label">Pause motion</span></button>
     <a href="#seller-app" class="scroll-cue" aria-label="Explore the seller app"><span aria-hidden="true">↓</span></a>
-    <button class="button button--gold hero-enquiry" data-pickup>Prepare pickup enquiry <span class="arrow" aria-hidden="true">↗</span></button>
+    <button class="button button--line hero-enquiry" data-pickup>Prepare pickup enquiry <span class="arrow" aria-hidden="true">↗</span></button>
   </div>
 </section>
 

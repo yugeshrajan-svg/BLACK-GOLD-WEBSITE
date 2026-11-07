@@ -12,17 +12,19 @@
   row-gap: 12px;
 }
 .hero-background, .hero-shade { position: absolute; inset: 0; width: 100%; height: 100%; }
-/* The poster is the oil animation's first frame (t = 6 s): 1920 x 1080, and 3840 x 2160 for
-   high-resolution screens and anything wider than 1920 CSS pixels. Phones get a tall one (responsive.css). */
+/* The poster is the pour's first and last frame, a settled pool: 1920 x 1080, and 3840 x 2160 for
+   high-resolution screens and anything wider than 1920 CSS pixels. Phones get a tall one (responsive.css).
+   It is the whole hero until the canvas has drawn a frame, and the still for reduced motion or no WebGL. */
 .hero-background {
   z-index: -2;
   background: #070706 url('assets/oil-poster.webp') 70% center / cover no-repeat;
   background-image: image-set(url('assets/oil-poster.webp') 1x, url('assets/oil-poster-4k.webp') 2x);
 }
 @media (min-width: 1921px) { .hero-background { background-image: url('assets/oil-poster-4k.webp'); } }
+/* Decorative only: no pointer events, no focus. It blends in over the matching poster once a frame is drawn. */
 .hero-oil {
   position: absolute; inset: 0; width: 100%; height: 100%;
-  pointer-events: none; opacity: 0; transition: opacity .6s;
+  pointer-events: none; opacity: 0; transition: opacity 400ms var(--ease-out);
 }
 .hero-oil.is-ready { opacity: 1; }
 .hero-shade {
@@ -63,8 +65,9 @@
 .motion-toggle[data-paused] .motion-icon::after { display: none; }
 .motion-toggle:hover { color: var(--gold); }
 .scroll-cue { display: grid; place-items: center; width: 44px; height: 44px; margin-left: auto; flex: none; font-size: 22px; color: var(--text); }
-/* Home hero: the pickup enquiry waits in the bottom-right corner, beside the scroll arrow. */
-.hero-enquiry { flex: none; text-transform: none; box-shadow: 0 14px 34px -16px rgba(201, 162, 39, .7); }
+/* Home hero: the pickup enquiry waits in the bottom-right corner, beside the scroll arrow.
+   The app download above owns the gold; the enquiry is the clear second action, in glass. */
+.hero-enquiry { flex: none; text-transform: none; }
 
 /* Laptops and monitors: every page opens on a first screen that fills the window, content centred.
    Taller content still grows the section; phones and tablets keep the compact height. */
@@ -105,6 +108,7 @@
 .hero--app .hero-description { max-width: 29em; margin-bottom: 20px; font-size: clamp(17px, 1.4vw, 20px); }
 .hero-downloads { width: min(100%, 480px); }
 .hero-downloads .store-link { border-color: rgba(246, 244, 239, .4); background: rgba(18, 24, 28, .94); }
+.hero-downloads .store-links .store-link[aria-disabled='true'], .hero-downloads .store-link--ios { border-color: rgba(246, 244, 239, .26); background: rgba(10, 11, 13, .5); }
 .hero-downloads .download-status { margin-top: 8px; color: #d7d5cb; }
 body[data-page='home'] #seller-app { --accent: #8a6a0f; --accent-rgb: 138, 106, 15; --accent-bright: #e7c85c; --accent-soft: #f7edcc; background: radial-gradient(ellipse at 83% 32%, #f2e7c5 0%, transparent 52%), #faf8f1; }
 /* The home introduction uses the same Play Store sequence as the Seller App hero. */
@@ -151,7 +155,10 @@ body[data-page='home'] #seller-app { overflow: hidden; }
 .app-install-guide strong, .app-install-guide span { display: block; }
 .app-install-guide strong { margin-bottom: 5px; color: var(--head); }
 .store-links { display: grid; grid-template-columns: repeat(auto-fit, minmax(min(100%, 208px), 1fr)); gap: 12px; }
-.store-link { display: flex; align-items: center; gap: 12px; min-width: 0; min-height: 64px; padding: 12px 16px; border: 1px solid #1e262d; border-radius: var(--radius); background: #1e262d; color: #fff; transition: border-color .2s, background-color .2s; }
+.store-link { display: flex; align-items: center; gap: 12px; min-width: 0; min-height: 64px; padding: 12px 16px; border: 1px solid #1e262d; border-radius: var(--radius); background: #1e262d; color: #fff; transition: border-color var(--dur-hover), background-color var(--dur-hover), transform var(--dur-press) var(--ease-out); }
+.store-link[href]:active { transform: translateY(1px) scale(.99); }
+.store-link-arrow { transition: transform var(--dur-hover) var(--ease-out); }
+.store-link--apk[href]:hover .store-link-arrow, .store-link--apk[href]:focus-visible .store-link-arrow { transform: translateY(2px); }
 .store-link > svg { width: 26px; height: 28px; flex: none; fill: none; stroke: #e7c85c; stroke-width: 1.8; stroke-linecap: round; stroke-linejoin: round; }
 .store-link > .store-icon-play { stroke: none; }
 .store-link small { display: block; margin-bottom: 3px; font: 500 11px/1.4 var(--sans); color: #d7d5cb; }

@@ -5,10 +5,8 @@
    keeps a few "light islands" (illustration panels) readable on purpose.
    ========================================================================== */
 
-/* ---------- Gold: metallic, light to deep ---------- */
+/* ---------- Gold: brushed, for the hero and closing accent words ---------- */
 
-.button--gold { background: var(--gold-grad); color: var(--on-gold); }
-.button--gold:hover { background: linear-gradient(115deg, #fff3cf 0%, #ecc66b 38%, #cf9a35 72%, #9a6c24 100%); box-shadow: 0 8px 28px -14px rgba(228, 187, 87, .8); }
 .hero h1 em, .closing h2 em {
   padding-right: .06em;
   background: var(--gold-grad); -webkit-background-clip: text; background-clip: text; color: transparent;
@@ -77,10 +75,19 @@ body[data-page='home'] #questions { background-color: var(--bg); --accent: #e0b4
 
 .store-link { border-color: var(--line-strong); background: var(--bg-3); }
 .store-link[href]:hover { border-color: var(--line-gold); background: #1c2025; }
-.store-links .store-link--apk { border-color: transparent; background: var(--gold-grad); color: var(--on-gold); }
+/* The direct Android download is the one gold download everywhere it appears. */
+.store-links .store-link--apk { border-color: transparent; background: var(--gold-grad); color: var(--on-gold); box-shadow: var(--gold-edge); }
 .store-link--apk small { color: #3a2a0c; }
 .store-links .store-link--apk > svg, .store-links .store-link--apk .store-link-arrow { stroke: var(--on-gold); color: var(--on-gold); }
-.store-links .store-link--apk:hover { background: linear-gradient(115deg, #fff3cf 0%, #ecc66b 38%, #cf9a35 72%, #9a6c24 100%); }
+.store-links .store-link--apk:hover { background: var(--gold-grad-hover); }
+/* Not available yet: a quiet outline, so it never competes with the working download.
+   It still reads "Coming soon", and stays aria-disabled without a link. */
+.store-links .store-link[aria-disabled='true'] { border-style: dashed; border-color: var(--line-strong); background: transparent; }
+.store-link[aria-disabled='true'] small { color: var(--muted); }
+.store-link[aria-disabled='true'] strong { color: var(--text); font-weight: 500; }
+.store-link[aria-disabled='true'] > svg { opacity: .75; }
+.store-link--ios { border-style: dashed; background: transparent; }
+.store-link--ios .store-ios-name { color: var(--text); }
 
 /* ---------- Dialogs and forms ---------- */
 

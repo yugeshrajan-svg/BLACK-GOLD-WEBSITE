@@ -69,15 +69,8 @@
   .hero--app .hero-title { font-size: clamp(40px, 10vw, 68px); }
   .hero-actions { gap: 12px 20px; }
   .hero-bottom { padding-block: 8px 0; flex-wrap: wrap; row-gap: 4px; }
-  /* Too narrow for one row: the enquiry button spans the width above Pause motion and the arrow.
-     The app download already owns the gold on this screen, so the enquiry steps back to an
-     outline — two full-width gold buttons in one view read as two primary actions. */
+  /* Too narrow for one row: the enquiry button spans the width above Pause motion and the arrow. */
   .hero-enquiry { order: -1; width: 100%; }
-  .hero-enquiry.button--gold {
-    background: transparent; color: var(--head);
-    border: 1px solid var(--line-gold); box-shadow: none;
-  }
-  .hero-enquiry.button--gold:hover { background: rgba(201, 162, 39, .1); border-color: var(--gold); box-shadow: none; }
   /* The phone poster is the phone's first frame of the oil (it lands lower right), pinned at that spot. */
   .hero-background { background-image: url('assets/oil-poster-phone.webp'); background-position: 78% 77%; }
   .hero-shade { background: linear-gradient(90deg, rgba(7, 7, 6, .83), rgba(7, 7, 6, .42)), linear-gradient(0deg, rgba(7, 7, 6, .8), transparent 70%); }

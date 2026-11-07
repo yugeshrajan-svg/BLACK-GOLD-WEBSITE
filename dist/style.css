@@ -33,8 +33,11 @@
   --brand-gold: #d6a843;
   --gold: #e0b453;
   --gold-hi: #f1d38a;
-  /* Metallic gold, light to deep, like the logo's foil */
-  --gold-grad: linear-gradient(115deg, #f8e7b0 0%, #e4bb57 36%, #c48f2e 68%, #8c6220 100%);
+  /* Brushed gold for key actions: a narrow, top-lit range, like light along a metal edge.
+     It is kept for the main action on each screen; everything else uses a gold line or text. */
+  --gold-grad: linear-gradient(180deg, #f1d58f 0%, #e2b85a 48%, #cb9b3c 100%);
+  --gold-grad-hover: linear-gradient(180deg, #f6e1a6 0%, #e9c46b 48%, #d4a748 100%);
+  --gold-edge: inset 0 1px 0 rgba(255, 246, 214, .55), inset 0 -1px 0 rgba(96, 64, 14, .3);
   --foil: linear-gradient(100deg, #b08a48 0%, #e3c98a 45%, #f3e2b4 60%, #c9a227 100%);
   --on-gold: #1b1408;
   --glass: rgba(7, 8, 10, .9);
@@ -60,8 +63,18 @@
   --serif: 'Fraunces', Georgia, 'Times New Roman', serif;
   --sans: 'Inter', system-ui, -apple-system, 'Segoe UI', Arial, sans-serif;
 
-  --ease: cubic-bezier(.22, 1, .36, 1);
-  --ease-in-out: cubic-bezier(.65, 0, .35, 1);
+  /* Motion: one vocabulary for every component. The oil is the one cinematic effect;
+     everything else is brief feedback or a short arrival. */
+  --ease: cubic-bezier(.22, 1, .36, 1);          /* quick ease-out: entrances */
+  --ease-out: var(--ease);
+  --ease-in-out: cubic-bezier(.65, 0, .35, 1);   /* controlled: changes between states */
+  --dur-press: 110ms;     /* a button or icon pressed */
+  --dur-hover: 170ms;     /* hover and focus feedback */
+  --dur-ui: 220ms;        /* menu, dialog, accordion */
+  --dur-swap: 280ms;      /* one preview screen to the next */
+  --dur-reveal: 380ms;    /* a section group arriving */
+  --stagger: 50ms;        /* between siblings arriving together */
+  --lift: 10px;           /* how far an arriving group rises */
   --pad-x: max(20px, 4.5vw, calc((100vw - 1280px) / 2));
   /* The header and home hero reach towards the window edges rather than the centred content column. */
   --edge-x: clamp(20px, 3vw, 60px);
@@ -139,7 +152,8 @@ button { cursor: pointer; border: 0; background: none; padding: 0; -webkit-tap-h
 img, svg, canvas { display: block; }
 ::selection { background: #c9a227; color: #15110a; }
 
-:focus-visible { outline: 2px solid #c9a227; outline-offset: 4px; }
+/* The focus ring appears at once (never animated), in the gold of the surface it is on. */
+:focus-visible { outline: 2px solid var(--gold); outline-offset: 4px; }
 [tabindex='-1']:focus { outline: none; }
 
 .skip {
@@ -151,7 +165,8 @@ img, svg, canvas { display: block; }
 
 /* ---------- Type ---------- */
 
-h1, h2, h3 { font-family: var(--serif); font-weight: 500; color: var(--head); font-optical-sizing: auto; }
+/* Headlines wrap into even lines and never split a word, even on a 320 px phone. */
+h1, h2, h3 { font-family: var(--serif); font-weight: 500; color: var(--head); font-optical-sizing: auto; text-wrap: balance; hyphens: manual; overflow-wrap: normal; }
 
 h2 {
   font-size: clamp(34px, 3.8vw, 56px);
@@ -216,27 +231,34 @@ h1 em, h2 em {
   min-height: 52px; max-width: 100%; padding: 14px 24px; border-radius: var(--radius);
   font: 600 14px/1.4 var(--sans); letter-spacing: .01em; text-align: center;
   overflow: hidden; isolation: isolate;
-  transition: background-color .2s, color .2s, border-color .2s, transform .2s, box-shadow .2s;
+  transition: background-color var(--dur-hover), color var(--dur-hover), border-color var(--dur-hover), box-shadow var(--dur-hover), transform var(--dur-press) var(--ease-out);
 }
-.button:active { transform: scale(.98); }
+/* Pressed: a small step down, then back. The arrow leans towards where the button goes. */
+.button:active { transform: translateY(1px) scale(.985); }
 .button .arrow {
   position: relative; flex: none;
   width: 24px; height: 1px; font-size: 0;
   background: currentColor;
+  transition: transform var(--dur-hover) var(--ease-out);
 }
+.button:hover .arrow, .button:focus-visible .arrow { transform: translateX(3px); }
 .button .arrow::after {
   content: ''; position: absolute; right: 0; top: 50%;
   width: 7px; height: 7px;
   border-top: 1px solid currentColor; border-right: 1px solid currentColor;
   transform: translateY(-50%) rotate(45deg);
 }
-/* Flat gold for the primary action; quiet neutral secondary controls. */
-.button--gold { background: #c9a227; color: var(--on-gold); }
-.button--gold:hover { background: #dec28a; box-shadow: 0 8px 28px -14px rgba(226, 191, 117, .8); }
+/* One gold treatment, for the main action; quieter neutral secondary controls. */
+.button--gold { background: var(--gold-grad); color: var(--on-gold); box-shadow: var(--gold-edge); }
+.button--gold:hover { background: var(--gold-grad-hover); box-shadow: var(--gold-edge), 0 10px 26px -16px rgba(226, 184, 90, .75); }
 .button--ink { background: var(--head); color: var(--bg); }
 .button--ink:hover { background: color-mix(in srgb, var(--head) 88%, var(--bg)); }
 .button--outline { color: var(--head); border: 1px solid var(--line-strong); background: transparent; }
 .button--outline:hover { background: var(--bg-2); border-color: var(--muted); }
+/* A secondary action on a dark photograph or the oil: glass with a gold hairline. */
+.button--line { color: var(--head); border: 1px solid var(--line-gold); background: rgba(10, 11, 13, .55); -webkit-backdrop-filter: blur(6px); backdrop-filter: blur(6px); }
+.button--line .arrow { color: var(--gold); }
+.button--line:hover { border-color: var(--gold); background: rgba(224, 180, 83, .1); }
 
 .text-link {
   position: relative;
@@ -253,9 +275,9 @@ h1 em, h2 em {
   content: ''; position: absolute; left: 0; right: 0; bottom: 0; height: 1px; z-index: 1;
   background: var(--accent);
   transform: scaleX(0); transform-origin: right;
-  transition: transform .7s var(--ease);
+  transition: transform calc(var(--dur-hover) + 60ms) var(--ease-out);
 }
-.text-link:hover::before { transform: scaleX(1); transform-origin: left; }
+.text-link:hover::before, .text-link:focus-visible::before { transform: scaleX(1); transform-origin: left; }
 .text-link span { font-size: 15px; letter-spacing: 0; color: inherit; }
 
 /* ---------- Reading progress ---------- */
@@ -330,17 +352,19 @@ h1 em, h2 em {
   row-gap: 12px;
 }
 .hero-background, .hero-shade { position: absolute; inset: 0; width: 100%; height: 100%; }
-/* The poster is the oil animation's first frame (t = 6 s): 1920 x 1080, and 3840 x 2160 for
-   high-resolution screens and anything wider than 1920 CSS pixels. Phones get a tall one (responsive.css). */
+/* The poster is the pour's first and last frame, a settled pool: 1920 x 1080, and 3840 x 2160 for
+   high-resolution screens and anything wider than 1920 CSS pixels. Phones get a tall one (responsive.css).
+   It is the whole hero until the canvas has drawn a frame, and the still for reduced motion or no WebGL. */
 .hero-background {
   z-index: -2;
   background: #070706 url('assets/oil-poster.webp') 70% center / cover no-repeat;
   background-image: image-set(url('assets/oil-poster.webp') 1x, url('assets/oil-poster-4k.webp') 2x);
 }
 @media (min-width: 1921px) { .hero-background { background-image: url('assets/oil-poster-4k.webp'); } }
+/* Decorative only: no pointer events, no focus. It blends in over the matching poster once a frame is drawn. */
 .hero-oil {
   position: absolute; inset: 0; width: 100%; height: 100%;
-  pointer-events: none; opacity: 0; transition: opacity .6s;
+  pointer-events: none; opacity: 0; transition: opacity 400ms var(--ease-out);
 }
 .hero-oil.is-ready { opacity: 1; }
 .hero-shade {
@@ -381,8 +405,9 @@ h1 em, h2 em {
 .motion-toggle[data-paused] .motion-icon::after { display: none; }
 .motion-toggle:hover { color: var(--gold); }
 .scroll-cue { display: grid; place-items: center; width: 44px; height: 44px; margin-left: auto; flex: none; font-size: 22px; color: var(--text); }
-/* Home hero: the pickup enquiry waits in the bottom-right corner, beside the scroll arrow. */
-.hero-enquiry { flex: none; text-transform: none; box-shadow: 0 14px 34px -16px rgba(201, 162, 39, .7); }
+/* Home hero: the pickup enquiry waits in the bottom-right corner, beside the scroll arrow.
+   The app download above owns the gold; the enquiry is the clear second action, in glass. */
+.hero-enquiry { flex: none; text-transform: none; }
 
 /* Laptops and monitors: every page opens on a first screen that fills the window, content centred.
    Taller content still grows the section; phones and tablets keep the compact height. */
@@ -423,6 +448,7 @@ h1 em, h2 em {
 .hero--app .hero-description { max-width: 29em; margin-bottom: 20px; font-size: clamp(17px, 1.4vw, 20px); }
 .hero-downloads { width: min(100%, 480px); }
 .hero-downloads .store-link { border-color: rgba(246, 244, 239, .4); background: rgba(18, 24, 28, .94); }
+.hero-downloads .store-links .store-link[aria-disabled='true'], .hero-downloads .store-link--ios { border-color: rgba(246, 244, 239, .26); background: rgba(10, 11, 13, .5); }
 .hero-downloads .download-status { margin-top: 8px; color: #d7d5cb; }
 body[data-page='home'] #seller-app { --accent: #8a6a0f; --accent-rgb: 138, 106, 15; --accent-bright: #e7c85c; --accent-soft: #f7edcc; background: radial-gradient(ellipse at 83% 32%, #f2e7c5 0%, transparent 52%), #faf8f1; }
 /* The home introduction uses the same Play Store sequence as the Seller App hero. */
@@ -469,7 +495,10 @@ body[data-page='home'] #seller-app { overflow: hidden; }
 .app-install-guide strong, .app-install-guide span { display: block; }
 .app-install-guide strong { margin-bottom: 5px; color: var(--head); }
 .store-links { display: grid; grid-template-columns: repeat(auto-fit, minmax(min(100%, 208px), 1fr)); gap: 12px; }
-.store-link { display: flex; align-items: center; gap: 12px; min-width: 0; min-height: 64px; padding: 12px 16px; border: 1px solid #1e262d; border-radius: var(--radius); background: #1e262d; color: #fff; transition: border-color .2s, background-color .2s; }
+.store-link { display: flex; align-items: center; gap: 12px; min-width: 0; min-height: 64px; padding: 12px 16px; border: 1px solid #1e262d; border-radius: var(--radius); background: #1e262d; color: #fff; transition: border-color var(--dur-hover), background-color var(--dur-hover), transform var(--dur-press) var(--ease-out); }
+.store-link[href]:active { transform: translateY(1px) scale(.99); }
+.store-link-arrow { transition: transform var(--dur-hover) var(--ease-out); }
+.store-link--apk[href]:hover .store-link-arrow, .store-link--apk[href]:focus-visible .store-link-arrow { transform: translateY(2px); }
 .store-link > svg { width: 26px; height: 28px; flex: none; fill: none; stroke: #e7c85c; stroke-width: 1.8; stroke-linecap: round; stroke-linejoin: round; }
 .store-link > .store-icon-play { stroke: none; }
 .store-link small { display: block; margin-bottom: 3px; font: 500 11px/1.4 var(--sans); color: #d7d5cb; }
@@ -501,26 +530,6 @@ body[data-page='home'] #seller-app { overflow: hidden; }
     radial-gradient(45% 55% at 5% 100%, rgba(201, 164, 92, .08) 0%, transparent 70%),
     #1e262d;
 }
-/* The same oil surface as the home hero, used as a backdrop on the pages whose hero
-   has no photograph of its own. Dimmer and calmer, and it sits under the decorative
-   layers those heroes already paint. */
-.page-oil {
-  position: absolute; z-index: -2; inset: 0; width: 100%; height: 100%;
-  pointer-events: none;
-  opacity: 0; transition: opacity 1.4s var(--ease);
-}
-.page-oil.is-ready { opacity: .8; }
-/* The oil keeps moving under the words, so its brightness is never the same twice.
-   This holds the reading side dark and lets the pool come through where the page's
-   own visual sits, the way the home hero's shade does. */
-.page-oil-shade {
-  position: absolute; z-index: -1; inset: 0; pointer-events: none;
-  background:
-    linear-gradient(90deg, rgba(7, 8, 10, .93) 0%, rgba(7, 8, 10, .74) 36%, rgba(7, 8, 10, .22) 74%, rgba(7, 8, 10, .1) 100%),
-    linear-gradient(0deg, rgba(7, 8, 10, .8) 0%, rgba(7, 8, 10, 0) 32%);
-}
-@media (prefers-reduced-motion: reduce) { .page-oil, .page-oil-shade { display: none; } }
-
 .page-hero-inner { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); align-items: center; gap: var(--layout-gap); min-height: 0; }
 .page-hero h1 { margin: 14px 0 20px; font-size: clamp(42px, 5vw, 76px); line-height: 1.05; letter-spacing: -.015em; }
 /* The accent phrase always starts its own line: "A resource. / Not a waste." */
@@ -528,7 +537,8 @@ body[data-page='home'] #seller-app { overflow: hidden; }
 .page-hero-visual { position: relative; isolation: isolate; display: grid; place-items: center; gap: 20px; min-width: 0; }
 .page-hero::after, .hero::after { content: ''; position: absolute; left: var(--pad-x); right: var(--pad-x); bottom: 0; height: 2px; background: rgba(var(--accent-rgb), .35); pointer-events: none; }
 .hero::after { left: var(--edge-x); right: var(--edge-x); }
-.page-hero-visual::before { content: ''; position: absolute; z-index: -1; inset: 2% -8% 16%; border-radius: 50%; background: radial-gradient(ellipse, rgba(var(--accent-rgb), .23), transparent 65%); filter: blur(20px); animation: ambient-drift 14s ease-in-out infinite alternate; pointer-events: none; }
+/* A still glow behind each page's visual: the oil on the home page is the one moving backdrop. */
+.page-hero-visual::before { content: ''; position: absolute; z-index: -1; inset: 2% -8% 16%; border-radius: 50%; background: radial-gradient(ellipse, rgba(var(--accent-rgb), .2), transparent 65%); filter: blur(20px); pointer-events: none; }
 .page-hero-visual.is-offscreen::before, .tab-hidden .page-hero-visual::before, .page-hero-visual.is-offscreen *, .page-hero-visual.is-offscreen *::before, .page-hero-visual.is-offscreen *::after, .tab-hidden .page-hero-visual *, .tab-hidden .page-hero-visual *::before, .tab-hidden .page-hero-visual *::after, .motion-paused .page-hero-visual::before, .motion-paused .page-hero-visual *, .motion-paused .page-hero-visual *::before, .motion-paused .page-hero-visual *::after { animation-play-state: paused !important; }
 .page-motion { position: absolute; right: var(--pad-x); bottom: 20px; }
 
@@ -564,7 +574,8 @@ body[data-page='home'] #questions { background-color: #f7edcc; --accent: #8a6a0f
 .home-section-head > .text-link { flex: none; }
 .home-oils-hint { margin: -8px 0 20px; font-size: 14px; color: var(--muted); }
 .home-oils { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 20px; }
-.home-oil { --tile-rgb: 164, 99, 29; position: relative; display: flex; flex-direction: column; align-items: flex-start; gap: 12px; width: 100%; padding: var(--card-pad); border: 1px solid rgba(var(--tile-rgb), .2); border-radius: var(--radius-card); text-align: left; background: radial-gradient(240px circle at var(--mx, 70%) var(--my, 20%), rgba(var(--tile-rgb), .12), transparent 80%), #fffdf9; transition: border-color .25s, box-shadow .25s, translate .25s; }
+.home-oil { --tile-rgb: 164, 99, 29; position: relative; display: flex; flex-direction: column; align-items: flex-start; gap: 12px; width: 100%; padding: var(--card-pad); border: 1px solid rgba(var(--tile-rgb), .2); border-radius: var(--radius-card); text-align: left; background: radial-gradient(240px circle at var(--mx, 70%) var(--my, 20%), rgba(var(--tile-rgb), .12), transparent 80%), #fffdf9; transition: border-color var(--dur-hover), box-shadow var(--dur-hover), translate var(--dur-hover) var(--ease-out), scale var(--dur-press) var(--ease-out); }
+.home-oil:active { scale: .99; }
 .home-oil[data-home-oil='hydraulic'] { --tile-rgb: 46, 125, 79; }
 .home-oil[data-home-oil='transformer'] { --tile-rgb: 30, 38, 45; }
 .home-oil[aria-selected='true'] { border-color: rgb(var(--tile-rgb)); box-shadow: inset 0 0 0 1px rgb(var(--tile-rgb)), 0 14px 34px -28px rgba(var(--tile-rgb), .6); }
@@ -612,7 +623,13 @@ body[data-page='home'] #questions { background-color: #f7edcc; --accent: #8a6a0f
   display: flex; flex-direction: column; align-items: flex-start; gap: 14px;
   padding: var(--card-pad);
   background: radial-gradient(300px circle at var(--mx, 0%) var(--my, 0%), rgba(var(--tile-rgb), .1), transparent 80%), #fffdf9; border: 1px solid rgba(var(--tile-rgb), .18); border-top: 2px solid rgba(var(--tile-rgb), .6); border-radius: var(--radius-card);
-  transition: transform .6s var(--ease), box-shadow .6s var(--ease), border-color .6s var(--ease), opacity 1.2s var(--ease);
+  transition: box-shadow var(--dur-hover), border-color var(--dur-hover);
+}
+/* Cards are information, not links, so they never lift. When a card holds an action, the
+   card's edge answers as that action is hovered or focused, tying the two together. */
+.card:has(:is(a, button):focus-visible) { border-color: rgba(var(--tile-rgb), .6); }
+@media (hover: hover) and (pointer: fine) {
+  .card:has(:is(a, button):hover) { border-color: rgba(var(--tile-rgb), .6); }
 }
 /* Tint values live in base.css; theme.css re-points them for the dark pages. */
 .card:nth-child(2), .home-steps li:nth-child(2) { --tile-rgb: var(--tint-2); }
@@ -724,14 +741,15 @@ body[data-page='home'] #questions { background-color: #f7edcc; --accent: #8a6a0f
 .promise-choice[data-promise-stage='1'] { --promise-ui: #83cff7; --promise-ui-rgb: 131, 207, 247; --promise-ui-ink: #163e67; }
 .promise-choice[data-promise-stage='2'] { --promise-ui: #77dfbd; --promise-ui-rgb: 119, 223, 189; --promise-ui-ink: #0d483a; }
 .promise-choice[data-promise-stage='3'] { --promise-ui: #c5a6f7; --promise-ui-rgb: 197, 166, 247; --promise-ui-ink: #42266b; }
-.promise-choice { display: flex; align-items: center; gap: 14px; width: 100%; min-height: 0; padding: 16px; text-align: left; border: 1px solid rgba(var(--promise-ui-rgb), .25); border-radius: var(--radius-card); background: #1d3039; color: var(--head); transition: background-color .3s, border-color .3s, box-shadow .3s; }
-.promise-choice-no { display: grid; place-items: center; width: 36px; height: 36px; flex: none; border-radius: var(--radius); background: rgba(var(--promise-ui-rgb), .1); color: var(--promise-ui); font: 600 12px/1 var(--sans); transition: background-color .3s, color .3s; }
+.promise-choice { display: flex; align-items: center; gap: 14px; width: 100%; min-height: 0; padding: 16px; text-align: left; border: 1px solid rgba(var(--promise-ui-rgb), .25); border-radius: var(--radius-card); background: #1d3039; color: var(--head); transition: background-color var(--dur-ui), border-color var(--dur-ui), box-shadow var(--dur-ui), transform var(--dur-press) var(--ease-out); }
+.promise-choice:active { transform: translateY(1px); }
+.promise-choice-no { display: grid; place-items: center; width: 36px; height: 36px; flex: none; border-radius: var(--radius); background: rgba(var(--promise-ui-rgb), .1); color: var(--promise-ui); font: 600 12px/1 var(--sans); transition: background-color var(--dur-ui), color var(--dur-ui); }
 .promise-choice-copy { flex: 1; min-width: 0; }
 .promise-choice-label { display: block; font: 500 clamp(19px, 1.6vw, 23px)/1.25 var(--serif); }
 .promise-choice-detail { display: block; margin-top: 6px; color: #c7d3d9; font: 400 14px/1.6 var(--sans); }
 /* The arrow marks which promise is showing. Dim and still when it is not the one,
    leaning forward on hover, fully lit and moved across once chosen. */
-.promise-choice-arrow { flex: none; color: var(--promise-ui); font-size: 18px; opacity: .3; transition: transform .3s var(--ease), opacity .3s; }
+.promise-choice-arrow { flex: none; color: var(--promise-ui); font-size: 18px; opacity: .3; transition: transform var(--dur-hover) var(--ease-out), opacity var(--dur-hover); }
 .promise-choice:hover .promise-choice-arrow { opacity: .65; transform: translateX(4px); }
 .promise-choice:hover, .promise-choice[aria-pressed='true'] { border-color: var(--promise-ui); background: linear-gradient(100deg, rgba(var(--promise-ui-rgb), .12), rgba(var(--promise-ui-rgb), .03)), #1d3039; }
 .promise-choice[aria-pressed='true'] { box-shadow: inset 3px 0 0 var(--promise-ui), 0 10px 24px -22px rgba(0, 0, 0, .6); }
@@ -746,7 +764,8 @@ body[data-page='home'] #questions { background-color: #f7edcc; --accent: #8a6a0f
 .visual-tools { width: min(100%, 580px); text-align: center; }
 .visual-hint { margin-bottom: 14px; color: var(--text); font-size: 13px; }
 .preview-controls { display: flex; flex-wrap: wrap; justify-content: center; gap: 8px; }
-.preview-controls button { min-height: 44px; padding: 10px 16px; border: 1px solid rgba(var(--accent-rgb), .4); border-radius: var(--radius); background: rgba(255, 255, 255, .035); color: var(--text); font: 500 14px/1.4 var(--sans); transition: background-color .2s, color .2s, border-color .2s, box-shadow .2s; }
+.preview-controls button { min-height: 44px; padding: 10px 16px; border: 1px solid rgba(var(--accent-rgb), .4); border-radius: var(--radius); background: rgba(255, 255, 255, .035); color: var(--text); font: 500 14px/1.4 var(--sans); transition: background-color var(--dur-hover), color var(--dur-hover), border-color var(--dur-hover), box-shadow var(--dur-hover), transform var(--dur-press) var(--ease-out); }
+.preview-controls button:active { transform: translateY(1px); }
 .preview-controls button:hover { border-color: var(--accent-bright); background: rgba(var(--accent-rgb), .15); }
 .preview-controls button[aria-pressed='true'] { background: var(--accent-bright); border-color: var(--accent-bright); color: #141b18; box-shadow: 0 5px 24px -15px var(--accent-bright); }
 .preview-controls--oils [data-oil-preview='engine'] { --choice: #f0c17d; }
@@ -756,27 +775,15 @@ body[data-page='home'] #questions { background-color: #f7edcc; --accent: #8a6a0f
 .preview-description { max-width: 38em; min-height: 3.3em; margin: 16px auto 0; color: var(--text); font-size: 14px; line-height: 1.65; text-wrap: pretty; }
 .visual-tools--app { margin-top: 0; }
 html:not(.js) .visual-tools { display: none; }
-/* Siblings in a row arrive one after another rather than all at once; the delay is
-   set per element as it enters, and capped so a long row never lags behind the scroll. */
-.entrance { animation: content-arrival .6s var(--ease) both; animation-delay: calc(var(--arrive, 0) * 75ms); }
-.motion-paused .entrance { animation: none; }
-
 @media (hover: hover) and (pointer: fine) {
-  /* On black, a lift alone is invisible: the edge brightens and the card casts its
-     own tint, so the card reads as picked up rather than merely nudged. */
-  .home-oil:hover, .card:hover { translate: 0 -4px; }
-  .home-oil:hover { border-color: rgb(var(--tile-rgb)); }
-  .card:hover {
-    border-color: rgba(var(--tile-rgb), .5);
-    box-shadow: 0 22px 46px -30px rgba(var(--tile-rgb), .5);
-  }
+  /* The home oil choices are buttons: they rise a little and their edge lights up. */
+  .home-oil:hover { translate: 0 -3px; border-color: rgb(var(--tile-rgb)); box-shadow: 0 18px 40px -30px rgba(var(--tile-rgb), .55); }
 }
 
 /* Oil descriptions sit below the single interactive sample jar. */
 .card.oil-card { padding: 0; gap: 0; overflow: hidden; }
 .oil-card-body { flex: 1; width: 100%; display: flex; flex-direction: column; align-items: flex-start; gap: 14px; padding: var(--card-pad); }
 .oil-card-body .button { margin-top: auto; min-height: 46px; padding: 0 20px; }
-.oil-card:hover { border-color: var(--line-gold); box-shadow: 0 26px 50px -30px rgba(23, 21, 15, .35); }
 
 .oil-note { display: flex; align-items: center; justify-content: center; gap: 12px; margin-top: 24px; font-size: 15px; color: var(--muted); text-align: center; }
 .oil-note svg { flex: none; width: 18px; height: 18px; fill: none; stroke: var(--gold); stroke-width: 1.4; stroke-linecap: round; stroke-linejoin: round; }
@@ -1512,8 +1519,8 @@ pre { margin: 20px 0; padding: 22px; white-space: pre-wrap; font: 500 14px/1.85 
 /* Source: src/styles/motion.css */
 /* ---------- Keyframes ---------- */
 
-@keyframes ambient-drift { from { transform: translate(-12px, 8px) scale(.96); } to { transform: translate(15px, -10px) scale(1.06); } }
-@keyframes content-arrival { from { opacity: .25; transform: translateY(14px); } to { opacity: 1; transform: none; } }
+@keyframes reveal-in { from { opacity: 0; transform: translateY(var(--lift)); } }
+@keyframes accent-draw { from { transform: scaleX(0); } }
 @keyframes refinery-flow { to { stroke-dashoffset: -48; } }
 @keyframes refinery-fill { 0%, 100% { transform: scaleY(.4); } 55% { transform: scaleY(.86); } }
 
@@ -1523,12 +1530,35 @@ pre { margin: 20px 0; padding: 22px; white-space: pre-wrap; font: 500 14px/1.85 
   5%, 31% { opacity: 1; transform: none; }
   36%, 100% { opacity: 0; transform: translateY(-16px); }
 }
-@keyframes dialog-in { from { opacity: 0; transform: translateY(30px); } }
 @keyframes flow { to { stroke-dashoffset: -4; } }
 @keyframes halo { 0% { opacity: .8; transform: scale(1); } 100% { opacity: 0; transform: scale(1.45); } }
 @keyframes chat-in { from { opacity: 0; transform: translateY(8px); } }
 @keyframes chat-dot { 0%, 60%, 100% { opacity: .35; transform: none; } 30% { opacity: 1; transform: translateY(-3px); } }
 @keyframes ripple { 0% { opacity: 0; transform: scale(.2); } 15% { opacity: .7; } 100% { opacity: 0; transform: scale(1); } }
+
+/* ---------- Section groups arriving ----------
+   app.js holds back only the groups still below the fold when the page starts
+   (data-reveal="held") and lets each arrive once as it scrolls into view. Without
+   scripting, with motion paused or reduced, or when printing, nothing is held. */
+[data-reveal='held'] { opacity: 0; transform: translateY(var(--lift)); }
+[data-reveal='in'] { animation: reveal-in var(--dur-reveal) var(--ease-out) both; animation-delay: calc(var(--reveal-i, 0) * var(--stagger)); }
+.motion-paused [data-reveal] { opacity: 1; transform: none; animation: none; }
+@media print { [data-reveal] { opacity: 1 !important; transform: none !important; animation: none !important; } }
+
+/* A timeline's accent line draws across each stage as that stage arrives. The stages
+   themselves are readable throughout; only the short line moves. */
+.stage-cards > .card::after {
+  content: ''; position: absolute; left: var(--card-pad); top: -2px; width: 44px; height: 2px;
+  background: rgb(var(--tile-rgb)); transform-origin: left; pointer-events: none;
+}
+.stage-cards > .card[data-reveal='held']::after { transform: scaleX(0); }
+.stage-cards > .card[data-reveal='in']::after { animation: accent-draw 420ms var(--ease-out) both; animation-delay: calc(var(--reveal-i, 0) * var(--stagger) + 160ms); }
+
+/* ---------- Decorative loops end ----------
+   Each illustration plays its own sequence once (app.js) and then rests; its small
+   looping details rest with it, so the page is still once it has been seen. */
+.refinery.is-resting *, .route.is-resting *, .route.is-resting *::after { animation-play-state: paused !important; }
+.sj-art.is-active .sj-map-route, .sj-art.is-active .sj-oil-fill, .sj-art.is-active .sj-pour { animation-iteration-count: 3 !important; }
 
 /* The pause control stops every looping animation, not just the oil. */
 .motion-paused .page-hero-visual::before, .motion-paused .route-icon::after, .motion-paused .screen {
@@ -1607,15 +1637,8 @@ pre { margin: 20px 0; padding: 22px; white-space: pre-wrap; font: 500 14px/1.85 
   .hero--app .hero-title { font-size: clamp(40px, 10vw, 68px); }
   .hero-actions { gap: 12px 20px; }
   .hero-bottom { padding-block: 8px 0; flex-wrap: wrap; row-gap: 4px; }
-  /* Too narrow for one row: the enquiry button spans the width above Pause motion and the arrow.
-     The app download already owns the gold on this screen, so the enquiry steps back to an
-     outline — two full-width gold buttons in one view read as two primary actions. */
+  /* Too narrow for one row: the enquiry button spans the width above Pause motion and the arrow. */
   .hero-enquiry { order: -1; width: 100%; }
-  .hero-enquiry.button--gold {
-    background: transparent; color: var(--head);
-    border: 1px solid var(--line-gold); box-shadow: none;
-  }
-  .hero-enquiry.button--gold:hover { background: rgba(201, 162, 39, .1); border-color: var(--gold); box-shadow: none; }
   /* The phone poster is the phone's first frame of the oil (it lands lower right), pinned at that spot. */
   .hero-background { background-image: url('assets/oil-poster-phone.webp'); background-position: 78% 77%; }
   .hero-shade { background: linear-gradient(90deg, rgba(7, 7, 6, .83), rgba(7, 7, 6, .42)), linear-gradient(0deg, rgba(7, 7, 6, .8), transparent 70%); }
@@ -1719,10 +1742,8 @@ pre { margin: 20px 0; padding: 22px; white-space: pre-wrap; font: 500 14px/1.85 
    keeps a few "light islands" (illustration panels) readable on purpose.
    ========================================================================== */
 
-/* ---------- Gold: metallic, light to deep ---------- */
+/* ---------- Gold: brushed, for the hero and closing accent words ---------- */
 
-.button--gold { background: var(--gold-grad); color: var(--on-gold); }
-.button--gold:hover { background: linear-gradient(115deg, #fff3cf 0%, #ecc66b 38%, #cf9a35 72%, #9a6c24 100%); box-shadow: 0 8px 28px -14px rgba(228, 187, 87, .8); }
 .hero h1 em, .closing h2 em {
   padding-right: .06em;
   background: var(--gold-grad); -webkit-background-clip: text; background-clip: text; color: transparent;
@@ -1791,10 +1812,19 @@ body[data-page='home'] #questions { background-color: var(--bg); --accent: #e0b4
 
 .store-link { border-color: var(--line-strong); background: var(--bg-3); }
 .store-link[href]:hover { border-color: var(--line-gold); background: #1c2025; }
-.store-links .store-link--apk { border-color: transparent; background: var(--gold-grad); color: var(--on-gold); }
+/* The direct Android download is the one gold download everywhere it appears. */
+.store-links .store-link--apk { border-color: transparent; background: var(--gold-grad); color: var(--on-gold); box-shadow: var(--gold-edge); }
 .store-link--apk small { color: #3a2a0c; }
 .store-links .store-link--apk > svg, .store-links .store-link--apk .store-link-arrow { stroke: var(--on-gold); color: var(--on-gold); }
-.store-links .store-link--apk:hover { background: linear-gradient(115deg, #fff3cf 0%, #ecc66b 38%, #cf9a35 72%, #9a6c24 100%); }
+.store-links .store-link--apk:hover { background: var(--gold-grad-hover); }
+/* Not available yet: a quiet outline, so it never competes with the working download.
+   It still reads "Coming soon", and stays aria-disabled without a link. */
+.store-links .store-link[aria-disabled='true'] { border-style: dashed; border-color: var(--line-strong); background: transparent; }
+.store-link[aria-disabled='true'] small { color: var(--muted); }
+.store-link[aria-disabled='true'] strong { color: var(--text); font-weight: 500; }
+.store-link[aria-disabled='true'] > svg { opacity: .75; }
+.store-link--ios { border-style: dashed; background: transparent; }
+.store-link--ios .store-ios-name { color: var(--text); }
 
 /* ---------- Dialogs and forms ---------- */
 
