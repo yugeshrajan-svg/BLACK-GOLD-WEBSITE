@@ -6,7 +6,9 @@
 <title>{{title}}</title>
 <meta name="description" content="{{description}}">
 {{pageUrlMetadata}}
+{{searchVerificationMeta}}
 <meta name="theme-color" content="#07080a">
+<meta name="referrer" content="strict-origin-when-cross-origin">
 <meta property="og:type" content="website">
 <meta property="og:site_name" content="Black Gold">
 <meta property="og:locale" content="en_IN">
@@ -44,6 +46,7 @@
     <a href="seller-app.html" data-page="app">Seller app</a>
     <a href="about.html" data-page="about">About</a>
     <a href="collect.html" data-page="collect">What we collect</a>
+    <a href="industry.html" data-page="industry">For industry</a>
     <a href="faq.html" data-page="faq">FAQs</a>
     <button class="button button--gold nav-mobile-cta" data-app>Get the seller app <span class="arrow" aria-hidden="true">↗</span></button>
   </nav>
@@ -59,8 +62,9 @@
     <div class="closing-cta">
       <p>{{closingDescription}}</p>
       <div class="closing-actions">
-        <button class="button button--gold" data-app>Get the seller app <span class="arrow" aria-hidden="true">↗</span></button>
-        <button class="text-link" data-pickup>Prepare pickup enquiry</button>
+        {{#if closingLink}}<a class="button button--gold" href="{{closingLink}}">{{closingLinkLabel}} <span class="arrow" aria-hidden="true">↑</span></a>{{/if}}
+        {{#unless closingLink}}<button class="button button--gold" data-app>Get the seller app <span class="arrow" aria-hidden="true">↗</span></button>
+        <button class="text-link" data-pickup>Prepare pickup enquiry</button>{{/unless}}
       </div>
     </div>
   </div>
@@ -84,6 +88,7 @@
       <a href="index.html" data-page="home">Home</a>
       <a href="about.html" data-page="about">About</a>
       <a href="collect.html" data-page="collect">What we collect</a>
+      <a href="industry.html" data-page="industry">For industry</a>
       <a href="seller-app.html" data-page="app">Seller app</a>
       <a href="faq.html" data-page="faq">FAQs</a>
     </nav>
@@ -118,7 +123,7 @@
       </div>
     </fieldset>
     <label class="field"><span>Business name</span><input name="business" required maxlength="100" autocomplete="organization" placeholder="Your workshop or company"><span class="field-error">Add your business name.</span></label>
-    <label class="field"><span>Mobile number</span><input name="phone" type="tel" inputmode="tel" required maxlength="16" autocomplete="tel" placeholder="e.g. 98765 43210"><span class="field-error">Enter a 10-digit phone number so Black Gold can call you back.</span></label>
+    <label class="field"><span>Contact phone number</span><input name="phone" type="tel" inputmode="tel" required maxlength="16" autocomplete="tel" placeholder="e.g. 98765 43210"><span class="field-error">Enter a 10-digit phone number so Black Gold can call you back.</span></label>
     <label class="field area-field"><span>Your area</span><select name="area" required><option value="" disabled selected>Choose your area</option>{{areaOptions}}<option value="Other">Other area (type it)</option></select><span class="field-error">Choose your area, or pick Other area and type it.</span></label>
     <label class="field area-other" hidden><span>Type your area</span><input name="areaOther" maxlength="100" autocomplete="address-level2" placeholder="e.g. Kolathur"><span class="field-error">Type your area.</span></label>
     <div class="form-row">

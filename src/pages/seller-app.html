@@ -1,12 +1,14 @@
 <!--
 page: app
-title: Seller app & complete guide — Black Gold
-description: The complete Black Gold Seller App guide: register your business, verify your address, list oil, track collection, use your pickup code and keep payment receipts.
+title: Black Gold Seller App — Sell Used Oil from Your Phone (Android)
+description: Sell used oil from your phone in Chennai: register your business, check the rate, list your oil, track the pickup and keep every receipt in the Black Gold app.
 closingEyebrow: For Android sellers
 closingTitle: Keep Black Gold on your phone.
 closingDescription: Choose your installation option and return to the app for your next oil sale.
 -->
 <section class="page-hero seller-app-hero" id="top" aria-labelledby="page-title">
+  <canvas class="page-oil" data-oil-ambient aria-hidden="true"></canvas>
+  <div class="page-oil-shade" aria-hidden="true"></div>
   {{> seller-install-preview}}
   <div class="page-hero-inner">
     <div class="page-hero-copy">
@@ -131,3 +133,4 @@ closingDescription: Choose your installation option and return to the app for yo
   </div>
   {{> app-download-options}}
 </section>
+<script src="oil-surface.js"></script>

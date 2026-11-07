@@ -4,16 +4,18 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-<title>Seller app &amp; complete guide — Black Gold</title>
-<meta name="description" content="The complete Black Gold Seller App guide: register your business, verify your address, list oil, track collection, use your pickup code and keep payment receipts.">
+<title>Black Gold Seller App — Sell Used Oil from Your Phone (Android)</title>
+<meta name="description" content="Sell used oil from your phone in Chennai: register your business, check the rate, list your oil, track the pickup and keep every receipt in the Black Gold app.">
 <link rel="canonical" href="https://myblackgold.app/seller-app.html">
 <meta property="og:url" content="https://myblackgold.app/seller-app.html">
+
 <meta name="theme-color" content="#07080a">
+<meta name="referrer" content="strict-origin-when-cross-origin">
 <meta property="og:type" content="website">
 <meta property="og:site_name" content="Black Gold">
 <meta property="og:locale" content="en_IN">
-<meta property="og:title" content="Seller app &amp; complete guide — Black Gold">
-<meta property="og:description" content="The complete Black Gold Seller App guide: register your business, verify your address, list oil, track collection, use your pickup code and keep payment receipts.">
+<meta property="og:title" content="Black Gold Seller App — Sell Used Oil from Your Phone (Android)">
+<meta property="og:description" content="Sell used oil from your phone in Chennai: register your business, check the rate, list your oil, track the pickup and keep every receipt in the Black Gold app.">
 <meta property="og:image" content="https://myblackgold.app/og-image.jpg">
 <meta property="og:image:type" content="image/jpeg">
 <meta property="og:image:width" content="1200">
@@ -46,6 +48,7 @@
     <a href="seller-app.html" data-page="app" aria-current="page">Seller app</a>
     <a href="about.html" data-page="about">About</a>
     <a href="collect.html" data-page="collect">What we collect</a>
+    <a href="industry.html" data-page="industry">For industry</a>
     <a href="faq.html" data-page="faq">FAQs</a>
     <button class="button button--gold nav-mobile-cta" data-app>Get the seller app <span class="arrow" aria-hidden="true">↗</span></button>
   </nav>
@@ -54,6 +57,8 @@
 
 <main id="main">
 <section class="page-hero seller-app-hero" id="top" aria-labelledby="page-title">
+  <canvas class="page-oil" data-oil-ambient aria-hidden="true"></canvas>
+  <div class="page-oil-shade" aria-hidden="true"></div>
   <div class="seller-install-backdrop" aria-hidden="true">
   <div class="install-preview" data-install-preview data-phase="3" data-launched="false" data-search-ready="true">
     <div class="install-scene-glow"></div>
@@ -416,8 +421,7 @@
 
     <a class="store-link store-link--apk" data-app-download="apk" href="assets/black-gold-seller.apk" download="Black-Gold-Seller.apk">
       <svg viewBox="0 0 28 32" aria-hidden="true"><path d="M14 3v17m-6-6 6 6 6-6M4 22v6h20v-6"/></svg>
-      <span><small>Tap to download</small><strong>Android app</strong></span>
-      <span class="store-link-arrow" aria-hidden="true">↓</span>
+      <span><small>Direct APK download</small><strong>Android app</strong></span>
     </a>
 
     <a class="store-link" role="link" data-app-download="googlePlay" aria-disabled="true" tabindex="-1">
@@ -432,8 +436,19 @@
     <span class="store-ios-status">Coming soon</span>
   </button>
 
+  <p class="download-note">Android 8.0+ · Download the APK, then open it to install. This is a direct download, not Google Play.</p>
+
+  <div class="download-help">
+    <p>Using iPhone or a computer, or need help installing?</p>
+    <div class="download-help-actions">
+      <button class="text-link" type="button" data-pickup data-download-enquiry>Enquire without the app <span aria-hidden="true">→</span></button>
+      <a class="enquiry-contact" href="mailto:support@myblackgold.app">Email Black Gold</a>
+    </div>
+    <p class="download-help-note">Prepare a summary to send yourself. A pickup is confirmed separately.</p>
+  </div>
 </div>
 </section>
+<script src="oil-surface.js"></script>
 <section class="closing" aria-labelledby="closing-title">
   <div class="closing-inner">
     <p class="eyebrow">For Android sellers</p>
@@ -441,6 +456,7 @@
     <div class="closing-cta">
       <p>Choose your installation option and return to the app for your next oil sale.</p>
       <div class="closing-actions">
+
         <button class="button button--gold" data-app>Get the seller app <span class="arrow" aria-hidden="true">↗</span></button>
         <button class="text-link" data-pickup>Prepare pickup enquiry</button>
       </div>
@@ -466,6 +482,7 @@
       <a href="index.html" data-page="home">Home</a>
       <a href="about.html" data-page="about">About</a>
       <a href="collect.html" data-page="collect">What we collect</a>
+      <a href="industry.html" data-page="industry">For industry</a>
       <a href="seller-app.html" data-page="app" aria-current="page">Seller app</a>
       <a href="faq.html" data-page="faq">FAQs</a>
     </nav>
@@ -500,7 +517,7 @@
       </div>
     </fieldset>
     <label class="field"><span>Business name</span><input name="business" required maxlength="100" autocomplete="organization" placeholder="Your workshop or company"><span class="field-error">Add your business name.</span></label>
-    <label class="field"><span>Mobile number</span><input name="phone" type="tel" inputmode="tel" required maxlength="16" autocomplete="tel" placeholder="e.g. 98765 43210"><span class="field-error">Enter a 10-digit phone number so Black Gold can call you back.</span></label>
+    <label class="field"><span>Contact phone number</span><input name="phone" type="tel" inputmode="tel" required maxlength="16" autocomplete="tel" placeholder="e.g. 98765 43210"><span class="field-error">Enter a 10-digit phone number so Black Gold can call you back.</span></label>
     <label class="field area-field"><span>Your area</span><select name="area" required><option value="" disabled selected>Choose your area</option><option value="Ambattur">Ambattur</option><option value="Anna Nagar">Anna Nagar</option><option value="Avadi">Avadi</option><option value="Chromepet">Chromepet</option><option value="Ennore">Ennore</option><option value="Guindy">Guindy</option><option value="Koyambedu">Koyambedu</option><option value="Madhavaram">Madhavaram</option><option value="Manali">Manali</option><option value="Padi">Padi</option><option value="Perambur">Perambur</option><option value="Perungudi">Perungudi</option><option value="Poonamallee">Poonamallee</option><option value="Porur">Porur</option><option value="Sholinganallur">Sholinganallur</option><option value="Sriperumbudur">Sriperumbudur</option><option value="T. Nagar">T. Nagar</option><option value="Tambaram">Tambaram</option><option value="Tiruvottiyur">Tiruvottiyur</option><option value="Velachery">Velachery</option><option value="Other">Other area (type it)</option></select><span class="field-error">Choose your area, or pick Other area and type it.</span></label>
     <label class="field area-other" hidden><span>Type your area</span><input name="areaOther" maxlength="100" autocomplete="address-level2" placeholder="e.g. Kolathur"><span class="field-error">Type your area.</span></label>
     <div class="form-row">
@@ -544,8 +561,7 @@
 
     <a class="store-link store-link--apk" data-app-download="apk" href="assets/black-gold-seller.apk" download="Black-Gold-Seller.apk">
       <svg viewBox="0 0 28 32" aria-hidden="true"><path d="M14 3v17m-6-6 6 6 6-6M4 22v6h20v-6"/></svg>
-      <span><small>Tap to download</small><strong>Android app</strong></span>
-      <span class="store-link-arrow" aria-hidden="true">↓</span>
+      <span><small>Direct APK download</small><strong>Android app</strong></span>
     </a>
 
     <a class="store-link" role="link" data-app-download="googlePlay" aria-disabled="true" tabindex="-1">
@@ -560,6 +576,16 @@
     <span class="store-ios-status">Coming soon</span>
   </button>
 
+  <p class="download-note">Android 8.0+ · Download the APK, then open it to install. This is a direct download, not Google Play.</p>
+
+  <div class="download-help">
+    <p>Using iPhone or a computer, or need help installing?</p>
+    <div class="download-help-actions">
+      <button class="text-link" type="button" data-pickup data-download-enquiry>Enquire without the app <span aria-hidden="true">→</span></button>
+      <a class="enquiry-contact" href="mailto:support@myblackgold.app">Email Black Gold</a>
+    </div>
+    <p class="download-help-note">Prepare a summary to send yourself. A pickup is confirmed separately.</p>
+  </div>
 </div>
   <button class="text-link" data-close>Back to the website <span aria-hidden="true">→</span></button>
 </dialog>

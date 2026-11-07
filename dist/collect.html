@@ -4,16 +4,18 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-<title>What we collect — used and waste oil — Black Gold</title>
-<meta name="description" content="Black Gold collects used and waste oil only — engine, hydraulic and transformer. Accepted oils, eligible business types and collection units for sellers in Chennai.">
+<title>Used Engine, Hydraulic &amp; Transformer Oil Buyers in Chennai | Black Gold</title>
+<meta name="description" content="We buy used and waste engine oil from car and bike service centres, and hydraulic and transformer oil from factories in Chennai. 50 L minimum, paid at pickup.">
 <link rel="canonical" href="https://myblackgold.app/collect.html">
 <meta property="og:url" content="https://myblackgold.app/collect.html">
+
 <meta name="theme-color" content="#07080a">
+<meta name="referrer" content="strict-origin-when-cross-origin">
 <meta property="og:type" content="website">
 <meta property="og:site_name" content="Black Gold">
 <meta property="og:locale" content="en_IN">
-<meta property="og:title" content="What we collect — used and waste oil — Black Gold">
-<meta property="og:description" content="Black Gold collects used and waste oil only — engine, hydraulic and transformer. Accepted oils, eligible business types and collection units for sellers in Chennai.">
+<meta property="og:title" content="Used Engine, Hydraulic &amp; Transformer Oil Buyers in Chennai | Black Gold">
+<meta property="og:description" content="We buy used and waste engine oil from car and bike service centres, and hydraulic and transformer oil from factories in Chennai. 50 L minimum, paid at pickup.">
 <meta property="og:image" content="https://myblackgold.app/og-image.jpg">
 <meta property="og:image:type" content="image/jpeg">
 <meta property="og:image:width" content="1200">
@@ -46,6 +48,7 @@
     <a href="seller-app.html" data-page="app">Seller app</a>
     <a href="about.html" data-page="about">About</a>
     <a href="collect.html" data-page="collect" aria-current="page">What we collect</a>
+    <a href="industry.html" data-page="industry">For industry</a>
     <a href="faq.html" data-page="faq">FAQs</a>
     <button class="button button--gold nav-mobile-cta" data-app>Get the seller app <span class="arrow" aria-hidden="true">↗</span></button>
   </nav>
@@ -54,10 +57,12 @@
 
 <main id="main">
 <section class="page-hero" id="top" aria-labelledby="page-title">
+  <canvas class="page-oil" data-oil-ambient aria-hidden="true"></canvas>
+  <div class="page-oil-shade" aria-hidden="true"></div>
   <div class="page-hero-inner">
     <div class="page-hero-copy">
-      <p class="eyebrow">What we collect</p>
-      <h1 id="page-title">The oils <em>we collect.</em></h1>
+      <p class="eyebrow">What we buy in Chennai</p>
+      <h1 id="page-title">The used oil <em>we buy.</em></h1>
       <ul class="points points--hero">
         <li>Used and waste oil only</li>
         <li>Engine, hydraulic and transformer</li>
@@ -126,6 +131,7 @@
   <div class="section-head">
     <p class="eyebrow">Who we serve</p>
     <h2 id="serve-title">For the people who keep Chennai <em>moving.</em></h2>
+    <p>Run a fleet or depot? <a class="enquiry-contact" href="faq.html#faq-fleet">Check with Black Gold about eligibility before registering.</a></p>
   </div>
   <div class="cards cards--3">
     <article class="card">
@@ -146,11 +152,25 @@
       <span class="card-icon" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M3 20.5V11l5 3v-3l5 3V8l3.2-1.2V3.5h3v17zM2 20.5h20M7 17.5h2M12 17.5h2"/></svg></span>
       <span class="card-tag">Industrial</span>
       <h3>Factories &amp; industrial units</h3>
-      <ul class="points"><li>Hydraulic and transformer oils</li><li>From machinery and operations</li></ul>
-      <button class="text-link" data-pickup data-preset="hydraulic">Prepare pickup enquiry <span aria-hidden="true">↗</span></button>
+      <ul class="points"><li>Hydraulic and transformer oils</li><li>From machinery and operations</li><li>Cutting oil, coolant, cleaners and oily sludge: <a class="enquiry-contact" href="industry.html">industrial enquiry</a></li></ul>
+      <a class="text-link" href="industry.html#industry-enquiry">Prepare industrial enquiry <span aria-hidden="true">→</span></a>
     </article>
   </div>
 </section>
+
+<section class="section" id="where-we-buy" aria-labelledby="areas-title">
+  <div class="section-head">
+    <p class="eyebrow">Where we buy</p>
+    <h2 id="areas-title">Used oil buyers across <em>Chennai.</em></h2>
+    <p>We buy used and waste oil from service centres, factories and industrial units in these areas of Chennai. Somewhere else nearby? Choose “Other area” in your enquiry and Black Gold will confirm.</p>
+  </div>
+  <ul class="area-chips" aria-label="Areas we collect from"><li>Ambattur</li><li>Anna Nagar</li><li>Avadi</li><li>Chromepet</li><li>Ennore</li><li>Guindy</li><li>Koyambedu</li><li>Madhavaram</li><li>Manali</li><li>Padi</li><li>Perambur</li><li>Perungudi</li><li>Poonamallee</li><li>Porur</li><li>Sholinganallur</li><li>Sriperumbudur</li><li>T. Nagar</li><li>Tambaram</li><li>Tiruvottiyur</li><li>Velachery</li></ul>
+  <div class="area-actions">
+    <button class="button button--outline" data-pickup>Prepare pickup enquiry <span class="arrow" aria-hidden="true">↗</span></button>
+    <a class="text-link" href="industry.html">Factory with industrial oil waste? <span aria-hidden="true">→</span></a>
+  </div>
+</section>
+<script src="oil-surface.js"></script>
 <section class="closing" aria-labelledby="closing-title">
   <div class="closing-inner">
     <p class="eyebrow">Your oil collection</p>
@@ -158,6 +178,7 @@
     <div class="closing-cta">
       <p>Choose the oil type and share your approximate quantity when you enquire.</p>
       <div class="closing-actions">
+
         <button class="button button--gold" data-app>Get the seller app <span class="arrow" aria-hidden="true">↗</span></button>
         <button class="text-link" data-pickup>Prepare pickup enquiry</button>
       </div>
@@ -183,6 +204,7 @@
       <a href="index.html" data-page="home">Home</a>
       <a href="about.html" data-page="about">About</a>
       <a href="collect.html" data-page="collect" aria-current="page">What we collect</a>
+      <a href="industry.html" data-page="industry">For industry</a>
       <a href="seller-app.html" data-page="app">Seller app</a>
       <a href="faq.html" data-page="faq">FAQs</a>
     </nav>
@@ -217,7 +239,7 @@
       </div>
     </fieldset>
     <label class="field"><span>Business name</span><input name="business" required maxlength="100" autocomplete="organization" placeholder="Your workshop or company"><span class="field-error">Add your business name.</span></label>
-    <label class="field"><span>Mobile number</span><input name="phone" type="tel" inputmode="tel" required maxlength="16" autocomplete="tel" placeholder="e.g. 98765 43210"><span class="field-error">Enter a 10-digit phone number so Black Gold can call you back.</span></label>
+    <label class="field"><span>Contact phone number</span><input name="phone" type="tel" inputmode="tel" required maxlength="16" autocomplete="tel" placeholder="e.g. 98765 43210"><span class="field-error">Enter a 10-digit phone number so Black Gold can call you back.</span></label>
     <label class="field area-field"><span>Your area</span><select name="area" required><option value="" disabled selected>Choose your area</option><option value="Ambattur">Ambattur</option><option value="Anna Nagar">Anna Nagar</option><option value="Avadi">Avadi</option><option value="Chromepet">Chromepet</option><option value="Ennore">Ennore</option><option value="Guindy">Guindy</option><option value="Koyambedu">Koyambedu</option><option value="Madhavaram">Madhavaram</option><option value="Manali">Manali</option><option value="Padi">Padi</option><option value="Perambur">Perambur</option><option value="Perungudi">Perungudi</option><option value="Poonamallee">Poonamallee</option><option value="Porur">Porur</option><option value="Sholinganallur">Sholinganallur</option><option value="Sriperumbudur">Sriperumbudur</option><option value="T. Nagar">T. Nagar</option><option value="Tambaram">Tambaram</option><option value="Tiruvottiyur">Tiruvottiyur</option><option value="Velachery">Velachery</option><option value="Other">Other area (type it)</option></select><span class="field-error">Choose your area, or pick Other area and type it.</span></label>
     <label class="field area-other" hidden><span>Type your area</span><input name="areaOther" maxlength="100" autocomplete="address-level2" placeholder="e.g. Kolathur"><span class="field-error">Type your area.</span></label>
     <div class="form-row">
@@ -261,8 +283,7 @@
 
     <a class="store-link store-link--apk" data-app-download="apk" href="assets/black-gold-seller.apk" download="Black-Gold-Seller.apk">
       <svg viewBox="0 0 28 32" aria-hidden="true"><path d="M14 3v17m-6-6 6 6 6-6M4 22v6h20v-6"/></svg>
-      <span><small>Tap to download</small><strong>Android app</strong></span>
-      <span class="store-link-arrow" aria-hidden="true">↓</span>
+      <span><small>Direct APK download</small><strong>Android app</strong></span>
     </a>
 
     <a class="store-link" role="link" data-app-download="googlePlay" aria-disabled="true" tabindex="-1">
@@ -277,6 +298,16 @@
     <span class="store-ios-status">Coming soon</span>
   </button>
 
+  <p class="download-note">Android 8.0+ · Download the APK, then open it to install. This is a direct download, not Google Play.</p>
+
+  <div class="download-help">
+    <p>Using iPhone or a computer, or need help installing?</p>
+    <div class="download-help-actions">
+      <button class="text-link" type="button" data-pickup data-download-enquiry>Enquire without the app <span aria-hidden="true">→</span></button>
+      <a class="enquiry-contact" href="mailto:support@myblackgold.app">Email Black Gold</a>
+    </div>
+    <p class="download-help-note">Prepare a summary to send yourself. A pickup is confirmed separately.</p>
+  </div>
 </div>
   <button class="text-link" data-close>Back to the website <span aria-hidden="true">→</span></button>
 </dialog>

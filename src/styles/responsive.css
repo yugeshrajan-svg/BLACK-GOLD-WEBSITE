@@ -11,7 +11,7 @@
   .cards--4 { grid-template-columns: repeat(2, minmax(0, 1fr)); }
 }
 
-/* Keep the five page links visible on laptops; tablets and phones use Menu. */
+/* Keep the six page links visible on laptops; tablets and phones use Menu. */
 @media (max-width: 1024px) {
   .nav-action { display: none; }
   .menu { display: flex; margin-left: auto; }
@@ -23,7 +23,8 @@
     /* The full-screen menu stays dark, whatever the header is showing. */
     --head: #f2ede1; --text: #c9c2b2; --line: rgba(236, 226, 204, .1); --gold: #c9a227; --gold-hi: #f1dca4;
     opacity: 0; visibility: hidden;
-    transition: opacity .25s var(--ease), visibility .25s;
+    /* Visibility must change synchronously so an immediate Tab reaches the links. */
+    transition: opacity .25s var(--ease);
     overflow-y: auto;
   }
   .nav.open { opacity: 1; visibility: visible; }
@@ -31,10 +32,12 @@
   .nav a::after { display: none; }
   .nav a[aria-current='page'] { color: var(--gold-hi); }
   .nav.open a { opacity: 1; transform: none; }
+  .nav.open:focus-within a { opacity: 1; transform: none; transition: none; }
   .nav.open a:nth-child(2) { transition-delay: .03s; }
   .nav.open a:nth-child(3) { transition-delay: .06s; }
   .nav.open a:nth-child(4) { transition-delay: .09s; }
   .nav.open a:nth-child(5) { transition-delay: .12s; }
+  .nav.open a:nth-child(6) { transition-delay: .15s; }
   .nav-mobile-cta { display: inline-flex; align-self: flex-start; margin-top: 36px; }
   .header.menu-open { background: transparent; border-color: transparent; -webkit-backdrop-filter: none; backdrop-filter: none; box-shadow: none; }
 }

@@ -132,3 +132,10 @@ html:not(.js) .route-icon, .route.is-static .route-icon { background: var(--gold
 .pickup-road-labels li:last-child { color: #2e7d4f; }
 .route--pickup.is-travelling .pickup-truck .pickup-wheel { transform-box: fill-box; transform-origin: center; animation: spin .8s linear infinite; }
 .motion-paused .route--pickup *, .tab-hidden .route--pickup *, .route--pickup.is-offscreen * { animation-play-state: paused !important; }
+
+/* ---------- What we collect: the Chennai areas we buy from ---------- */
+
+#where-we-buy .section-head p { margin-top: 16px; color: var(--text); }
+.area-chips { list-style: none; margin: 0; padding: 0; display: flex; flex-wrap: wrap; gap: 10px; }
+.area-chips li { padding: 9px 16px; border: 1px solid var(--line-gold); border-radius: 999px; background: var(--bg-3); color: var(--head); font-size: 15px; line-height: 1.3; }
+.area-actions { display: flex; flex-wrap: wrap; align-items: center; gap: 16px 28px; margin-top: 28px; }

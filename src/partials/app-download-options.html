@@ -3,8 +3,7 @@
     {{#if apk}}
     <a class="store-link store-link--apk" data-app-download="apk" {{apkAttrs}}>
       <svg viewBox="0 0 28 32" aria-hidden="true"><path d="M14 3v17m-6-6 6 6 6-6M4 22v6h20v-6"/></svg>
-      <span><small>Tap to download</small><strong>Android app</strong></span>
-      <span class="store-link-arrow" aria-hidden="true">↓</span>
+      <span><small>Direct APK download</small><strong>Android app</strong></span>
     </a>
     {{/if}}
     <a class="store-link" role="link" data-app-download="googlePlay" {{googlePlayAttrs}}>
@@ -18,5 +17,16 @@
     <span class="store-ios-name">iOS</span>
     <span class="store-ios-status">Coming soon</span>
   </button>
+  {{#if apk}}
+  <p class="download-note">Android 8.0+ · Download the APK, then open it to install. This is a direct download, not Google Play.</p>
+  {{/if}}
   {{downloadStatus}}
+  <div class="download-help">
+    <p>Using iPhone or a computer, or need help installing?</p>
+    <div class="download-help-actions">
+      <button class="text-link" type="button" data-pickup data-download-enquiry>Enquire without the app <span aria-hidden="true">→</span></button>
+      <a class="enquiry-contact" href="{{contactMailto}}">Email Black Gold</a>
+    </div>
+    <p class="download-help-note">Prepare a summary to send yourself. A pickup is confirmed separately.</p>
+  </div>
 </div>

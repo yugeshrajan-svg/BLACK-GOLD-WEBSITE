@@ -1,5 +1,6 @@
 /* ---------- Keyframes ---------- */
 
+@keyframes ambient-drift { from { transform: translate(-12px, 8px) scale(.96); } to { transform: translate(15px, -10px) scale(1.06); } }
 @keyframes reveal-in { from { opacity: 0; transform: translateY(var(--lift)); } }
 @keyframes accent-draw { from { transform: scaleX(0); } }
 @keyframes refinery-flow { to { stroke-dashoffset: -48; } }

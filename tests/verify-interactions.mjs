@@ -200,12 +200,18 @@ function load(file, reduced = false, browserLanguage = 'en', oilFactory) {
 for (const reduced of [false,true]) {
   for (const browserLanguage of ['en','ta']) {
     const home = load('index.html',reduced,browserLanguage);
-    home.click('.hero .text-link');
+    home.click('.hero a[href="#seller-app"]');
     assert.equal(home.doc.activeElement,home.q('#seller-app'),'Section links retain keyboard focus at their destination');
     home.click('.header [data-app]');
     assert.equal(home.q('#app-dialog').open,true,'The header opens the app download panel');
     assert.equal(home.q('#pickup-dialog').open,false,'Getting the app must not open the enquiry form');
-    home.q('#app-dialog').close();
+    home.click('#app-dialog [data-download-enquiry]');
+    assert.equal(home.q('#app-dialog').open,false,'The app-to-enquiry action closes the previous dialog');
+    assert.equal(home.q('#pickup-dialog').open,true,'Non-Android visitors can enquire from the download panel');
+    assert.equal(home.doc.documentElement.classList.contains('menu-locked'),true,'The remaining dialog retains its scroll lock');
+    home.q('#pickup-dialog').close();
+    assert.equal(home.doc.documentElement.classList.contains('menu-locked'),false);
+    assert.equal(home.qa('[data-download-enquiry]').length,3,'Every homepage download group includes an enquiry fallback');
     home.click('.hero-bottom .hero-enquiry');
     assert.equal(home.q('#pickup-dialog').open,true,'The hero corner button opens the pickup enquiry');
     home.q('#pickup-dialog').close();
@@ -320,8 +326,12 @@ for (const reduced of [false,true]) {
     faq.search('Chennai');
     assert.equal(faq.qa('#faq-answers details').filter(n=>!n.hidden).length,1);
     faq.search('no-such-answer-4729'); assert.equal(faq.q('.faq-no-results').hidden,false);
-    faq.click('[data-clear-search]'); assert.equal(faq.qa('#faq-answers details').filter(n=>!n.hidden).length,12);
+    faq.click('[data-clear-search]'); assert.equal(faq.qa('#faq-answers details').filter(n=>!n.hidden).length,13);
     assert.equal(faq.q('.faq-no-results').hidden,true);
+    faq.search('fleet');
+    assert.equal(faq.qa('#faq-answers details').filter(n=>!n.hidden).length,1);
+    assert.equal(faq.q('#faq-fleet').hidden,false,'Fleet visitors get an explicit eligibility-confirmation route');
+    assert.match(faq.q('#faq-fleet').textContent,/confirm fleet or depot eligibility/);
     faq.search('Does this website book');
     assert.equal(faq.qa('#faq-answers details').filter(n=>!n.hidden).length,1);
     assert.equal(faq.q('#faq-booking').hidden,false,'Keep the booking explanation when moving it from Home');
@@ -352,6 +362,7 @@ for (const reduced of [false,true]) {
     ['who can register','Who can register?'],
     ['I want to cancel my listing','Can I change or cancel a submitted listing?'],
     ['do you take hydraulic oil','What oils can I sell?'],
+    ['do you collect coolant or oily sludge','What oils can I sell?'],
     ['the driver measured less than I had','What if the measured quantity is different?'],
     ['can I book a pickup on this website','Does this website book my pickup?'],
     ['what is your email address','How do I contact Black Gold support?'],
@@ -387,7 +398,7 @@ for (const reduced of [false,true]) {
 }
 
 assert.equal(existsSync('dist/how-it-works.html'),false,'The How it works page has been removed');
-for (const file of ['index.html','about.html','collect.html','seller-app.html','faq.html']) {
+for (const file of ['index.html','about.html','collect.html','industry.html','seller-app.html','faq.html']) {
   assert.equal(load(file).q('a[href^="how-it-works"]'),null,file+' must not link to the removed How it works page');
 }
 assert.ok(load('seller-app.html').q('#app-workflow'),'Process links lead to the Seller App journey');
@@ -452,8 +463,11 @@ assert.equal(stillPickup.q('.home-steps .is-highlighted h3').textContent,'Get pa
 const flowState = {created:0, playing:false, rendered:false};
 const flowing = load('index.html',false,'en',(canvas,options) => {
   flowState.created++;
-  assert.deepEqual([...options.impact],[.7,.42],'The oil lands where oil-poster.webp shows its rings');
-  assert.deepEqual([...options.impactNarrow],[.8,.2],'On phones it lands where oil-poster-phone.webp shows them');
+  assert.equal(options.mode,'pour','The home hero pours continuously, as on the live site');
+  assert.equal(options.parallax,1,'The camera tilts as the hero scrolls away');
+  assert.equal(options.interactive,true,'Touching the hero ripples the oil');
+  assert.ok(options.eventTarget,'Ripples listen on the hero, not the covered canvas');
+  assert.equal(options.startTime,6,'Start on the frame oil-poster.webp shows');
   assert.equal(options.quality,undefined,'Draw at the full screen resolution');
   return {
     renderOnce() { flowState.rendered = true; canvas.classList.add('is-ready'); },
@@ -481,6 +495,17 @@ for (const factory of [() => null, () => { throw new Error('No WebGL'); }]) {
 
 // The oil surface itself, with a stand-in WebGL context: it draws at the screen's own resolution
 // (up to 2 device pixels per CSS pixel and a 4K frame), and lowers it only while frames run slow.
+// Inner pages keep a quieter moving oil behind their heroes, as on the live site.
+for (const file of ['collect.html','faq.html','seller-app.html','industry.html']) {
+  const ambient = [];
+  load(file,false,'en',(canvas,options) => { ambient.push(options); return {renderOnce(){}, play(){}, pause(){}}; });
+  assert.equal(ambient.length,1,file+' has one moving oil backdrop');
+  assert.equal(ambient[0].mode,'drop',file+' uses the calm drop, not the full pour');
+  let stillCreated = 0;
+  load(file,true,'en',() => { stillCreated++; return null; });
+  assert.equal(stillCreated,0,file+' keeps the oil still for reduced motion');
+}
+
 function oilRig(width, height, dpr) {
   const rig = {frames:new Map(), seq:0, now:0, events:{}};
   const gl = new Proxy({}, {get:(_,k) => /^get(Shader|Program)Parameter$/.test(k) ? () => true : /^[A-Z_]+$/.test(k) ? 0 : () => ({})});
@@ -494,7 +519,7 @@ function oilRig(width, height, dpr) {
   rig.run = (count,ms) => { for (let i = 0; i < count; i++) { rig.now += [].concat(ms)[i % [].concat(ms).length]; const jobs = [...rig.frames.values()]; rig.frames.clear(); jobs.forEach(fn => fn(rig.now)); } };
   return rig;
 }
-for (const [width,height,dpr,expected] of [[1366,827,1,'1366x827'],[1920,1080,2,'3840x2160'],[2560,1440,2,'3840x2160'],[390,810,3,'585x1215']]) {
+for (const [width,height,dpr,expected] of [[1366,827,1,'1366x827'],[1920,1080,2,'3840x2160'],[2560,1440,2,'3840x2160'],[390,810,3,'780x1620']]) {
   const rig = oilRig(width,height,dpr); rig.oil.renderOnce();
   assert.equal(rig.canvas.width+'x'+rig.canvas.height,expected,`Oil canvas at ${width}x${height} on a ${dpr}x screen`);
 }
@@ -701,6 +726,69 @@ barrels.q('#pickup-form').fire('submit');
 assert.equal(barrels.q('input[name="quantity"]').getAttribute('min'),'50');
 assert.equal(barrels.q('#enquiry-result').hidden,true,'Switching back to litres restores the collection minimum');
 
+// For industry: its own page and enquiry, for industrial waste only.
+const industry = load('industry.html');
+assert.ok(industry.q('.nav a[href="industry.html"][aria-current="page"]'),'For industry is in the menu and marked as the current page');
+assert.equal(industry.qa('.industry-cards .card').length,6,'Six industrial waste types');
+assert.equal(industry.qa('#industry-form input[name="waste"]').length,6,'One tick box per waste type');
+assert.equal(industry.q('.closing a.button').getAttribute('href'),'#industry-enquiry','The closing banner leads to the industrial form');
+assert.equal(industry.q('.closing [data-pickup]'),null,'The industry page does not send visitors to the seller pickup form');
+assert.deepEqual(industry.qa('#industry-form select[name="area"] option').map(n => n.value),['',...areaList,'Other']);
+industry.q('#industry-form').fire('submit');
+assert.equal(industry.q('.industry-choice').classList.contains('invalid'),true,'At least one waste type is required');
+assert.equal(industry.qa('#industry-form .field.invalid').length,4,'Company, phone, location and quantity are required; details are optional');
+assert.equal(industry.q('#industry-result').hidden,true);
+industry.click('[data-industry-pick="coolant"]');
+assert.equal(industry.q('[data-industry-option="coolant"]').checked,true,'Add to enquiry ticks that waste');
+assert.equal(industry.q('.industry-choice').classList.contains('invalid'),false,'Ticking a waste clears its error');
+industry.q('[data-industry-option="water-sludge"]').checked = true;
+industry.q('input[name="company"]').value = 'Test Forgings Pvt Ltd';
+industry.q('input[name="phone"]').value = '12345';
+industry.q('#industry-form select[name="area"]').value = 'Other';
+industry.q('#industry-form select[name="area"]').fire('change');
+assert.equal(industry.q('#industry-form .area-other').hidden,false);
+industry.q('input[name="quantity"]').value = '0';
+industry.q('#industry-form').fire('submit');
+assert.equal(industry.q('#industry-form input[name="phone"]').getAttribute('aria-invalid'),'true');
+assert.equal(industry.q('#industry-form input[name="quantity"]').getAttribute('aria-invalid'),'true','Quantity must be at least 1');
+assert.equal(industry.q('#industry-form input[name="areaOther"]').getAttribute('aria-invalid'),'true');
+industry.q('input[name="phone"]').value = '98765 43210';
+industry.q('input[name="areaOther"]').value = 'Irungattukottai';
+industry.q('input[name="quantity"]').value = '400';
+industry.q('#industry-form input[name="unit"][value="Litres"]').checked = false;
+industry.q('#industry-form input[name="unit"][value="Kg"]').checked = true;
+industry.q('#industry-form input[name="frequency"][value="Regular pickups"]').checked = true;
+industry.q('input[name="details"]').value = 'Stored in drums';
+industry.q('#industry-form').fire('submit');
+assert.equal(industry.q('#industry-result').hidden,false);
+const industryText = industry.q('#industry-text').textContent;
+assert.match(industryText,/INDUSTRIAL WASTE ENQUIRY/);
+assert.match(industryText,/Company: Test Forgings Pvt Ltd/);
+assert.match(industryText,/Phone: \+91 98765 43210/);
+assert.match(industryText,/Plant location: Irungattukottai/);
+assert.match(industryText,/Waste: Used coolant, Oily washing water and sludge/,'Every ticked waste reaches the enquiry');
+assert.match(industryText,/Approximate quantity: 400 Kg/);
+assert.match(industryText,/Pickup needed: Regular pickups/);
+assert.match(industryText,/Details: Stored in drums/);
+assert.match(industryText,/no pickup has been booked/i);
+assert.doesNotMatch(industryText,/50 litres/,'The seller-app minimum is not applied to industrial waste');
+const industryShare = new URL(industry.q('#industry-whatsapp').href);
+assert.equal(industryShare.pathname,'/' + contactDetails.phone.slice(1));
+assert.equal(industryShare.searchParams.get('text'),industryText,'The full industrial enquiry stays intact in the WhatsApp draft');
+const industryMail = new URL(industry.q('#industry-email').href);
+assert.equal(industryMail.pathname,contactDetails.email);
+assert.equal(industryMail.searchParams.get('subject'),'Black Gold industrial waste enquiry');
+assert.equal(industryMail.searchParams.get('body').replace(/\r\n/g,'\n'),industryText);
+industry.click('#industry-edit');
+assert.equal(industry.q('#industry-form').hidden,false);
+assert.equal(industry.doc.activeElement,industry.q('input[name="company"]'),'Editing returns to the company name');
+industry.q('input[name="details"]').value = '';
+industry.q('#industry-form').fire('submit');
+assert.doesNotMatch(industry.q('#industry-text').textContent,/Details:/,'Empty optional details are left out');
+for (const file of ['index.html','collect.html','faq.html']) {
+  assert.ok(load(file).q('a[href^="industry.html"]'),file+' links to the industry page');
+}
+
 // Crossing into desktop navigation must release the mobile menu's scroll and focus locks.
 const navigation = load('index.html');
 navigation.resize(1024,900);
@@ -815,4 +903,4 @@ for (const [file,motionControl] of [
   assert.equal(finishingInstall.q('[data-install-ring]').style.strokeDashoffset,'0.00');
 }
 
-console.log('PASS: Menu resize and keyboard recovery; compact and desktop Seller App journey; search/install hero loop, typing, progress, pause, hidden tabs and reduced motion; English pages, removed-page links, app preview, FAQ search and chat, quantity minimums, home truck, downloads, promises and enquiry validation.');
+console.log('PASS: Menu resize and keyboard recovery; compact and desktop Seller App journey; search/install hero loop, typing, progress, pause, hidden tabs and reduced motion; English pages, removed-page links, app preview, FAQ search and chat, quantity minimums, home truck, downloads, promises, enquiry validation and the industrial enquiry.');

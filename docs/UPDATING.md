@@ -27,7 +27,7 @@ closingDescription: Prepare an enquiry or get the seller app.
 -->
 ```
 
-Keep all six fields. `page` identifies the current menu item; `title` and `description` are used in the document head. The three `closing` values control the final call to action.
+Keep all six fields. `page` identifies the current menu item; `title` and `description` are used in the document head. The three `closing` values control the final call to action. Optionally, `closingLink` (a link such as `#industry-enquiry`) and `closingLinkLabel` replace its two default buttons with one button to that link; the industry page uses this to lead to its own form.
 
 Preserve existing `id`, `data-*` and `aria-*` attributes when changing text. Menus, links, animations and accessibility depend on them.
 
@@ -73,7 +73,7 @@ When the seller app is public on Google Play, set `googlePlay` to `https://play.
 
 ### Direct APK download
 
-The website's “Tap to download” button serves **`public/assets/black-gold-seller.apk`**: the Google-signed universal APK of **version 1.0.1** (version code 2, SHA-256 `3203e6ff9bca42dc6b2404505e46e97f1c648e91ca9d310eef08f695c379ee2d`), the first release uploaded after Play Console's automatic protection was turned off. Installed from the file, it opens normally (checked on an Android 14 emulator on 2 November 2026).
+The website's “Direct APK download” button serves **`public/assets/black-gold-seller.apk`**: the Google-signed universal APK of **version 1.0.1** (version code 2, SHA-256 `3203e6ff9bca42dc6b2404505e46e97f1c648e91ca9d310eef08f695c379ee2d`), the first release uploaded after Play Console's automatic protection was turned off. Installed from the file, it opens normally (checked on an Android 14 emulator on 2 November 2026).
 
 Version 1.0.0's Google-signed APK can't be used: automatic protection was on when it was uploaded, so Google added a check (`com.pairip.licensecheck`) that stops the app opening unless Google Play installed it (“Something went wrong. Check that Google Play is enabled…”).
 
@@ -127,6 +127,10 @@ Once the public domain is chosen, set `url` in `src/config/site.json` to the fin
 - `tests/verify-site.mjs`: page structure, local links and files, section anchors, ARIA references, metadata, download availability and exact static-file copying.
 - `tests/verify-interactions.mjs`: menus, motion controls, app demonstrations, collection choices, FAQ search/chat and enquiry validation under simulated desktop / compact / reduced-motion conditions.
 
-Also look at all five pages in your browser and on a phone after visible design changes. The automated checks do not assess visual layout or whether the Android app installs on a particular device.
+The shared download component includes an app-free enquiry fallback. Keep it available even when Google Play becomes public; do not activate a guessed or tester-only Play link. Fleet/depot wording currently asks for eligibility confirmation and must not become an eligibility promise without operations approval.
+
+Use the [release verification guide](RELEASE-VERIFICATION.md) to compare a built manifest with published artifacts, and the [security-header guide](SECURITY-HEADERS.md) before any proxy changes. A build does not deploy server headers.
+
+Also look at all six pages in your browser and on a phone after visible design changes. The automated checks do not assess visual layout or whether the Android app installs on a particular device.
 
 Upload the contents of **`dist/`** after the checks pass. Builds recreate that folder from `src/` and `public/` and remove stale generated files. The existing Sites hosting identity remains in `.openai/hosting.json`; keep that configuration when updating the same hosted Site.

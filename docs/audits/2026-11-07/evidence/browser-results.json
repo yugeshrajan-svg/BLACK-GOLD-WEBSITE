@@ -1,0 +1,413 @@
+[
+  {
+    "name": "android",
+    "url": "https://myblackgold.app/",
+    "viewport": [
+      412,
+      839
+    ],
+    "ua": "Mozilla/5.0 (Linux; Android 14; Pixel 7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/153.0.8010.12 Mobile Safari/537.36",
+    "overflow": false,
+    "brokenImages": [],
+    "resources": [
+      {
+        "url": "https://myblackgold.app/fonts/fraunces-latin.woff2",
+        "bytes": 67604
+      },
+      {
+        "url": "https://myblackgold.app/fonts/inter-latin.woff2",
+        "bytes": 48556
+      },
+      {
+        "url": "https://myblackgold.app/style.css",
+        "bytes": 33605
+      },
+      {
+        "url": "https://myblackgold.app/assets/oil-poster-phone.webp",
+        "bytes": 64752
+      },
+      {
+        "url": "https://myblackgold.app/assets/black-gold-logo.webp",
+        "bytes": 127234
+      },
+      {
+        "url": "https://myblackgold.app/assets/black-gold-app-icon.webp",
+        "bytes": 42122
+      },
+      {
+        "url": "https://myblackgold.app/oil-surface.js",
+        "bytes": 6138
+      },
+      {
+        "url": "https://myblackgold.app/app.js",
+        "bytes": 14998
+      },
+      {
+        "url": "https://myblackgold.app/assets/about-refinery.webp",
+        "bytes": 193036
+      },
+      {
+        "url": "https://myblackgold.app/fonts/fraunces-italic-latin.woff2",
+        "bytes": 81820
+      },
+      {
+        "url": "https://myblackgold.app/fonts/fraunces-latin-ext.woff2",
+        "bytes": 59688
+      },
+      {
+        "url": "https://myblackgold.app/fonts/inter-latin-ext.woff2",
+        "bytes": 85368
+      },
+      {
+        "url": "https://myblackgold.app/assets/favicon-32.png",
+        "bytes": 3444
+      }
+    ],
+    "timing": [
+      {
+        "domReady": 8018.700000000186,
+        "load": 12100.399999999907
+      }
+    ],
+    "buttons": [
+      {
+        "text": "Tap to downloadAndroid app\n      ↓",
+        "href": "https://myblackgold.app/assets/black-gold-seller.apk",
+        "box": {
+          "x": 20,
+          "y": 309.34375,
+          "width": 372,
+          "height": 70.78125,
+          "top": 309.34375,
+          "right": 392,
+          "bottom": 380.125,
+          "left": 20
+        }
+      },
+      {
+        "text": "Explore the app ↓",
+        "href": "https://myblackgold.app/#seller-app",
+        "box": {
+          "x": 20,
+          "y": 617.78125,
+          "width": 156.75,
+          "height": 44,
+          "top": 617.78125,
+          "right": 176.75,
+          "bottom": 661.78125,
+          "left": 20
+        }
+      },
+      {
+        "text": "↓",
+        "href": "https://myblackgold.app/#seller-app",
+        "box": {
+          "x": 348,
+          "y": 737.78125,
+          "width": 44,
+          "height": 44,
+          "top": 737.78125,
+          "right": 392,
+          "bottom": 781.78125,
+          "left": 348
+        }
+      }
+    ],
+    "menuNextFocus": {
+      "tag": "BODY",
+      "text": "Skip to content\n\n\n\n  \n    \n  \n  \n    Hom"
+    },
+    "reduced": {
+      "matches": true,
+      "paused": false
+    },
+    "afterScroll": {
+      "overflow": false,
+      "brokenImages": []
+    },
+    "cookies": [],
+    "errors": [],
+    "failed": []
+  },
+  {
+    "name": "iphone-chromium",
+    "url": "https://myblackgold.app/",
+    "viewport": [
+      390,
+      664
+    ],
+    "ua": "Mozilla/5.0 (iPhone; CPU iPhone OS 15_0 like Mac OS X) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/26.6 Mobile/15E148 Safari/604.1",
+    "overflow": false,
+    "brokenImages": [],
+    "resources": [
+      {
+        "url": "https://myblackgold.app/fonts/inter-latin.woff2",
+        "bytes": 48556
+      },
+      {
+        "url": "https://myblackgold.app/fonts/fraunces-latin.woff2",
+        "bytes": 67604
+      },
+      {
+        "url": "https://myblackgold.app/style.css",
+        "bytes": 33605
+      },
+      {
+        "url": "https://myblackgold.app/assets/oil-poster-phone.webp",
+        "bytes": 64752
+      },
+      {
+        "url": "https://myblackgold.app/assets/black-gold-logo.webp",
+        "bytes": 127234
+      },
+      {
+        "url": "https://myblackgold.app/assets/black-gold-app-icon.webp",
+        "bytes": 42122
+      },
+      {
+        "url": "https://myblackgold.app/oil-surface.js",
+        "bytes": 6138
+      },
+      {
+        "url": "https://myblackgold.app/app.js",
+        "bytes": 14998
+      },
+      {
+        "url": "https://myblackgold.app/assets/about-refinery.webp",
+        "bytes": 193036
+      },
+      {
+        "url": "https://myblackgold.app/fonts/fraunces-italic-latin.woff2",
+        "bytes": 81820
+      },
+      {
+        "url": "https://myblackgold.app/fonts/fraunces-latin-ext.woff2",
+        "bytes": 59688
+      },
+      {
+        "url": "https://myblackgold.app/fonts/inter-latin-ext.woff2",
+        "bytes": 85368
+      },
+      {
+        "url": "https://myblackgold.app/assets/favicon-32.png",
+        "bytes": 3444
+      }
+    ],
+    "timing": [
+      {
+        "domReady": 5581.100000000093,
+        "load": 7757.800000000279
+      }
+    ],
+    "buttons": [
+      {
+        "text": "Tap to downloadAndroid app\n      ↓",
+        "href": "https://myblackgold.app/assets/black-gold-seller.apk",
+        "box": {
+          "x": 20,
+          "y": 333.9375,
+          "width": 350,
+          "height": 70.78125,
+          "top": 333.9375,
+          "right": 370,
+          "bottom": 404.71875,
+          "left": 20
+        }
+      },
+      {
+        "text": "Explore the app ↓",
+        "href": "https://myblackgold.app/#seller-app",
+        "box": {
+          "x": 20,
+          "y": 642.375,
+          "width": 156.75,
+          "height": 44,
+          "top": 642.375,
+          "right": 176.75,
+          "bottom": 686.375,
+          "left": 20
+        }
+      },
+      {
+        "text": "↓",
+        "href": "https://myblackgold.app/#seller-app",
+        "box": {
+          "x": 326,
+          "y": 762.375,
+          "width": 44,
+          "height": 44,
+          "top": 762.375,
+          "right": 370,
+          "bottom": 806.375,
+          "left": 326
+        }
+      }
+    ],
+    "menuNextFocus": {
+      "tag": "BODY",
+      "text": "Skip to content\n\n\n\n  \n    \n  \n  \n    Hom"
+    },
+    "reduced": {
+      "matches": true,
+      "paused": false
+    },
+    "afterScroll": {
+      "overflow": false,
+      "brokenImages": []
+    },
+    "cookies": [],
+    "errors": [],
+    "failed": []
+  },
+  {
+    "name": "desktop",
+    "url": "https://myblackgold.app/",
+    "viewport": [
+      1440,
+      900
+    ],
+    "ua": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) HeadlessChrome/157.0.0.0 Safari/537.36",
+    "overflow": false,
+    "brokenImages": [],
+    "resources": [
+      {
+        "url": "https://myblackgold.app/fonts/fraunces-latin.woff2",
+        "bytes": 67604
+      },
+      {
+        "url": "https://myblackgold.app/fonts/inter-latin.woff2",
+        "bytes": 48556
+      },
+      {
+        "url": "https://myblackgold.app/assets/black-gold-app-icon.webp",
+        "bytes": 42122
+      },
+      {
+        "url": "https://myblackgold.app/assets/black-gold-logo.webp",
+        "bytes": 127234
+      },
+      {
+        "url": "https://myblackgold.app/style.css",
+        "bytes": 33605
+      },
+      {
+        "url": "https://myblackgold.app/oil-surface.js",
+        "bytes": 6138
+      },
+      {
+        "url": "https://myblackgold.app/app.js",
+        "bytes": 14998
+      },
+      {
+        "url": "https://myblackgold.app/assets/oil-poster.webp",
+        "bytes": 49768
+      },
+      {
+        "url": "https://myblackgold.app/assets/about-refinery.webp",
+        "bytes": 193036
+      },
+      {
+        "url": "https://myblackgold.app/fonts/fraunces-italic-latin.woff2",
+        "bytes": 81820
+      },
+      {
+        "url": "https://myblackgold.app/fonts/fraunces-latin-ext.woff2",
+        "bytes": 59688
+      },
+      {
+        "url": "https://myblackgold.app/fonts/inter-latin-ext.woff2",
+        "bytes": 85368
+      },
+      {
+        "url": "https://myblackgold.app/assets/favicon-32.png",
+        "bytes": 3444
+      }
+    ],
+    "timing": [
+      {
+        "domReady": 1126.9000000003725,
+        "load": 1439.6000000000931
+      }
+    ],
+    "buttons": [
+      {
+        "text": "Tap to downloadAndroid app\n      ↓",
+        "href": "https://myblackgold.app/assets/black-gold-seller.apk",
+        "box": {
+          "x": 43.1875,
+          "y": 492.875,
+          "width": 234,
+          "height": 70.78125,
+          "top": 492.875,
+          "right": 277.1875,
+          "bottom": 563.65625,
+          "left": 43.1875
+        }
+      },
+      {
+        "text": "Explore the app ↓",
+        "href": "https://myblackgold.app/#seller-app",
+        "box": {
+          "x": 43.1875,
+          "y": 677.09375,
+          "width": 156.75,
+          "height": 44,
+          "top": 677.09375,
+          "right": 199.9375,
+          "bottom": 721.09375,
+          "left": 43.1875
+        }
+      },
+      {
+        "text": "↓",
+        "href": "https://myblackgold.app/#seller-app",
+        "box": {
+          "x": 1083.984375,
+          "y": 836,
+          "width": 44,
+          "height": 44,
+          "top": 836,
+          "right": 1127.984375,
+          "bottom": 880,
+          "left": 1083.984375
+        }
+      }
+    ],
+    "reduced": {
+      "matches": true,
+      "paused": false
+    },
+    "afterScroll": {
+      "overflow": false,
+      "brokenImages": []
+    },
+    "cookies": [],
+    "errors": [],
+    "failed": []
+  },
+  {
+    "name": "slow-mobile-1.6Mbps-150ms",
+    "viewport": [
+      412,
+      839
+    ],
+    "timing": [
+      {
+        "domReady": 2436.899999999907,
+        "load": 4664.5
+      }
+    ],
+    "paint": [
+      {
+        "name": "first-paint",
+        "ms": 1784
+      },
+      {
+        "name": "first-contentful-paint",
+        "ms": 1784
+      }
+    ],
+    "cls": 0.00015396162408615386,
+    "ctaObservedVisibleAtMs": 4681.199999999721
+  }
+]

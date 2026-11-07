@@ -4,16 +4,18 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-<title>FAQs — Black Gold</title>
-<meta name="description" content="Short answers about selling used and waste oil to Black Gold: which oils we collect, who can register, how prices are set, measuring, service areas and minimum quantity.">
+<title>Selling Used Oil in Chennai — Rates, Minimum &amp; Payment FAQs</title>
+<meta name="description" content="Answers about selling used and waste oil to Black Gold in Chennai: which oils we buy, who can register, how rates are set, the 50 litre minimum and payment.">
 <link rel="canonical" href="https://myblackgold.app/faq.html">
 <meta property="og:url" content="https://myblackgold.app/faq.html">
+
 <meta name="theme-color" content="#07080a">
+<meta name="referrer" content="strict-origin-when-cross-origin">
 <meta property="og:type" content="website">
 <meta property="og:site_name" content="Black Gold">
 <meta property="og:locale" content="en_IN">
-<meta property="og:title" content="FAQs — Black Gold">
-<meta property="og:description" content="Short answers about selling used and waste oil to Black Gold: which oils we collect, who can register, how prices are set, measuring, service areas and minimum quantity.">
+<meta property="og:title" content="Selling Used Oil in Chennai — Rates, Minimum &amp; Payment FAQs">
+<meta property="og:description" content="Answers about selling used and waste oil to Black Gold in Chennai: which oils we buy, who can register, how rates are set, the 50 litre minimum and payment.">
 <meta property="og:image" content="https://myblackgold.app/og-image.jpg">
 <meta property="og:image:type" content="image/jpeg">
 <meta property="og:image:width" content="1200">
@@ -46,6 +48,7 @@
     <a href="seller-app.html" data-page="app">Seller app</a>
     <a href="about.html" data-page="about">About</a>
     <a href="collect.html" data-page="collect">What we collect</a>
+    <a href="industry.html" data-page="industry">For industry</a>
     <a href="faq.html" data-page="faq" aria-current="page">FAQs</a>
     <button class="button button--gold nav-mobile-cta" data-app>Get the seller app <span class="arrow" aria-hidden="true">↗</span></button>
   </nav>
@@ -54,6 +57,8 @@
 
 <main id="main">
 <section class="page-hero faq-hero" id="top" aria-labelledby="page-title">
+  <canvas class="page-oil" data-oil-ambient aria-hidden="true"></canvas>
+  <div class="page-oil-shade" aria-hidden="true"></div>
   <div class="page-hero-inner">
     <div class="page-hero-copy">
       <p class="eyebrow">FAQs</p>
@@ -100,19 +105,23 @@
     <div class="faq-search">
       <label for="faq-search">Find an answer</label>
       <div class="faq-search-field"><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="10.5" cy="10.5" r="6.5"/><path d="m15.5 15.5 5 5"/></svg><input type="search" id="faq-search" placeholder="Try price, quantity or Chennai" aria-controls="faq-answers" aria-describedby="faq-search-status" autocomplete="off"></div>
-      <p id="faq-search-status" class="search-status" role="status" aria-live="polite">11 questions</p>
+      <p id="faq-search-status" class="search-status" role="status" aria-live="polite">13 questions</p>
     </div>
     <button class="text-link" data-pickup>Prepare pickup enquiry <span aria-hidden="true">↗</span></button>
   </div>
   <div class="faq-answer-column">
   <div class="faq-list" id="faq-answers">
-    <details id="faq-oils" data-keywords="type types kind kinds accept accepted engine hydraulic transformer lubricant lube cooking vegetable waste which">
+    <details id="faq-oils" data-keywords="type types kind kinds accept accepted engine hydraulic transformer lubricant lube cooking vegetable waste which cutting coolant cleaner cleaners sludge">
       <summary>What oils can I sell?<span class="faq-icon" aria-hidden="true"></span></summary>
-      <div class="faq-body"><p>Black Gold collects used and waste oil only, in three types:</p><ul class="points"><li>Used and waste engine oil</li><li>Used and waste hydraulic oil</li><li>Used and waste transformer oil</li></ul></div>
+      <div class="faq-body"><p>Black Gold collects used and waste oil only, in three types:</p><ul class="points"><li>Used and waste engine oil</li><li>Used and waste hydraulic oil</li><li>Used and waste transformer oil</li></ul><p>Factories and industrial units can also enquire about waste cutting oil, used coolant, cleaners, and oily washing water or sludge on the <a class="enquiry-contact" href="industry.html">For industry</a> page.</p></div>
     </details>
     <details id="faq-register" data-keywords="who register registration signup sign join account eligible eligibility individual household home personal garage workshop gst proof documents">
       <summary>Who can register?<span class="faq-icon" aria-hidden="true"></span></summary>
       <div class="faq-body"><ul class="points"><li>Registered businesses only</li><li>Car &amp; bike service centres, industrial units</li><li>GST and address proof verified first</li></ul></div>
+    </details>
+    <details id="faq-fleet" data-keywords="fleet fleets depot depots transport operator operators trucks buses">
+      <summary>Can a fleet or depot sell used oil?<span class="faq-icon" aria-hidden="true"></span></summary>
+      <div class="faq-body"><p>Please confirm fleet or depot eligibility with Black Gold before registering. Share your business type, location, oil type and approximate volume by emailing <a class="enquiry-contact" href="mailto:support@myblackgold.app">support@myblackgold.app</a>. The website does not confirm fleet eligibility or book a collection.</p></div>
     </details>
     <details id="faq-price" data-keywords="price prices rate rates cost much per litre liter worth value today current">
       <summary>How is the price set?<span class="faq-icon" aria-hidden="true"></span></summary>
@@ -158,6 +167,7 @@
   <div class="faq-no-results" hidden><p>No matching answers. Try another word or view all questions.</p><button type="button" class="text-link" data-clear-search>Clear search <span aria-hidden="true">→</span></button></div>
   </div>
 </section>
+<script src="oil-surface.js"></script>
 <section class="closing" aria-labelledby="closing-title">
   <div class="closing-inner">
     <p class="eyebrow">Need more help?</p>
@@ -165,6 +175,7 @@
     <div class="closing-cta">
       <p>Prepare an enquiry with your business details so you can share it with Black Gold.</p>
       <div class="closing-actions">
+
         <button class="button button--gold" data-app>Get the seller app <span class="arrow" aria-hidden="true">↗</span></button>
         <button class="text-link" data-pickup>Prepare pickup enquiry</button>
       </div>
@@ -190,6 +201,7 @@
       <a href="index.html" data-page="home">Home</a>
       <a href="about.html" data-page="about">About</a>
       <a href="collect.html" data-page="collect">What we collect</a>
+      <a href="industry.html" data-page="industry">For industry</a>
       <a href="seller-app.html" data-page="app">Seller app</a>
       <a href="faq.html" data-page="faq" aria-current="page">FAQs</a>
     </nav>
@@ -224,7 +236,7 @@
       </div>
     </fieldset>
     <label class="field"><span>Business name</span><input name="business" required maxlength="100" autocomplete="organization" placeholder="Your workshop or company"><span class="field-error">Add your business name.</span></label>
-    <label class="field"><span>Mobile number</span><input name="phone" type="tel" inputmode="tel" required maxlength="16" autocomplete="tel" placeholder="e.g. 98765 43210"><span class="field-error">Enter a 10-digit phone number so Black Gold can call you back.</span></label>
+    <label class="field"><span>Contact phone number</span><input name="phone" type="tel" inputmode="tel" required maxlength="16" autocomplete="tel" placeholder="e.g. 98765 43210"><span class="field-error">Enter a 10-digit phone number so Black Gold can call you back.</span></label>
     <label class="field area-field"><span>Your area</span><select name="area" required><option value="" disabled selected>Choose your area</option><option value="Ambattur">Ambattur</option><option value="Anna Nagar">Anna Nagar</option><option value="Avadi">Avadi</option><option value="Chromepet">Chromepet</option><option value="Ennore">Ennore</option><option value="Guindy">Guindy</option><option value="Koyambedu">Koyambedu</option><option value="Madhavaram">Madhavaram</option><option value="Manali">Manali</option><option value="Padi">Padi</option><option value="Perambur">Perambur</option><option value="Perungudi">Perungudi</option><option value="Poonamallee">Poonamallee</option><option value="Porur">Porur</option><option value="Sholinganallur">Sholinganallur</option><option value="Sriperumbudur">Sriperumbudur</option><option value="T. Nagar">T. Nagar</option><option value="Tambaram">Tambaram</option><option value="Tiruvottiyur">Tiruvottiyur</option><option value="Velachery">Velachery</option><option value="Other">Other area (type it)</option></select><span class="field-error">Choose your area, or pick Other area and type it.</span></label>
     <label class="field area-other" hidden><span>Type your area</span><input name="areaOther" maxlength="100" autocomplete="address-level2" placeholder="e.g. Kolathur"><span class="field-error">Type your area.</span></label>
     <div class="form-row">
@@ -268,8 +280,7 @@
 
     <a class="store-link store-link--apk" data-app-download="apk" href="assets/black-gold-seller.apk" download="Black-Gold-Seller.apk">
       <svg viewBox="0 0 28 32" aria-hidden="true"><path d="M14 3v17m-6-6 6 6 6-6M4 22v6h20v-6"/></svg>
-      <span><small>Tap to download</small><strong>Android app</strong></span>
-      <span class="store-link-arrow" aria-hidden="true">↓</span>
+      <span><small>Direct APK download</small><strong>Android app</strong></span>
     </a>
 
     <a class="store-link" role="link" data-app-download="googlePlay" aria-disabled="true" tabindex="-1">
@@ -284,6 +295,16 @@
     <span class="store-ios-status">Coming soon</span>
   </button>
 
+  <p class="download-note">Android 8.0+ · Download the APK, then open it to install. This is a direct download, not Google Play.</p>
+
+  <div class="download-help">
+    <p>Using iPhone or a computer, or need help installing?</p>
+    <div class="download-help-actions">
+      <button class="text-link" type="button" data-pickup data-download-enquiry>Enquire without the app <span aria-hidden="true">→</span></button>
+      <a class="enquiry-contact" href="mailto:support@myblackgold.app">Email Black Gold</a>
+    </div>
+    <p class="download-help-note">Prepare a summary to send yourself. A pickup is confirmed separately.</p>
+  </div>
 </div>
   <button class="text-link" data-close>Back to the website <span aria-hidden="true">→</span></button>
 </dialog>

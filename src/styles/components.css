@@ -9,6 +9,26 @@
     radial-gradient(45% 55% at 5% 100%, rgba(201, 164, 92, .08) 0%, transparent 70%),
     #1e262d;
 }
+/* The same oil surface as the home hero, used as a backdrop on the pages whose hero
+   has no photograph of its own. Dimmer and calmer, and it sits under the decorative
+   layers those heroes already paint. */
+.page-oil {
+  position: absolute; z-index: -2; inset: 0; width: 100%; height: 100%;
+  pointer-events: none;
+  opacity: 0; transition: opacity 1.4s var(--ease);
+}
+.page-oil.is-ready { opacity: .8; }
+/* The oil keeps moving under the words, so its brightness is never the same twice.
+   This holds the reading side dark and lets the pool come through where the page's
+   own visual sits, the way the home hero's shade does. */
+.page-oil-shade {
+  position: absolute; z-index: -1; inset: 0; pointer-events: none;
+  background:
+    linear-gradient(90deg, rgba(7, 8, 10, .93) 0%, rgba(7, 8, 10, .74) 36%, rgba(7, 8, 10, .22) 74%, rgba(7, 8, 10, .1) 100%),
+    linear-gradient(0deg, rgba(7, 8, 10, .8) 0%, rgba(7, 8, 10, 0) 32%);
+}
+@media (prefers-reduced-motion: reduce) { .page-oil, .page-oil-shade { display: none; } }
+
 .page-hero-inner { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); align-items: center; gap: var(--layout-gap); min-height: 0; }
 .page-hero h1 { margin: 14px 0 20px; font-size: clamp(42px, 5vw, 76px); line-height: 1.05; letter-spacing: -.015em; }
 /* The accent phrase always starts its own line: "A resource. / Not a waste." */
@@ -17,7 +37,7 @@
 .page-hero::after, .hero::after { content: ''; position: absolute; left: var(--pad-x); right: var(--pad-x); bottom: 0; height: 2px; background: rgba(var(--accent-rgb), .35); pointer-events: none; }
 .hero::after { left: var(--edge-x); right: var(--edge-x); }
 /* A still glow behind each page's visual: the oil on the home page is the one moving backdrop. */
-.page-hero-visual::before { content: ''; position: absolute; z-index: -1; inset: 2% -8% 16%; border-radius: 50%; background: radial-gradient(ellipse, rgba(var(--accent-rgb), .2), transparent 65%); filter: blur(20px); pointer-events: none; }
+.page-hero-visual::before { content: ''; position: absolute; z-index: -1; inset: 2% -8% 16%; border-radius: 50%; background: radial-gradient(ellipse, rgba(var(--accent-rgb), .23), transparent 65%); filter: blur(20px); animation: ambient-drift 14s ease-in-out infinite alternate; pointer-events: none; }
 .page-hero-visual.is-offscreen::before, .tab-hidden .page-hero-visual::before, .page-hero-visual.is-offscreen *, .page-hero-visual.is-offscreen *::before, .page-hero-visual.is-offscreen *::after, .tab-hidden .page-hero-visual *, .tab-hidden .page-hero-visual *::before, .tab-hidden .page-hero-visual *::after, .motion-paused .page-hero-visual::before, .motion-paused .page-hero-visual *, .motion-paused .page-hero-visual *::before, .motion-paused .page-hero-visual *::after { animation-play-state: paused !important; }
 .page-motion { position: absolute; right: var(--pad-x); bottom: 20px; }
 

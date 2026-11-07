@@ -497,8 +497,9 @@ body[data-page='home'] #seller-app { overflow: hidden; }
 .store-links { display: grid; grid-template-columns: repeat(auto-fit, minmax(min(100%, 208px), 1fr)); gap: 12px; }
 .store-link { display: flex; align-items: center; gap: 12px; min-width: 0; min-height: 64px; padding: 12px 16px; border: 1px solid #1e262d; border-radius: var(--radius); background: #1e262d; color: #fff; transition: border-color var(--dur-hover), background-color var(--dur-hover), transform var(--dur-press) var(--ease-out); }
 .store-link[href]:active { transform: translateY(1px) scale(.99); }
-.store-link-arrow { transition: transform var(--dur-hover) var(--ease-out); }
-.store-link--apk[href]:hover .store-link-arrow, .store-link--apk[href]:focus-visible .store-link-arrow { transform: translateY(2px); }
+.store-link-arrow, .store-link--apk > svg { transition: transform var(--dur-hover) var(--ease-out); }
+/* The Android download has one arrow, its download icon, which dips when hovered or focused. */
+.store-link--apk[href]:hover > svg, .store-link--apk[href]:focus-visible > svg { transform: translateY(2px); }
 .store-link > svg { width: 26px; height: 28px; flex: none; fill: none; stroke: #e7c85c; stroke-width: 1.8; stroke-linecap: round; stroke-linejoin: round; }
 .store-link > .store-icon-play { stroke: none; }
 .store-link small { display: block; margin-bottom: 3px; font: 500 11px/1.4 var(--sans); color: #d7d5cb; }
@@ -515,6 +516,12 @@ body[data-page='home'] #seller-app { overflow: hidden; }
 .store-ios-name { font: 600 13px/1.4 var(--sans); }
 .store-ios-status { font: 500 11px/1.4 var(--sans); color: #d7d5cb; }
 .download-status { margin-top: 12px; font-size: 14px; line-height: 1.6; color: var(--muted); }
+.download-note { margin-top: 12px; max-width: 40em; color: var(--text); font-size: 13px; line-height: 1.6; }
+.download-help { margin-top: 16px; padding-top: 16px; border-top: 1px solid var(--line-strong); }
+.download-help > p { margin: 0; color: var(--text); font-size: 14px; line-height: 1.6; }
+.download-help-actions { display: flex; align-items: center; flex-wrap: wrap; gap: 8px 20px; margin-top: 8px; }
+.download-help-actions > a, .download-help-actions > button { min-height: 44px; display: inline-flex; align-items: center; }
+.download-help .download-help-note { margin-top: 8px; font-size: 12px; color: var(--muted); }
 .closing-actions { display: flex; align-items: center; flex-wrap: wrap; gap: 12px 20px; }
 #app-dialog .app-download-options { margin: 26px 0; }
 
@@ -530,6 +537,26 @@ body[data-page='home'] #seller-app { overflow: hidden; }
     radial-gradient(45% 55% at 5% 100%, rgba(201, 164, 92, .08) 0%, transparent 70%),
     #1e262d;
 }
+/* The same oil surface as the home hero, used as a backdrop on the pages whose hero
+   has no photograph of its own. Dimmer and calmer, and it sits under the decorative
+   layers those heroes already paint. */
+.page-oil {
+  position: absolute; z-index: -2; inset: 0; width: 100%; height: 100%;
+  pointer-events: none;
+  opacity: 0; transition: opacity 1.4s var(--ease);
+}
+.page-oil.is-ready { opacity: .8; }
+/* The oil keeps moving under the words, so its brightness is never the same twice.
+   This holds the reading side dark and lets the pool come through where the page's
+   own visual sits, the way the home hero's shade does. */
+.page-oil-shade {
+  position: absolute; z-index: -1; inset: 0; pointer-events: none;
+  background:
+    linear-gradient(90deg, rgba(7, 8, 10, .93) 0%, rgba(7, 8, 10, .74) 36%, rgba(7, 8, 10, .22) 74%, rgba(7, 8, 10, .1) 100%),
+    linear-gradient(0deg, rgba(7, 8, 10, .8) 0%, rgba(7, 8, 10, 0) 32%);
+}
+@media (prefers-reduced-motion: reduce) { .page-oil, .page-oil-shade { display: none; } }
+
 .page-hero-inner { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); align-items: center; gap: var(--layout-gap); min-height: 0; }
 .page-hero h1 { margin: 14px 0 20px; font-size: clamp(42px, 5vw, 76px); line-height: 1.05; letter-spacing: -.015em; }
 /* The accent phrase always starts its own line: "A resource. / Not a waste." */
@@ -538,7 +565,7 @@ body[data-page='home'] #seller-app { overflow: hidden; }
 .page-hero::after, .hero::after { content: ''; position: absolute; left: var(--pad-x); right: var(--pad-x); bottom: 0; height: 2px; background: rgba(var(--accent-rgb), .35); pointer-events: none; }
 .hero::after { left: var(--edge-x); right: var(--edge-x); }
 /* A still glow behind each page's visual: the oil on the home page is the one moving backdrop. */
-.page-hero-visual::before { content: ''; position: absolute; z-index: -1; inset: 2% -8% 16%; border-radius: 50%; background: radial-gradient(ellipse, rgba(var(--accent-rgb), .2), transparent 65%); filter: blur(20px); pointer-events: none; }
+.page-hero-visual::before { content: ''; position: absolute; z-index: -1; inset: 2% -8% 16%; border-radius: 50%; background: radial-gradient(ellipse, rgba(var(--accent-rgb), .23), transparent 65%); filter: blur(20px); animation: ambient-drift 14s ease-in-out infinite alternate; pointer-events: none; }
 .page-hero-visual.is-offscreen::before, .tab-hidden .page-hero-visual::before, .page-hero-visual.is-offscreen *, .page-hero-visual.is-offscreen *::before, .page-hero-visual.is-offscreen *::after, .tab-hidden .page-hero-visual *, .tab-hidden .page-hero-visual *::before, .tab-hidden .page-hero-visual *::after, .motion-paused .page-hero-visual::before, .motion-paused .page-hero-visual *, .motion-paused .page-hero-visual *::before, .motion-paused .page-hero-visual *::after { animation-play-state: paused !important; }
 .page-motion { position: absolute; right: var(--pad-x); bottom: 20px; }
 
@@ -923,6 +950,13 @@ html:not(.js) .route-icon, .route.is-static .route-icon { background: var(--gold
 .pickup-road-labels li:last-child { color: #2e7d4f; }
 .route--pickup.is-travelling .pickup-truck .pickup-wheel { transform-box: fill-box; transform-origin: center; animation: spin .8s linear infinite; }
 .motion-paused .route--pickup *, .tab-hidden .route--pickup *, .route--pickup.is-offscreen * { animation-play-state: paused !important; }
+
+/* ---------- What we collect: the Chennai areas we buy from ---------- */
+
+#where-we-buy .section-head p { margin-top: 16px; color: var(--text); }
+.area-chips { list-style: none; margin: 0; padding: 0; display: flex; flex-wrap: wrap; gap: 10px; }
+.area-chips li { padding: 9px 16px; border: 1px solid var(--line-gold); border-radius: 999px; background: var(--bg-3); color: var(--head); font-size: 15px; line-height: 1.3; }
+.area-actions { display: flex; flex-wrap: wrap; align-items: center; gap: 16px 28px; margin-top: 28px; }
 
 /* Source: src/styles/seller-app.css */
 /* ---------- Seller app: reference-matched light screens ---------- */
@@ -1516,9 +1550,86 @@ pre { margin: 20px 0; padding: 22px; white-space: pre-wrap; font: 500 14px/1.85 
 .result-actions .button { min-height: 44px; padding: 0 18px; }
 .copy-status { min-height: 1.5em; margin: 12px 0 6px; font-size: 13px; color: var(--gold-hi); }
 
+/* Source: src/styles/industry.css */
+/* ---------- For industry: who the page is for, waste types and the industrial enquiry ---------- */
+
+.industry-who {
+  width: min(100%, 460px); padding: clamp(22px, 2.4vw, 32px);
+  border: 1px solid var(--line-gold); border-radius: var(--radius-panel);
+  background: linear-gradient(160deg, rgba(224, 180, 83, .1), transparent 60%), var(--bg-3);
+  box-shadow: 0 30px 70px -50px #000;
+}
+.industry-who h2 { margin: 0 0 18px; font-size: clamp(24px, 2.2vw, 30px); line-height: 1.2; }
+.industry-who-list { list-style: none; margin: 0; padding: 0; display: grid; gap: 0; }
+.industry-who-list li { position: relative; padding: 14px 0 14px 38px; border-top: 1px solid var(--line); font-size: 16px; line-height: 1.5; color: var(--head); }
+.industry-who-list li::before { position: absolute; left: 0; top: 13px; display: grid; place-items: center; width: 24px; height: 24px; border-radius: 50%; font: 700 13px/1 var(--sans); }
+.industry-who-list .is-yes::before { content: '✓'; background: rgba(224, 180, 83, .16); color: var(--gold-hi); }
+.industry-who-list .is-no { color: var(--muted); }
+.industry-who-list .is-no::before { content: '×'; border: 1px solid var(--line-strong); color: var(--muted); font-size: 16px; }
+.industry-who-list a { color: var(--head); text-decoration: underline; text-decoration-color: var(--line-gold); text-underline-offset: 4px; }
+.industry-who-list a:hover { color: var(--gold-hi); }
+
+.industry-cards .card h3 { font-size: clamp(21px, 1.7vw, 25px); }
+
+.industry-enquiry-layout { display: grid; grid-template-columns: minmax(0, .85fr) minmax(0, 1.15fr); gap: var(--layout-gap); align-items: start; }
+.industry-enquiry-intro { position: sticky; top: calc(var(--header-h) + 24px); }
+.industry-enquiry-intro .section-head { margin-bottom: 28px; }
+.industry-enquiry-intro .section-head p { margin-top: 16px; color: var(--text); }
+.industry-steps { list-style: none; margin: 0; padding: 0; display: grid; gap: 0; counter-reset: industry-step; }
+.industry-steps li { counter-increment: industry-step; display: grid; grid-template-columns: 44px 1fr; column-gap: 14px; padding: 16px 0; border-top: 1px solid var(--line); }
+.industry-steps li::before { content: counter(industry-step, decimal-leading-zero); grid-row: 1 / 3; font: 500 22px/1.2 var(--serif); color: var(--gold); }
+.industry-steps strong { color: var(--head); font-size: 16px; }
+.industry-steps span { color: var(--muted); font-size: 15px; line-height: 1.5; }
+.industry-call { margin-top: 20px; font-size: 15px; color: var(--text); }
+
+.industry-form-panel {
+  scroll-margin-top: calc(var(--header-h) + 16px);
+  padding: clamp(20px, 3vw, 36px);
+  border: 1px solid var(--line-strong); border-radius: var(--radius-panel);
+  background: var(--bg-3);
+}
+.industry-form-panel form { margin-top: 0; gap: 20px; }
+.industry-choice legend span { margin-left: 6px; font-weight: 500; letter-spacing: 0; text-transform: none; color: var(--muted); }
+.industry-choice-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+/* A tick box on each choice; the whole tile is the hit area. */
+.choice-grid.industry-choice-grid span {
+  position: relative; display: flex; flex-direction: row; align-items: center; min-height: 64px;
+  padding: 12px 14px 12px 48px; font: 600 16px/1.3 var(--sans);
+}
+.choice-grid.industry-choice-grid span::before {
+  content: ''; position: absolute; left: 16px; top: 50%; width: 20px; height: 20px; margin-top: -10px;
+  border: 1.5px solid var(--line-strong); border-radius: 5px; background: transparent;
+  transition: background-color .2s, border-color .2s;
+}
+.choice-grid.industry-choice-grid input:checked + span { border-color: var(--gold); box-shadow: inset 0 0 0 1px var(--gold); background: rgba(224, 180, 83, .08); }
+.choice-grid.industry-choice-grid input:checked + span::before {
+  border-color: var(--gold);
+  background: var(--gold) url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%231b1408' stroke-width='3.2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='m6 12 4 4 8-8'/%3E%3C/svg%3E") center / 15px no-repeat;
+}
+.industry-choice > .field-error { margin-top: 10px; }
+.industry-choice.invalid > .field-error { display: block; }
+.industry-choice.invalid .choice-grid span { border-color: #b4462a; }
+.field--optional small { margin-left: 6px; font-weight: 500; letter-spacing: 0; text-transform: none; color: var(--muted); }
+.industry-form-panel .seg-track { width: fit-content; }
+
+#industry-result .result-head { margin-top: 0; }
+#industry-result .send-intro { margin-top: 14px; font-size: 15px; color: var(--text); }
+.industry-copy-status { min-height: 1.5em; margin-top: 12px; font-size: 13px; color: var(--gold-hi); }
+
+@media (max-width: 1080px) {
+  .industry-enquiry-layout { grid-template-columns: 1fr; }
+  .industry-enquiry-intro { position: static; }
+}
+@media (max-width: 760px) {
+  .choice-grid.industry-choice-grid span { display: flex; min-height: 56px; padding: 12px 14px 12px 48px; }
+  .industry-form-panel .seg-track { width: 100%; }
+}
+#industry-wastes .section-head p { margin-top: 16px; color: var(--text); }
+
 /* Source: src/styles/motion.css */
 /* ---------- Keyframes ---------- */
 
+@keyframes ambient-drift { from { transform: translate(-12px, 8px) scale(.96); } to { transform: translate(15px, -10px) scale(1.06); } }
 @keyframes reveal-in { from { opacity: 0; transform: translateY(var(--lift)); } }
 @keyframes accent-draw { from { transform: scaleX(0); } }
 @keyframes refinery-flow { to { stroke-dashoffset: -48; } }
@@ -1579,7 +1690,7 @@ pre { margin: 20px 0; padding: 22px; white-space: pre-wrap; font: 500 14px/1.85 
   .cards--4 { grid-template-columns: repeat(2, minmax(0, 1fr)); }
 }
 
-/* Keep the five page links visible on laptops; tablets and phones use Menu. */
+/* Keep the six page links visible on laptops; tablets and phones use Menu. */
 @media (max-width: 1024px) {
   .nav-action { display: none; }
   .menu { display: flex; margin-left: auto; }
@@ -1591,7 +1702,8 @@ pre { margin: 20px 0; padding: 22px; white-space: pre-wrap; font: 500 14px/1.85 
     /* The full-screen menu stays dark, whatever the header is showing. */
     --head: #f2ede1; --text: #c9c2b2; --line: rgba(236, 226, 204, .1); --gold: #c9a227; --gold-hi: #f1dca4;
     opacity: 0; visibility: hidden;
-    transition: opacity .25s var(--ease), visibility .25s;
+    /* Visibility must change synchronously so an immediate Tab reaches the links. */
+    transition: opacity .25s var(--ease);
     overflow-y: auto;
   }
   .nav.open { opacity: 1; visibility: visible; }
@@ -1599,10 +1711,12 @@ pre { margin: 20px 0; padding: 22px; white-space: pre-wrap; font: 500 14px/1.85 
   .nav a::after { display: none; }
   .nav a[aria-current='page'] { color: var(--gold-hi); }
   .nav.open a { opacity: 1; transform: none; }
+  .nav.open:focus-within a { opacity: 1; transform: none; transition: none; }
   .nav.open a:nth-child(2) { transition-delay: .03s; }
   .nav.open a:nth-child(3) { transition-delay: .06s; }
   .nav.open a:nth-child(4) { transition-delay: .09s; }
   .nav.open a:nth-child(5) { transition-delay: .12s; }
+  .nav.open a:nth-child(6) { transition-delay: .15s; }
   .nav-mobile-cta { display: inline-flex; align-self: flex-start; margin-top: 36px; }
   .header.menu-open { background: transparent; border-color: transparent; -webkit-backdrop-filter: none; backdrop-filter: none; box-shadow: none; }
 }

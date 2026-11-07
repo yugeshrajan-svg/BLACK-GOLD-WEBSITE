@@ -1,0 +1,50 @@
+[
+  {
+    "file": "index.html",
+    "liveSha256": "7efcb4d3ac499d8d74b6ff696fa5b602d798e4382c152c2097bdff479efdb882",
+    "localSha256": "fff209e162ba2c6e945b4818451511d90dc833b87e1efd77b6b24eee8bc45dda",
+    "match": false
+  },
+  {
+    "file": "about.html",
+    "liveSha256": "fe011364392aa0bedea7c6e76eadfd6594b6177c996367b31e2f8a5877898144",
+    "localSha256": "bab6bbae29302f02e0ff0720081961c2891b2251075fca8da13c3a6181c204f1",
+    "match": false
+  },
+  {
+    "file": "collect.html",
+    "liveSha256": "52dfa24af33facf2ba197b033db77ca6aca77f66d105b099799acd863d76c09e",
+    "localSha256": "062b08bb611b369ef6989fe4a9f3e0b681d5de066ceca72e9b56859a3eb4773e",
+    "match": false
+  },
+  {
+    "file": "faq.html",
+    "liveSha256": "77bab4d49ef992d434e31cb45d6357cd63e5bf198f68cc94fba7bd6bec385963",
+    "localSha256": "b3f639a283e0206a2ff8425431577bccde2537c36760a5cc9f5261fdbe09e40e",
+    "match": false
+  },
+  {
+    "file": "seller-app.html",
+    "liveSha256": "952ea49505048dcdd85e750e1137a1be86ced33ea7a44b97aa50330b0f9523de",
+    "localSha256": "e7703bf8e739a8485b8960de02a58e4b7af92f5af6a8ca78b8eb8df560f70871",
+    "match": false
+  },
+  {
+    "file": "app.js",
+    "liveSha256": "4fa217ceff916afc0c54f92df80fcf639abc8903deb1ebef82d2e898932fb0f0",
+    "localSha256": "32e30f35c4c2bf4e9dd248b4a2efa9fde94fc0ce529bde4f3b28a43f16fb6fdf",
+    "match": false
+  },
+  {
+    "file": "oil-surface.js",
+    "liveSha256": "32a74c4b3afaea92ff5802b3eb7274e9aa61ce5b782c2fd525d9877c7030b19a",
+    "localSha256": "810cee50c9dedc30aaa77853c3f73831d5b70aa0afd02a8f1c2f1078600dd96b",
+    "match": false
+  },
+  {
+    "file": "style.css",
+    "liveSha256": "0b012a05bf5c9b8af6f8b64df3cf088ca2f6645fa84886acebbe4869bf41231a",
+    "localSha256": "a4b77bcf40399bb2d501b4e9f730d4b0c9227c9944fcccf9f18bf26b0500f409",
+    "match": false
+  }
+]

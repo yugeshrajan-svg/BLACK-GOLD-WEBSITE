@@ -4,11 +4,13 @@ import { createReadStream, statSync, watch } from 'node:fs';
 import { extname, join, resolve, sep } from 'node:path';
 import { parseArgs } from 'node:util';
 import { buildSite, output, root } from './build.mjs';
+import { securityHeaders } from './security-headers.mjs';
 
-const { values } = parseArgs({ options: { watch: { type: 'boolean' }, port: { type: 'string', default: '3000' } } });
+const { values } = parseArgs({ options: { watch: { type: 'boolean' }, port: { type: 'string', default: '3000' }, 'csp-enforce': { type: 'boolean' } } });
 const port = Number(values.port);
 if (!Number.isInteger(port) || port < 1 || port > 65535) throw new Error('Choose a port from 1 to 65535.');
 buildSite();
+let headers = securityHeaders(output, { reportOnly: !values['csp-enforce'] });
 
 const types = {
   '.html': 'text/html; charset=utf-8', '.css': 'text/css; charset=utf-8',
@@ -19,6 +21,7 @@ const types = {
 };
 
 const server = createServer((request, response) => {
+  for (const [name, value] of Object.entries(headers)) response.setHeader(name, value);
   if (!['GET', 'HEAD'].includes(request.method)) {
     response.writeHead(405, { Allow: 'GET, HEAD' }).end('Method not allowed');
     return;
@@ -64,6 +67,7 @@ server.listen(port, '127.0.0.1', () => {
       rebuildTimer = setTimeout(() => {
         try {
           buildSite();
+          headers = securityHeaders(output, { reportOnly: !values['csp-enforce'] });
           console.log('Updated. Refresh your browser.');
         } catch (error) {
           console.error('Build failed:', error.message);

@@ -162,33 +162,54 @@
     btn.addEventListener('click', function () { setMotion(doc.classList.contains('motion-paused'), true); });
   });
 
-  /* ---------- Home: one oil pour over its still poster ----------
-     The poster is the first thing drawn and the whole fallback. The canvas is created only on
-     the home hero, only when motion is allowed, and fades in on a first frame that matches the
-     poster. It plays one pour of about 4.5 seconds, pausing with the tab, the motion switch or
-     when scrolled away, and then rests on its settled frame. Without WebGL the poster stays. */
+  /* ---------- Home: a continuous oil pour and spreading surface ripples ---------- */
 
-  var oilCanvas = $('#oil-flow');
-  if (oilCanvas && window.OilSurface) (function () {
+  /* One lifecycle for every oil surface on the page: built on first use, paused with the
+     rest of the motion, and abandoned quietly if WebGL is unavailable. */
+  function mountOil(canvas, options) {
     var oil = null, failed = false;
     function syncOil() {
       var play = !reduce.matches && !document.hidden && !doc.classList.contains('motion-paused');
       if (!oil && !failed && play) {
         try {
-          oil = window.OilSurface(oilCanvas, { impact: [.7, .42], impactNarrow: [.8, .2] });
+          oil = window.OilSurface(canvas, options);
           if (oil) oil.renderOnce();
           else failed = true;
         } catch (e) {
           failed = true;
           oil = null;
-          oilCanvas.classList.remove('is-ready');
+          canvas.classList.remove('is-ready');
         }
       }
       if (oil) { if (play) oil.play(); else oil.pause(); }
     }
     liveSyncs.push(syncOil);
     syncOil();
-  })();
+  }
+
+  // Home: the full pour, at the screen's own resolution. It starts on the frame
+  // oil-poster.webp shows (t = 6 s), so the fade from poster to moving oil has no jump.
+  var oilCanvas = $('#oil-flow');
+  if (oilCanvas && window.OilSurface) mountOil(oilCanvas, {
+    mode: 'pour', impact: [.7, .42], impactNarrow: [.78, .23],
+    startTime: 6,
+    // Touch or click the hero and the ripple spreads from that spot; the shade
+    // layer sits over the canvas, so the whole section listens on its behalf.
+    interactive: true, eventTarget: oilCanvas.closest('.hero') || oilCanvas.parentElement,
+    // The camera tilts as the hero scrolls away, so the pool has real depth.
+    parallax: 1
+  });
+
+  // Inner pages: the same pool, kept quiet. A drop every few seconds instead of a pour,
+  // dimmer light, and fewer pixels, because here it is behind the reading.
+  if (window.OilSurface) $$('[data-oil-ambient]').forEach(function (canvas) {
+    mountOil(canvas, {
+      mode: 'drop', impact: [.74, .44], impactNarrow: [.6, .34],
+      light: .6, quality: .72, startTime: 2.4,
+      interactive: true, eventTarget: canvas.closest('.page-hero') || canvas.parentElement,
+      parallax: .85
+    });
+  });
 
   /* ---------- Home: choosing an oil carries through to the enquiry ---------- */
 
@@ -1144,6 +1165,8 @@
   $$('[data-pickup]').forEach(function (btn) {
     btn.addEventListener('click', function () {
       if (btn.dataset.preset || selectedOilKey) presetOil(btn.dataset.preset || selectedOilKey);
+      // Move between dialogs instead of stacking two modal focus traps.
+      if (appDialog.open) appDialog.close();
       openDialog(pickup);
     });
   });
@@ -1256,7 +1279,7 @@
     $('#enquiry-text').textContent = summary;
     whatsappLink.href = whatsappRecipient + '?text=' + encodeURIComponent(summary);
     emailLink.href = emailRecipient + '?subject=' + encodeURIComponent('Black Gold pickup enquiry') + '&body=' + encodeURIComponent(summary.replace(/\n/g, '\r\n'));
-    $('.copy-status').textContent = '';
+    $('.copy-status', pickup).textContent = '';
   }
 
   form.addEventListener('submit', function (e) {
@@ -1285,29 +1308,166 @@
     setTimeout(function () { URL.revokeObjectURL(url); }, 1000);
   });
 
-  $('#copy-enquiry').addEventListener('click', function () {
-    var status = $('.copy-status');
+  // Copies text and reports the outcome in `status`. The fallback textarea goes inside `host`,
+  // so it stays within an open dialog's focus trap.
+  function copyText(text, status, host, unavailable) {
     function fallback() {
       var area = document.createElement('textarea');
-      area.value = summary;
+      area.value = text;
       area.setAttribute('readonly', '');
       area.style.position = 'fixed';
       area.style.opacity = '0';
-      pickup.appendChild(area);
+      host.appendChild(area);
       area.select();
       var ok = false;
       try { ok = document.execCommand('copy'); } catch (err) { ok = false; }
       area.remove();
-      status.textContent = ok ? 'Copied. Paste it into a message to Black Gold.' : 'Copy is unavailable here — download the summary instead.';
+      status.textContent = ok ? 'Copied. Paste it into a message to Black Gold.' : unavailable;
     }
     if (navigator.clipboard && window.isSecureContext) {
-      navigator.clipboard.writeText(summary).then(function () {
+      navigator.clipboard.writeText(text).then(function () {
         status.textContent = 'Copied. Paste it into a message to Black Gold.';
       }, fallback);
     } else {
       fallback();
     }
+  }
+
+  $('#copy-enquiry').addEventListener('click', function () {
+    copyText(summary, $('.copy-status', pickup), pickup, 'Copy is unavailable here — download the summary instead.');
   });
+
+  /* ---------- For industry: an industrial waste enquiry on its own page ---------- */
+
+  var industryForm = $('#industry-form');
+  if (industryForm) (function () {
+    var industryResult = $('#industry-result');
+    var industrySummary = '';
+    var industryWhatsApp = $('#industry-whatsapp');
+    var industryWhatsAppRecipient = industryWhatsApp.getAttribute('href');
+    var industryEmail = $('#industry-email');
+    var industryEmailRecipient = industryEmail.getAttribute('href');
+    var wasteChoice = $('.industry-choice', industryForm);
+    var wasteBoxes = $$('input[name="waste"]', industryForm);
+    var industryArea = $('select[name="area"]', industryForm);
+    var industryAreaOther = $('.area-other', industryForm);
+
+    function chosenWastes() {
+      return wasteBoxes.filter(function (box) { return box.checked; }).map(function (box) { return box.value; });
+    }
+    function markWastes(ok) {
+      wasteChoice.classList.toggle('invalid', !ok);
+      wasteBoxes.forEach(function (box) { if (ok) box.removeAttribute('aria-invalid'); else box.setAttribute('aria-invalid', 'true'); });
+    }
+    function showForm() {
+      industryResult.hidden = true;
+      industryForm.hidden = false;
+    }
+
+    wasteBoxes.forEach(function (box) {
+      box.addEventListener('change', function () { if (chosenWastes().length) markWastes(true); });
+    });
+
+    // "Add to enquiry" on a waste card ticks that waste and brings the form into view.
+    $$('[data-industry-pick]').forEach(function (button) {
+      button.addEventListener('click', function () {
+        var box = $('[data-industry-option="' + button.dataset.industryPick + '"]', industryForm);
+        if (!box) return;
+        showForm();
+        box.checked = true;
+        markWastes(true);
+        var panel = industryForm.closest('.industry-form-panel') || industryForm;
+        if (panel.scrollIntoView) panel.scrollIntoView({ behavior: reduce.matches ? 'auto' : 'smooth', block: 'start' });
+        box.focus({ preventScroll: true });
+      });
+    });
+
+    industryArea.addEventListener('change', function () {
+      if (industryArea.value) {
+        industryArea.closest('.field').classList.remove('invalid');
+        industryArea.removeAttribute('aria-invalid');
+      }
+      industryAreaOther.hidden = industryArea.value !== 'Other';
+      if (industryAreaOther.hidden) {
+        industryAreaOther.classList.remove('invalid');
+        $('input', industryAreaOther).removeAttribute('aria-invalid');
+      } else {
+        $('input', industryAreaOther).focus();
+      }
+    });
+
+    $$('.field input', industryForm).forEach(function (input) {
+      input.addEventListener('input', function () {
+        var field = input.closest('.field');
+        if (field.classList.contains('invalid') && input.value.trim()) {
+          field.classList.remove('invalid');
+          input.removeAttribute('aria-invalid');
+        }
+      });
+    });
+
+    function validateIndustry() {
+      var firstBad = null;
+      var hasWaste = chosenWastes().length > 0;
+      markWastes(hasWaste);
+      if (!hasWaste) firstBad = wasteBoxes[0];
+      $$('.field', industryForm).forEach(function (field) {
+        if (field.hidden || field.classList.contains('field--optional')) return;
+        var input = $('input, select', field);
+        var value = input.value.trim();
+        var ok = value.length > 0;
+        if (ok && input.type === 'number') {
+          var n = Number(value);
+          ok = isFinite(n) && n >= 1 && n <= 1000000;
+        }
+        if (ok && input.type === 'tel') ok = phoneDigits(value) !== null;
+        field.classList.toggle('invalid', !ok);
+        input.setAttribute('aria-invalid', String(!ok));
+        if (!ok && !firstBad) firstBad = input;
+      });
+      if (firstBad) firstBad.focus();
+      return !firstBad;
+    }
+
+    function writeIndustrySummary() {
+      var f = new FormData(industryForm);
+      var phone = phoneDigits(f.get('phone'));
+      var area = f.get('area') === 'Other' ? f.get('areaOther').trim() : f.get('area');
+      var details = (f.get('details') || '').trim();
+      industrySummary = 'BLACK GOLD — INDUSTRIAL WASTE ENQUIRY\n\n' +
+        'Company: ' + f.get('company').trim() + '\n' +
+        'Phone: +91 ' + phone.slice(0, 5) + ' ' + phone.slice(5) + '\n' +
+        'Plant location: ' + area + '\n' +
+        'Waste: ' + chosenWastes().join(', ') + '\n' +
+        'Approximate quantity: ' + Number(f.get('quantity')) + ' ' + f.get('unit') + '\n' +
+        'Pickup needed: ' + f.get('frequency') + '\n' +
+        (details ? 'Details: ' + details + '\n' : '') + '\n' +
+        'Please confirm whether you can collect this, the rate and any documents needed.\n\n' +
+        'Prepared enquiry only — no pickup has been booked.';
+      $('#industry-text').textContent = industrySummary;
+      industryWhatsApp.href = industryWhatsAppRecipient + '?text=' + encodeURIComponent(industrySummary);
+      industryEmail.href = industryEmailRecipient + '?subject=' + encodeURIComponent('Black Gold industrial waste enquiry') + '&body=' + encodeURIComponent(industrySummary.replace(/\n/g, '\r\n'));
+      $('.industry-copy-status').textContent = '';
+    }
+
+    industryForm.addEventListener('submit', function (e) {
+      e.preventDefault();
+      if (!validateIndustry()) return;
+      writeIndustrySummary();
+      industryForm.hidden = true;
+      industryResult.hidden = false;
+      $('h3', industryResult).focus();
+    });
+
+    $('#industry-edit').addEventListener('click', function () {
+      showForm();
+      $('input[name="company"]', industryForm).focus();
+    });
+
+    $('#industry-copy').addEventListener('click', function () {
+      copyText(industrySummary, $('.industry-copy-status'), industryResult, 'Copy is unavailable here — select the text above and copy it.');
+    });
+  })();
 
   $('#year').textContent = new Date().getFullYear();
 })();

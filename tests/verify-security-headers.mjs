@@ -1,0 +1,30 @@
+import assert from 'node:assert/strict';
+import {mkdtempSync,writeFileSync,rmSync} from 'node:fs';
+import {tmpdir} from 'node:os';
+import {join} from 'node:path';
+import {createHash} from 'node:crypto';
+import {securityHeaders,caddyFragment} from '../scripts/security-headers.mjs';
+const directory=mkdtempSync(join(tmpdir(),'blackgold-headers-'));
+try {
+  const inline='document.documentElement.classList.add("js");';
+  writeFileSync(join(directory,'index.html'),'<script>'+inline+'</script><script src="app.js"></script>');
+  const h=securityHeaders(directory);
+  assert.equal(h['X-Content-Type-Options'],'nosniff');
+  assert.equal(h['X-Frame-Options'],'DENY');
+  assert.equal(h['Referrer-Policy'],'strict-origin-when-cross-origin');
+  assert.equal(h['Strict-Transport-Security'],undefined,'No HSTS for loopback HTTP');
+  assert.ok(h['Content-Security-Policy-Report-Only'].includes("'sha256-"+createHash('sha256').update(inline).digest('base64')+"'"));
+  assert.ok(h['Content-Security-Policy-Report-Only'].includes("form-action 'none'"));
+  assert.ok(!h['Content-Security-Policy-Report-Only'].split('style-src')[0].includes('unsafe-inline'));
+  const strict=securityHeaders(directory,{reportOnly:false,https:true});
+  assert.ok(strict['Content-Security-Policy']);
+  assert.equal(strict['Content-Security-Policy-Report-Only'],undefined);
+  assert.equal(strict['Strict-Transport-Security'],'max-age=86400');
+  assert.ok(!JSON.stringify(strict).includes('includeSubDomains'));
+  const fragment=caddyFragment(strict);
+  assert.ok(fragment.includes('-X-Powered-By'));
+  assert.ok(fragment.includes('Content-Security-Policy "'));
+  writeFileSync(join(directory,'index.html'),'<script>changed()</script>');
+  assert.notEqual(securityHeaders(directory)['Content-Security-Policy-Report-Only'],h['Content-Security-Policy-Report-Only'],'Inline script changes require new hashes');
+  console.log('PASS: Security policy hashes, report-only/enforcement, HTTPS-only HSTS, and Caddy fragment.');
+} finally {rmSync(directory,{recursive:true,force:true});}

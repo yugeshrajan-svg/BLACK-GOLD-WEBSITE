@@ -1,0 +1,11 @@
+HTTP/2 200 
+accept-ranges: bytes
+alt-svc: h3=":443"; ma=2592000
+content-type: application/vnd.android.package-archive
+etag: "dmkp42d1m79c-rhqiy"
+last-modified: Mon, 02 Nov 2026 11:41:21 GMT
+server: Caddy
+vary: Accept-Encoding
+content-length: 46177162
+date: Sat, 07 Nov 2026 17:33:26 GMT
+

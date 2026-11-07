@@ -4,16 +4,18 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-<title>Black Gold seller app — Sell used and waste oil in Chennai</title>
-<meta name="description" content="Sell used and waste oil with the Black Gold seller app. We collect used and waste engine, hydraulic and transformer oil in Chennai. Check rates, request a pickup and keep every digital receipt.">
+<title>Used &amp; Waste Oil Buyers in Chennai — Paid on Pickup | Black Gold</title>
+<meta name="description" content="Black Gold buys used and waste engine, hydraulic and transformer oil from service centres and factories in Chennai. Measured on site, paid by UPI or cash.">
 <link rel="canonical" href="https://myblackgold.app/">
 <meta property="og:url" content="https://myblackgold.app/">
+
 <meta name="theme-color" content="#07080a">
+<meta name="referrer" content="strict-origin-when-cross-origin">
 <meta property="og:type" content="website">
 <meta property="og:site_name" content="Black Gold">
 <meta property="og:locale" content="en_IN">
-<meta property="og:title" content="Black Gold seller app — Sell used and waste oil in Chennai">
-<meta property="og:description" content="Sell used and waste oil with the Black Gold seller app. We collect used and waste engine, hydraulic and transformer oil in Chennai. Check rates, request a pickup and keep every digital receipt.">
+<meta property="og:title" content="Used &amp; Waste Oil Buyers in Chennai — Paid on Pickup | Black Gold">
+<meta property="og:description" content="Black Gold buys used and waste engine, hydraulic and transformer oil from service centres and factories in Chennai. Measured on site, paid by UPI or cash.">
 <meta property="og:image" content="https://myblackgold.app/og-image.jpg">
 <meta property="og:image:type" content="image/jpeg">
 <meta property="og:image:width" content="1200">
@@ -46,6 +48,7 @@
     <a href="seller-app.html" data-page="app">Seller app</a>
     <a href="about.html" data-page="about">About</a>
     <a href="collect.html" data-page="collect">What we collect</a>
+    <a href="industry.html" data-page="industry">For industry</a>
     <a href="faq.html" data-page="faq">FAQs</a>
     <button class="button button--gold nav-mobile-cta" data-app>Get the seller app <span class="arrow" aria-hidden="true">↗</span></button>
   </nav>
@@ -57,20 +60,27 @@
 {
   "@context": "https://schema.org",
   "@type": "RecyclingCenter",
+  "@id": "https://myblackgold.app/#business",
   "name": "Black Gold",
+  "alternateName": "Black Gold Refining",
   "telephone": "+917010860788",
   "email": "support@myblackgold.app",
-  "description": "Used and waste oil collection only — engine, hydraulic and transformer oil from car service centres, bike service centres and industrial units in Chennai. Measured in front of you, paid on pickup, with a digital receipt every time.",
+  "description": "Used and waste oil buyers in Chennai. Black Gold buys used and waste engine, hydraulic and transformer oil from car service centres, bike service centres and industrial units, and collects industrial oil waste such as cutting oil, coolant and oily sludge. Measured in front of you, paid on pickup, with a digital receipt every time.",
   "slogan": "Used oil. New value.",
   "image": "https://myblackgold.app/og-image.jpg",
+  "logo": "https://myblackgold.app/assets/black-gold-app-icon.webp",
   "url": "https://myblackgold.app/",
-  "address": { "@type": "PostalAddress", "streetAddress": "No. 22J, TVK Industrial Estate, Guindy", "addressLocality": "Chennai", "addressRegion": "Tamil Nadu", "addressCountry": "IN" },
-  "areaServed": { "@type": "City", "name": "Chennai" },
-  "knowsLanguage": ["en"],
+
+  "address": { "@type": "PostalAddress", "streetAddress": "No. 22J, TVK Industrial Estate, Guindy", "addressLocality": "Chennai", "postalCode": "600032", "addressRegion": "Tamil Nadu", "addressCountry": "IN" },
+  "areaServed": [{"@type":"City","name":"Chennai"},{"@type":"Place","name":"Ambattur, Chennai"},{"@type":"Place","name":"Anna Nagar, Chennai"},{"@type":"Place","name":"Avadi, Chennai"},{"@type":"Place","name":"Chromepet, Chennai"},{"@type":"Place","name":"Ennore, Chennai"},{"@type":"Place","name":"Guindy, Chennai"},{"@type":"Place","name":"Koyambedu, Chennai"},{"@type":"Place","name":"Madhavaram, Chennai"},{"@type":"Place","name":"Manali, Chennai"},{"@type":"Place","name":"Padi, Chennai"},{"@type":"Place","name":"Perambur, Chennai"},{"@type":"Place","name":"Perungudi, Chennai"},{"@type":"Place","name":"Poonamallee, Chennai"},{"@type":"Place","name":"Porur, Chennai"},{"@type":"Place","name":"Sholinganallur, Chennai"},{"@type":"Place","name":"Sriperumbudur, Chennai"},{"@type":"Place","name":"T. Nagar, Chennai"},{"@type":"Place","name":"Tambaram, Chennai"},{"@type":"Place","name":"Tiruvottiyur, Chennai"},{"@type":"Place","name":"Velachery, Chennai"}],
+  "paymentAccepted": "UPI, Cash",
+  "knowsLanguage": ["en", "ta"],
+  "knowsAbout": ["Used engine oil", "Waste engine oil", "Used hydraulic oil", "Used transformer oil", "Waste cutting oil", "Used coolant", "Oily sludge", "Used oil recycling"],
   "makesOffer": [
-    { "@type": "Offer", "itemOffered": { "@type": "Service", "name": "Used and waste engine oil collection", "description": "Pickup of used and waste engine oil from car and bike service centres." } },
-    { "@type": "Offer", "itemOffered": { "@type": "Service", "name": "Used and waste hydraulic oil collection", "description": "Pickup of used and waste hydraulic oil from factories and industrial machinery." } },
-    { "@type": "Offer", "itemOffered": { "@type": "Service", "name": "Used and waste transformer oil collection", "description": "Pickup of used and waste transformer oil from industrial operations." } }
+    { "@type": "Offer", "itemOffered": { "@type": "Service", "name": "Used and waste engine oil buying", "description": "We buy used and waste engine oil from car and bike service centres in Chennai and collect it on site." } },
+    { "@type": "Offer", "itemOffered": { "@type": "Service", "name": "Used and waste hydraulic oil buying", "description": "We buy used and waste hydraulic oil from factories and industrial machinery in Chennai." } },
+    { "@type": "Offer", "itemOffered": { "@type": "Service", "name": "Used and waste transformer oil buying", "description": "We buy used and waste transformer oil from industrial operations in Chennai." } },
+    { "@type": "Offer", "itemOffered": { "@type": "Service", "name": "Industrial oil waste collection", "description": "Collection enquiries for waste cutting oil, used coolant, cleaners, oily washing water and sludge from factories in Chennai." } }
   ]
 }
 </script>
@@ -83,7 +93,7 @@
   </div>
   <div class="hero-shade" aria-hidden="true"></div>
   <div class="hero-inner">
-      <p class="eyebrow hero-eyebrow"><span class="dot" aria-hidden="true"></span><span>Black Gold seller app</span></p>
+      <p class="eyebrow hero-eyebrow"><span class="dot" aria-hidden="true"></span><span>Used oil buyers in Chennai</span></p>
       <h1 class="hero-title" id="hero-title"><span class="line"><span>Sell your used oil.</span></span><span class="line"><span>From <em>your phone.</em></span></span></h1>
       <p class="hero-description">Check oil rates, request a pickup and keep every receipt. All in the Black Gold seller app.</p>
       <div class="hero-downloads">
@@ -92,8 +102,7 @@
 
     <a class="store-link store-link--apk" data-app-download="apk" href="assets/black-gold-seller.apk" download="Black-Gold-Seller.apk">
       <svg viewBox="0 0 28 32" aria-hidden="true"><path d="M14 3v17m-6-6 6 6 6-6M4 22v6h20v-6"/></svg>
-      <span><small>Tap to download</small><strong>Android app</strong></span>
-      <span class="store-link-arrow" aria-hidden="true">↓</span>
+      <span><small>Direct APK download</small><strong>Android app</strong></span>
     </a>
 
     <a class="store-link" role="link" data-app-download="googlePlay" aria-disabled="true" tabindex="-1">
@@ -108,6 +117,16 @@
     <span class="store-ios-status">Coming soon</span>
   </button>
 
+  <p class="download-note">Android 8.0+ · Download the APK, then open it to install. This is a direct download, not Google Play.</p>
+
+  <div class="download-help">
+    <p>Using iPhone or a computer, or need help installing?</p>
+    <div class="download-help-actions">
+      <button class="text-link" type="button" data-pickup data-download-enquiry>Enquire without the app <span aria-hidden="true">→</span></button>
+      <a class="enquiry-contact" href="mailto:support@myblackgold.app">Email Black Gold</a>
+    </div>
+    <p class="download-help-note">Prepare a summary to send yourself. A pickup is confirmed separately.</p>
+  </div>
 </div>
       </div>
       <ul class="hero-facts" aria-label="Collection essentials"><li>Used &amp; waste oil only</li><li>50 L minimum</li><li>UPI or cash</li><li>Chennai</li></ul>
@@ -149,8 +168,7 @@
 
     <a class="store-link store-link--apk" data-app-download="apk" href="assets/black-gold-seller.apk" download="Black-Gold-Seller.apk">
       <svg viewBox="0 0 28 32" aria-hidden="true"><path d="M14 3v17m-6-6 6 6 6-6M4 22v6h20v-6"/></svg>
-      <span><small>Tap to download</small><strong>Android app</strong></span>
-      <span class="store-link-arrow" aria-hidden="true">↓</span>
+      <span><small>Direct APK download</small><strong>Android app</strong></span>
     </a>
 
     <a class="store-link" role="link" data-app-download="googlePlay" aria-disabled="true" tabindex="-1">
@@ -165,6 +183,16 @@
     <span class="store-ios-status">Coming soon</span>
   </button>
 
+  <p class="download-note">Android 8.0+ · Download the APK, then open it to install. This is a direct download, not Google Play.</p>
+
+  <div class="download-help">
+    <p>Using iPhone or a computer, or need help installing?</p>
+    <div class="download-help-actions">
+      <button class="text-link" type="button" data-pickup data-download-enquiry>Enquire without the app <span aria-hidden="true">→</span></button>
+      <a class="enquiry-contact" href="mailto:support@myblackgold.app">Email Black Gold</a>
+    </div>
+    <p class="download-help-note">Prepare a summary to send yourself. A pickup is confirmed separately.</p>
+  </div>
 </div>
       </div>
       <div class="home-app-links">
@@ -443,7 +471,7 @@
     <button class="button button--ink" data-pickup data-home-enquire data-preset="engine">Prepare pickup enquiry <span class="arrow" aria-hidden="true">↗</span></button>
   </div>
   <div class="home-section-foot">
-    <p>Minimum pickup: 50 litres. Sell in litres or barrels.</p>
+    <p>Minimum pickup: 50 litres. Sell in litres or barrels. Factories with cutting oil, coolant or oily sludge: <a class="enquiry-contact" href="industry.html">enquire on our industry page</a>.</p>
     <a class="text-link" href="collect.html">Collection details <span aria-hidden="true">→</span></a>
   </div>
 </section>
@@ -557,6 +585,7 @@
     <div class="closing-cta">
       <p>Start with the Android seller app, or prepare an enquiry to discuss your oil.</p>
       <div class="closing-actions">
+
         <button class="button button--gold" data-app>Get the seller app <span class="arrow" aria-hidden="true">↗</span></button>
         <button class="text-link" data-pickup>Prepare pickup enquiry</button>
       </div>
@@ -582,6 +611,7 @@
       <a href="index.html" data-page="home" aria-current="page">Home</a>
       <a href="about.html" data-page="about">About</a>
       <a href="collect.html" data-page="collect">What we collect</a>
+      <a href="industry.html" data-page="industry">For industry</a>
       <a href="seller-app.html" data-page="app">Seller app</a>
       <a href="faq.html" data-page="faq">FAQs</a>
     </nav>
@@ -616,7 +646,7 @@
       </div>
     </fieldset>
     <label class="field"><span>Business name</span><input name="business" required maxlength="100" autocomplete="organization" placeholder="Your workshop or company"><span class="field-error">Add your business name.</span></label>
-    <label class="field"><span>Mobile number</span><input name="phone" type="tel" inputmode="tel" required maxlength="16" autocomplete="tel" placeholder="e.g. 98765 43210"><span class="field-error">Enter a 10-digit phone number so Black Gold can call you back.</span></label>
+    <label class="field"><span>Contact phone number</span><input name="phone" type="tel" inputmode="tel" required maxlength="16" autocomplete="tel" placeholder="e.g. 98765 43210"><span class="field-error">Enter a 10-digit phone number so Black Gold can call you back.</span></label>
     <label class="field area-field"><span>Your area</span><select name="area" required><option value="" disabled selected>Choose your area</option><option value="Ambattur">Ambattur</option><option value="Anna Nagar">Anna Nagar</option><option value="Avadi">Avadi</option><option value="Chromepet">Chromepet</option><option value="Ennore">Ennore</option><option value="Guindy">Guindy</option><option value="Koyambedu">Koyambedu</option><option value="Madhavaram">Madhavaram</option><option value="Manali">Manali</option><option value="Padi">Padi</option><option value="Perambur">Perambur</option><option value="Perungudi">Perungudi</option><option value="Poonamallee">Poonamallee</option><option value="Porur">Porur</option><option value="Sholinganallur">Sholinganallur</option><option value="Sriperumbudur">Sriperumbudur</option><option value="T. Nagar">T. Nagar</option><option value="Tambaram">Tambaram</option><option value="Tiruvottiyur">Tiruvottiyur</option><option value="Velachery">Velachery</option><option value="Other">Other area (type it)</option></select><span class="field-error">Choose your area, or pick Other area and type it.</span></label>
     <label class="field area-other" hidden><span>Type your area</span><input name="areaOther" maxlength="100" autocomplete="address-level2" placeholder="e.g. Kolathur"><span class="field-error">Type your area.</span></label>
     <div class="form-row">
@@ -660,8 +690,7 @@
 
     <a class="store-link store-link--apk" data-app-download="apk" href="assets/black-gold-seller.apk" download="Black-Gold-Seller.apk">
       <svg viewBox="0 0 28 32" aria-hidden="true"><path d="M14 3v17m-6-6 6 6 6-6M4 22v6h20v-6"/></svg>
-      <span><small>Tap to download</small><strong>Android app</strong></span>
-      <span class="store-link-arrow" aria-hidden="true">↓</span>
+      <span><small>Direct APK download</small><strong>Android app</strong></span>
     </a>
 
     <a class="store-link" role="link" data-app-download="googlePlay" aria-disabled="true" tabindex="-1">
@@ -676,6 +705,16 @@
     <span class="store-ios-status">Coming soon</span>
   </button>
 
+  <p class="download-note">Android 8.0+ · Download the APK, then open it to install. This is a direct download, not Google Play.</p>
+
+  <div class="download-help">
+    <p>Using iPhone or a computer, or need help installing?</p>
+    <div class="download-help-actions">
+      <button class="text-link" type="button" data-pickup data-download-enquiry>Enquire without the app <span aria-hidden="true">→</span></button>
+      <a class="enquiry-contact" href="mailto:support@myblackgold.app">Email Black Gold</a>
+    </div>
+    <p class="download-help-note">Prepare a summary to send yourself. A pickup is confirmed separately.</p>
+  </div>
 </div>
   <button class="text-link" data-close>Back to the website <span aria-hidden="true">→</span></button>
 </dialog>

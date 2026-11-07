@@ -1,0 +1,11 @@
+HTTP/2 200 
+accept-ranges: bytes
+alt-svc: h3=":443"; ma=2592000
+content-type: text/plain; charset=utf-8
+etag: "dmkncx9qpgga-1x"
+last-modified: Mon, 02 Nov 2026 10:18:53 GMT
+server: Caddy
+vary: Accept-Encoding
+content-length: 69
+date: Sat, 07 Nov 2026 17:29:38 GMT
+

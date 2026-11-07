@@ -1,0 +1,43 @@
+{
+  "reduced": true,
+  "paused": true,
+  "labels": [
+    "Play motion",
+    "Play motion",
+    "Play motion",
+    "Play motion"
+  ],
+  "colors": [
+    {
+      "selector": "body",
+      "color": "rgb(217, 211, 196)",
+      "background": "rgb(7, 8, 10)",
+      "backgroundImage": "none"
+    },
+    {
+      "selector": ".hero h1",
+      "color": "rgb(243, 238, 226)",
+      "background": "rgba(0, 0, 0, 0)",
+      "backgroundImage": "none"
+    },
+    {
+      "selector": ".hero p",
+      "color": "rgb(220, 214, 199)",
+      "background": "rgba(0, 0, 0, 0)",
+      "backgroundImage": "none"
+    },
+    {
+      "selector": ".hero .store-link--apk",
+      "color": "rgb(27, 20, 8)",
+      "background": "rgba(0, 0, 0, 0)",
+      "backgroundImage": "linear-gradient(115deg, rgb(248, 231, 176) 0%, rgb(228, 187, 87) 36%, rgb(196, 143, 46) 68%, rgb(140, 98, 32) 100%)"
+    }
+  ],
+  "focus": {
+    "tag": "A",
+    "text": "Skip to content",
+    "outline": "rgb(201, 162, 39) solid 2px"
+  },
+  "skipTarget": "main",
+  "dynamicReduced": true
+}

@@ -1,12 +1,14 @@
 <!--
 page: faq
-title: FAQs — Black Gold
-description: Short answers about selling used and waste oil to Black Gold: which oils we collect, who can register, how prices are set, measuring, service areas and minimum quantity.
+title: Selling Used Oil in Chennai — Rates, Minimum & Payment FAQs
+description: Answers about selling used and waste oil to Black Gold in Chennai: which oils we buy, who can register, how rates are set, the 50 litre minimum and payment.
 closingEyebrow: Need more help?
 closingTitle: Still have a question?
 closingDescription: Prepare an enquiry with your business details so you can share it with Black Gold.
 -->
 <section class="page-hero faq-hero" id="top" aria-labelledby="page-title">
+  <canvas class="page-oil" data-oil-ambient aria-hidden="true"></canvas>
+  <div class="page-oil-shade" aria-hidden="true"></div>
   <div class="page-hero-inner">
     <div class="page-hero-copy">
       <p class="eyebrow">FAQs</p>
@@ -53,19 +55,23 @@ closingDescription: Prepare an enquiry with your business details so you can sha
     <div class="faq-search">
       <label for="faq-search">Find an answer</label>
       <div class="faq-search-field"><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="10.5" cy="10.5" r="6.5"/><path d="m15.5 15.5 5 5"/></svg><input type="search" id="faq-search" placeholder="Try price, quantity or Chennai" aria-controls="faq-answers" aria-describedby="faq-search-status" autocomplete="off"></div>
-      <p id="faq-search-status" class="search-status" role="status" aria-live="polite">11 questions</p>
+      <p id="faq-search-status" class="search-status" role="status" aria-live="polite">13 questions</p>
     </div>
     <button class="text-link" data-pickup>Prepare pickup enquiry <span aria-hidden="true">↗</span></button>
   </div>
   <div class="faq-answer-column">
   <div class="faq-list" id="faq-answers">
-    <details id="faq-oils" data-keywords="type types kind kinds accept accepted engine hydraulic transformer lubricant lube cooking vegetable waste which">
+    <details id="faq-oils" data-keywords="type types kind kinds accept accepted engine hydraulic transformer lubricant lube cooking vegetable waste which cutting coolant cleaner cleaners sludge">
       <summary>What oils can I sell?<span class="faq-icon" aria-hidden="true"></span></summary>
-      <div class="faq-body"><p>Black Gold collects used and waste oil only, in three types:</p><ul class="points"><li>Used and waste engine oil</li><li>Used and waste hydraulic oil</li><li>Used and waste transformer oil</li></ul></div>
+      <div class="faq-body"><p>Black Gold collects used and waste oil only, in three types:</p><ul class="points"><li>Used and waste engine oil</li><li>Used and waste hydraulic oil</li><li>Used and waste transformer oil</li></ul><p>Factories and industrial units can also enquire about waste cutting oil, used coolant, cleaners, and oily washing water or sludge on the <a class="enquiry-contact" href="industry.html">For industry</a> page.</p></div>
     </details>
     <details id="faq-register" data-keywords="who register registration signup sign join account eligible eligibility individual household home personal garage workshop gst proof documents">
       <summary>Who can register?<span class="faq-icon" aria-hidden="true"></span></summary>
       <div class="faq-body"><ul class="points"><li>Registered businesses only</li><li>Car &amp; bike service centres, industrial units</li><li>GST and address proof verified first</li></ul></div>
+    </details>
+    <details id="faq-fleet" data-keywords="fleet fleets depot depots transport operator operators trucks buses">
+      <summary>Can a fleet or depot sell used oil?<span class="faq-icon" aria-hidden="true"></span></summary>
+      <div class="faq-body"><p>Please confirm fleet or depot eligibility with Black Gold before registering. Share your business type, location, oil type and approximate volume by emailing <a class="enquiry-contact" href="{{contactMailto}}">{{contactEmail}}</a>. The website does not confirm fleet eligibility or book a collection.</p></div>
     </details>
     <details id="faq-price" data-keywords="price prices rate rates cost much per litre liter worth value today current">
       <summary>How is the price set?<span class="faq-icon" aria-hidden="true"></span></summary>
@@ -111,3 +117,4 @@ closingDescription: Prepare an enquiry with your business details so you can sha
   <div class="faq-no-results" hidden><p>No matching answers. Try another word or view all questions.</p><button type="button" class="text-link" data-clear-search>Clear search <span aria-hidden="true">→</span></button></div>
   </div>
 </section>
+<script src="oil-surface.js"></script>

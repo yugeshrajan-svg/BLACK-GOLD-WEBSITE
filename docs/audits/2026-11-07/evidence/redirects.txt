@@ -1,0 +1,72 @@
+=== https://www.myblackgold.app/
+HTTP/2 301 
+alt-svc: h3=":443"; ma=2592000
+location: https://myblackgold.app/
+server: Caddy
+date: Sat, 07 Nov 2026 17:33:24 GMT
+
+HTTP/2 200 
+accept-ranges: bytes
+alt-svc: h3=":443"; ma=2592000
+content-type: text/html; charset=utf-8
+etag: "dmoicyfb9lje-1b2t"
+last-modified: Fri, 06 Nov 2026 23:14:29 GMT
+server: Caddy
+vary: Accept-Encoding
+content-length: 61013
+date: Sat, 07 Nov 2026 17:33:24 GMT
+
+=== https://myblackgold.app/
+HTTP/2 200 
+accept-ranges: bytes
+alt-svc: h3=":443"; ma=2592000
+content-type: text/html; charset=utf-8
+etag: "dmoicyfb9lje-1b2t"
+last-modified: Fri, 06 Nov 2026 23:14:29 GMT
+server: Caddy
+vary: Accept-Encoding
+content-length: 61013
+date: Sat, 07 Nov 2026 17:33:25 GMT
+
+=== http://www.myblackgold.app/
+HTTP/1.1 308 Permanent Redirect
+Connection: close
+Location: https://www.myblackgold.app/
+Server: Caddy
+Date: Sat, 07 Nov 2026 17:33:25 GMT
+
+HTTP/2 301 
+alt-svc: h3=":443"; ma=2592000
+location: https://myblackgold.app/
+server: Caddy
+date: Sat, 07 Nov 2026 17:33:25 GMT
+
+HTTP/2 200 
+accept-ranges: bytes
+alt-svc: h3=":443"; ma=2592000
+content-type: text/html; charset=utf-8
+etag: "dmoicyfb9lje-1b2t"
+last-modified: Fri, 06 Nov 2026 23:14:29 GMT
+server: Caddy
+vary: Accept-Encoding
+content-length: 61013
+date: Sat, 07 Nov 2026 17:33:25 GMT
+
+=== http://myblackgold.app/
+HTTP/1.1 308 Permanent Redirect
+Connection: close
+Location: https://myblackgold.app/
+Server: Caddy
+Date: Sat, 07 Nov 2026 17:33:25 GMT
+
+HTTP/2 200 
+accept-ranges: bytes
+alt-svc: h3=":443"; ma=2592000
+content-type: text/html; charset=utf-8
+etag: "dmoicyfb9lje-1b2t"
+last-modified: Fri, 06 Nov 2026 23:14:29 GMT
+server: Caddy
+vary: Accept-Encoding
+content-length: 61013
+date: Sat, 07 Nov 2026 17:33:26 GMT
+

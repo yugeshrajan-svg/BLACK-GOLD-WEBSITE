@@ -1,0 +1,11 @@
+HTTP/2 200 
+access-control-allow-credentials: true
+alt-svc: h3=":443"; ma=2592000
+content-type: text/html; charset=utf-8
+date: Sat, 07 Nov 2026 17:29:39 GMT
+etag: W/"130f-i326lhIcZmevpScS5h4nn9D4t+k"
+vary: Origin
+via: 1.1 Caddy
+x-powered-by: Express
+content-length: 4879
+

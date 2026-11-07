@@ -14,6 +14,9 @@ const html = new Map();
 for (const page of pages) {
   const content = readFileSync(join(root, page), 'utf8');
   html.set(page, content);
+  assert.ok(content.indexOf('class="menu"') < content.indexOf('<nav id="navigation"'), `${page}: Menu must precede links in keyboard order`);
+  assert.match(content, /<meta name="referrer" content="strict-origin-when-cross-origin">/);
+  assert.ok(content.includes('data-download-enquiry'), `${page}: missing non-Android enquiry fallback`);
   assert.ok(!content.includes('{{'), `${page}: unresolved template`);
   assert.equal([...content.matchAll(/<h1\b/g)].length, 1, `${page}: needs one main heading`);
   assert.match(content, /<title>[^<]+<\/title>/, `${page}: needs a title`);
@@ -29,6 +32,24 @@ for (const page of pages) {
     JSON.parse(script[1]);
   }
 }
+
+// Search results: each page needs its own title and description, short enough not to be cut off.
+const metaText = (page, pattern) => html.get(page).match(pattern)[1].replaceAll('&amp;', '&');
+const titles = pages.map(page => metaText(page, /<title>([^<]+)<\/title>/));
+const descriptions = pages.map(page => metaText(page, /<meta name="description" content="([^"]+)"/));
+assert.equal(new Set(titles).size, pages.length, 'Every page needs a different title');
+assert.equal(new Set(descriptions).size, pages.length, 'Every page needs a different description');
+pages.forEach((page, i) => {
+  assert.ok(titles[i].length <= 72, `${page}: title is ${titles[i].length} characters; keep it to 72 or fewer`);
+  assert.ok(descriptions[i].length >= 70 && descriptions[i].length <= 160, `${page}: description is ${descriptions[i].length} characters; keep it between 70 and 160`);
+});
+assert.match(titles[pages.indexOf('index.html')], /Used .*Oil Buyers in Chennai/, 'The home page title names what we buy and where');
+const structured = page => [...html.get(page).matchAll(/<script type="application\/ld\+json">([\s\S]*?)<\/script>/g)].map(match => JSON.parse(match[1]));
+const business = structured('index.html').find(item => item['@type'] === 'RecyclingCenter');
+assert.ok(business?.['@id'] && business.address?.streetAddress && business.telephone, 'The home page describes the business, its address and phone');
+assert.ok(business.areaServed.some(area => area.name === 'Chennai'), 'The business serves Chennai');
+const industryService = structured('industry.html').find(item => item['@type'] === 'Service');
+assert.equal(industryService?.provider['@id'], business['@id'], 'The industrial service points to the same business');
 
 let localReferences = 0;
 function checkReference(from, value) {

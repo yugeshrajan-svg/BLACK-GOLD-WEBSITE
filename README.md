@@ -1,6 +1,6 @@
 # Black Gold website
 
-A five-page website for Black Gold's used-oil collection service and Android seller app. Built with HTML, CSS and JavaScript. Requires Node.js 20 or newer; no package installation is needed.
+A six-page website for Black Gold's used-oil collection service and Android seller app. Built with HTML, CSS and JavaScript. Requires Node.js 20 or newer; no package installation is needed.
 
 ## Run the website
 
@@ -23,7 +23,7 @@ npm run dev -- --port 3001
 ```text
 BLACK-GOLD-WEBSITE/
 ├── src/                     ← Edit the website here
-│   ├── pages/               ← Home, About, Collect, Seller App, FAQs
+│   ├── pages/               ← Home, About, Collect, Industry, Seller App, FAQs
 │   ├── partials/            ← Shared page sections and app previews
 │   ├── config/              ← Contact details, service areas, download links
 │   ├── styles/              ← CSS grouped by purpose
@@ -50,13 +50,14 @@ BLACK-GOLD-WEBSITE/
 | Home page | `src/pages/index.html` |
 | About page | `src/pages/about.html` |
 | Oils and eligible businesses | `src/pages/collect.html` |
+| Industrial waste page and its enquiry form (industry only) | `src/pages/industry.html`, `src/styles/industry.css` |
 | Seller app guide | `src/pages/seller-app.html` |
 | FAQ answers | `src/pages/faq.html` |
 | Menu, footer, enquiry and app dialogs | `src/layout.html` |
 | Phone, email, office address | `src/config/contact.json` |
 | Pickup area choices | `src/config/areas.json` |
 | Google Play and APK links | `src/config/app-downloads.json` |
-| Final website URL and generated search/share URLs | `src/config/site.json` |
+| Final website URL, search verification codes and business profile links ([SEO guide](docs/SEO.md)) | `src/config/site.json` |
 | Colours, spacing, page styles | `src/styles/` |
 | Black-and-gold theme: colour tokens, then the overrides for light surfaces | `src/styles/base.css` (tokens), `src/styles/theme.css` (loaded last) |
 | Home hero: the oil pour over the oil poster | `src/scripts/oil-surface.js` (WebGL pour, drawn at the screen's own resolution up to 4K), `public/assets/oil-poster*.webp` (still frames shown before it starts, when motion is off or without WebGL; see the update guide) |
@@ -72,14 +73,20 @@ The [launch review](docs/LAUNCH-CHECK.md) records the remaining release items. T
 npm run check
 ```
 
-This builds a fresh `dist/` and checks all five pages, local links, section anchors, metadata, downloads and shared interactions. It also confirms that static files are copied without alteration. Interaction checks simulate desktop, compact layouts and reduced motion; they do not replace visual testing on a real phone.
+This builds a fresh `dist/` and checks all six pages, local links, section anchors, metadata, downloads and shared interactions. It also confirms that static files are copied without alteration. Interaction checks simulate desktop, compact layouts and reduced motion; they do not replace visual testing on a real phone.
 
 After a successful check, commit and push, including `dist/`. The live site at myblackgold.app is served from this repo's `dist/` on the Black Gold server: after a push, run `cd /opt/blackgold-website && git pull` there. `npm run build` generates the website without running checks; `npm start` builds and serves it without watching for changes.
 
 ## Current download and enquiry behaviour
 
-The gold “Tap to download” button gives Android phones the seller app directly: the Google-signed universal APK of version 1.0.1 from Play Console, so Google Play can update it later (see [the update guide](docs/UPDATING.md#direct-apk-download) before replacing it). The Google Play button displays “Coming soon” until its official URL is configured; the app is in closed testing until production approval. A smaller iOS button with an Apple symbol also displays “Coming soon”. Both coming-soon options are inactive. The Play Store animation and app screens are labelled illustrations.
+The gold “Direct APK download” button gives Android phones the seller app directly: the Google-signed universal APK of version 1.0.1 from Play Console, so Google Play can update it later (see [the update guide](docs/UPDATING.md#direct-apk-download) before replacing it). The Google Play button displays “Coming soon” until its official URL is configured; the app is in closed testing until production approval. A smaller iOS button with an Apple symbol also displays “Coming soon”. Both coming-soon options are inactive. The Play Store animation and app screens are labelled illustrations.
 
 The footer links to the privacy policy and account deletion pages, which the Black Gold server serves at `https://myblackgold.app/privacy` and `/delete-account`.
 
-The enquiry form prepares a summary for WhatsApp or email. Visitors choose whether to send it; the website does not automatically send details or book a pickup.
+Every download group also offers “Enquire without the app” and email support for iPhone, desktop or installation help. The enquiry form prepares a summary for WhatsApp or email. Visitors choose whether to send it; the website does not automatically send details or book a pickup. Fleet/depot visitors are asked to confirm eligibility rather than being promised collection.
+
+## Audit-fix verification
+
+See [security-header rollout](docs/SECURITY-HEADERS.md) and [release verification](docs/RELEASE-VERIFICATION.md). The local preview can enforce the candidate static-site CSP with `npm start -- --port 4300 --csp-enforce`. Actual production proxy headers require inspection and a separately verified server change. Building or running these tests does not deploy the website.
+
+The optional real-browser suite is `npm run test:browser`. It only accepts loopback HTTP, blocks external requests and non-GET/HEAD requests, and uses synthetic draft details. Start the preview on port 4300 with `--csp-enforce` first. Supply an already installed `playwright-core` module via `PLAYWRIGHT_MODULE=/absolute/path/to/index.mjs` if it is not locally resolvable; Chrome must be installed. No package is downloaded automatically. `BLACKGOLD_TEST_URL` overrides the loopback port, and `BLACKGOLD_SCREENSHOTS` optionally saves screenshots. This suite checks 15 page/viewport combinations; it is not real Android/iOS coverage.
