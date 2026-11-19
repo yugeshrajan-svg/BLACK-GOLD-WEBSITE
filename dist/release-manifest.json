@@ -1,14 +1,14 @@
 {
   "schemaVersion": 1,
   "source": {
-    "commit": "736d7175a97fed1d2a17b00b2b090cd95dce0f71",
-    "inputSha256": "20efed5e96c0f898954ec416699643217f86823d3e8986cb902426adb5d711bc"
+    "commit": "660859c1ea2cd3ef7170842579b0e52199282337",
+    "inputSha256": "e7906f90af299a7c1019248230697692ee759ec3f609a73007cd80d6e81dbdfe"
   },
   "artifacts": [
     {
       "path": "about.html",
-      "size": 41776,
-      "sha256": "7f3249b473629a53a187f594aee4cd7ced839b6a16cda589c26f306f40d85223"
+      "size": 41829,
+      "sha256": "c1d15202a1c1da1b940de73349a212700dabc33bd30d5032672fe1736df8f6ec"
     },
     {
       "path": "app.js",
@@ -82,13 +82,13 @@
     },
     {
       "path": "collect.html",
-      "size": 26544,
-      "sha256": "b51217bec57b891b63be1539715e7de24a611220914668db97ad091a6ae9c81b"
+      "size": 26597,
+      "sha256": "9ed8cde12ba013b563c67d7cf40089e51196286644e86fc65b63d3ff5f85321e"
     },
     {
       "path": "faq.html",
-      "size": 28868,
-      "sha256": "bd63861ef65a5c11b22e8ce46da18dca57e8f738190381b502a5d9193b9d8bbf"
+      "size": 28921,
+      "sha256": "097c1ead0b8439756628fcd09236ea4e3fe51ca6a78ccd5792b0e03ada86ef29"
     },
     {
       "path": "fonts/OFL.txt",
@@ -127,13 +127,13 @@
     },
     {
       "path": "index.html",
-      "size": 64819,
-      "sha256": "15a6d64fc5501cc22239f923f57538c958a7ea8275ff270c36f4482fde0a9bfe"
+      "size": 65014,
+      "sha256": "fac284341697f2b2ec434cf0202e7c7d0c6620b5820ac854921c3252ef91c39d"
     },
     {
       "path": "industry.html",
-      "size": 33647,
-      "sha256": "984b2c60a9534bf8eabb8d6d06fd23f83196c75e0bb7179225d3277270632a03"
+      "size": 33700,
+      "sha256": "095ccd32ffcc03f160425e28266bd90fbd850c6eae13503e2ebdacb12ab70c69"
     },
     {
       "path": "og-image.jpg",
@@ -152,8 +152,8 @@
     },
     {
       "path": "seller-app.html",
-      "size": 57229,
-      "sha256": "1e49b6db76e97652cc6ed8e59cb7e3e5260b74da7f06588a4f994afea80b57ea"
+      "size": 57268,
+      "sha256": "cc130a28d5e3e1159ace5edab55230684100e60a67ad8c2df7c5570901347ef1"
     },
     {
       "path": "sitemap.xml",
