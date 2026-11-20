@@ -79,8 +79,52 @@ export function readSourceCommit(projectRoot = root) {
 
 const styles = [
   'base.css', 'header.css', 'home.css', 'components.css', 'collection.css',
-  'seller-app.css', 'faq.css', 'footer-forms.css', 'industry.css', 'motion.css', 'responsive.css', 'theme.css'
+  'seller-app.css', 'faq.css', 'footer-forms.css', 'industry.css', 'get-app.css', 'motion.css', 'responsive.css', 'theme.css'
 ];
+
+const decodeHtml = text => text
+  .replace(/&nbsp;/g, ' ').replace(/&lt;/g, '<').replace(/&gt;/g, '>').replace(/&quot;/g, '"').replace(/&#39;/g, "'")
+  .replace(/&#(\d+);/g, (_, n) => String.fromCodePoint(Number(n))).replace(/&amp;/g, '&');
+
+// Answer HTML as plain text: paragraphs on their own lines, list items as bullets.
+export function htmlToText(html) {
+  return decodeHtml(html
+    .replace(/<span class="faq-icon"[^>]*><\/span>/g, '')
+    .replace(/<li\b[^>]*>/g, '\n• ').replace(/<\/(p|ul|ol|li)>/g, '\n').replace(/<br\s*\/?>/g, '\n')
+    .replace(/<[^>]+>/g, ''))
+    .split('\n').map(line => line.replace(/\s+/g, ' ').trim()).filter(Boolean).join('\n');
+}
+
+// schema.org FAQPage from the page's <details> questions, or null for pages without them.
+export function faqStructuredData(html) {
+  const list = /<div class="faq-list"[^>]*>([\s\S]*?)<div class="faq-no-results"/.exec(html);
+  if (!list) return null;
+  const items = [...list[1].matchAll(/<details\b[^>]*>\s*<summary>([\s\S]*?)<\/summary>\s*<div class="faq-body">([\s\S]*?)<\/div>\s*<\/details>/g)];
+  if (!items.length) throw new Error('faq.html: no questions found for the FAQ structured data');
+  return {
+    '@context': 'https://schema.org',
+    '@type': 'FAQPage',
+    mainEntity: items.map(([, question, answer]) => ({
+      '@type': 'Question',
+      name: htmlToText(question),
+      acceptedAnswer: { '@type': 'Answer', text: htmlToText(answer) }
+    }))
+  };
+}
+
+// llms.txt (llmstxt.org): a plain summary for AI assistants, from src/llms.txt plus every page.
+function llmsText(template, tokens, pageMeta) {
+  const text = template.replace(/\{\{(\w+)\}\}/g, (_, key) => {
+    if (tokens[key] == null) throw new Error(`src/llms.txt: unknown template value "${key}"`);
+    return decodeHtml(String(tokens[key]));
+  });
+  const order = ['index.html', ...[...pageMeta.keys()].filter(file => file !== 'index.html')];
+  const links = order.filter(file => pageMeta.has(file)).map(file => {
+    const { title, description, url } = pageMeta.get(file);
+    return `- [${title.replace(/\s*\|\s*Black Gold$/, '')}](${url}): ${description}`;
+  });
+  return text.trimEnd() + '\n\n## Pages\n\n' + links.join('\n') + '\n';
+}
 
 export function buildSite() {
   if (existsSync(join(root, 'public', RELEASE_MANIFEST))) throw new Error(RELEASE_MANIFEST + ' is reserved for the build');
@@ -117,6 +161,25 @@ export function buildSite() {
   if (!Array.isArray(sameAs) || !sameAs.every(link => typeof link === 'string' && /^https:\/\/[^\s"<>]+$/.test(link))) {
     throw new Error('src/config/site.json: sameAs must list full https:// profile links');
   }
+  // Website enquiries saved to the Black Gold API (leadsEndpoint, e.g. "/leads", which the
+  // server passes to the API) and Meta ad measurement (metaPixelId). Both optional: empty
+  // keeps enquiries as drafts the visitor sends themselves, with nothing sent anywhere.
+  for (const key of ['leadsEndpoint', 'metaPixelId']) {
+    if (site[key] !== undefined && typeof site[key] !== 'string') throw new Error(`src/config/site.json: ${key} must be a string`);
+  }
+  const leadsEndpoint = (site.leadsEndpoint ?? '').trim();
+  if (leadsEndpoint && !/^\/[a-zA-Z0-9/_-]+$/.test(leadsEndpoint) && !/^https:\/\/[a-zA-Z0-9.-]+(?::\d+)?\/[a-zA-Z0-9/_-]*$/.test(leadsEndpoint)) {
+    throw new Error('src/config/site.json: leadsEndpoint must be a path such as /leads, a full https:// URL, or empty');
+  }
+  const metaPixelId = (site.metaPixelId ?? '').trim();
+  if (metaPixelId && !/^\d{6,20}$/.test(metaPixelId)) throw new Error('src/config/site.json: metaPixelId must be the numeric Pixel (dataset) ID, or empty');
+  const marketing = { leads: Boolean(leadsEndpoint), metaPixel: Boolean(metaPixelId), tracking: Boolean(leadsEndpoint || metaPixelId) };
+  const marketingTokens = {
+    trackingMeta: [
+      leadsEndpoint && `<meta name="bg-leads" content="${escape(leadsEndpoint)}">`,
+      metaPixelId && `<meta name="bg-meta-pixel" content="${metaPixelId}">`
+    ].filter(Boolean).join('\n')
+  };
   const businessId = (siteUrl || '') + '#business';
   const seoTokens = {
     searchVerificationMeta: [
@@ -199,6 +262,7 @@ export function buildSite() {
 
   // Prepare and validate everything before replacing generated output.
   const pages = new Map();
+  const pageMeta = new Map();
   for (const file of readdirSync(join(root, 'src/pages')).filter((f) => f.endsWith('.html')).sort()) {
     const source = readFileSync(join(root, 'src/pages', file), 'utf8');
     // Each page starts with a comment of "key: value" lines (page, title, description).
@@ -212,30 +276,39 @@ export function buildSite() {
     for (const key of ['page', 'title', 'description', 'closingEyebrow', 'closingTitle', 'closingDescription']) {
       if (!meta[key]) throw new Error(`${file}: missing "${key}" in the page header`);
     }
+    // "robots: noindex" keeps a page (such as the ad landing page) out of search results,
+    // the sitemap and llms.txt.
+    if (meta.robots !== undefined && meta.robots !== 'noindex') throw new Error(`${file}: robots may only be "noindex"`);
+    const indexed = meta.robots !== 'noindex';
     const content = expand(source.slice(header[0].length).trim());
     const canonical = siteUrl ? new URL(file === 'index.html' ? '' : file, siteUrl).href : '';
     const siteTokens = {
       pageUrlMetadata: canonical ? `<link rel="canonical" href="${escape(canonical)}">\n<meta property="og:url" content="${escape(canonical)}">` : '',
+      pageRobots: indexed ? '' : '<meta name="robots" content="noindex">',
       shareImage: escape(shareImage),
       shareImageJson: jsonString(shareImage),
       siteUrlProperty: siteUrl ? '"url": ' + jsonString(siteUrl) + ',' : ''
     };
     let html = expand(layout).replace('{{content}}', () => content);
     // {{#if key}} / {{#unless key}}: an app download that is configured, or an optional page header value.
-    const isSet = key => key in available ? available[key] : Boolean(meta[key]);
+    const isSet = key => key in available ? available[key] : key in marketing ? marketing[key] : Boolean(meta[key]);
     html = html.replace(/\{\{#(if|unless) (\w+)\}\}([\s\S]*?)\{\{\/\1\}\}/g, (_, test, key, content) => isSet(key) === (test === 'if') ? content : '');
     html = html.replace(/\{\{(\w+)\}\}/g, (_, key) => {
-      const value = downloadTokens[key] ?? contactTokens[key] ?? areaTokens[key] ?? siteTokens[key] ?? seoTokens[key] ?? (meta[key] == null ? undefined : escape(meta[key]));
+      const value = downloadTokens[key] ?? contactTokens[key] ?? areaTokens[key] ?? siteTokens[key] ?? seoTokens[key] ?? marketingTokens[key] ?? (meta[key] == null ? undefined : escape(meta[key]));
       if (value == null) throw new Error(`${file}: unknown template value "${key}"`);
       return value;
     });
     if (/\{\{[\s\S]*?\}\}/.test(html)) throw new Error(`${file}: unresolved template markup`);
+    // The FAQ page also describes its questions and answers for search engines and AI assistants.
+    const faq = faqStructuredData(html);
+    if (faq) html = html.replace('</head>', () => `<script type="application/ld+json">\n${jsonString(faq)}\n</script>\n</head>`);
     // Mark this page's links in the menu and footer.
     html = html.split(`data-page="${meta.page}"`).join(`data-page="${meta.page}" aria-current="page"`);
     // The <body> tag carries data-page too; it is not a link, so take the marker off again.
     html = html.replace(`<body data-page="${meta.page}" aria-current="page">`, `<body data-page="${meta.page}">`);
     html = html.replace(/\r\n/g, '\n').replace(/[\t ]+$/gm, '').replace(/\n{3,}/g, '\n\n');
     pages.set(file, `<!-- Generated from src/pages/${file}. Edit src/ or public/, then run npm run build. -->\n` + html);
+    if (indexed) pageMeta.set(file, { title: meta.title, description: meta.description, url: siteUrl ? new URL(file === 'index.html' ? '' : file, siteUrl).href : file });
   }
 
   const stylesheet = styles.map(file => `/* Source: src/styles/${file} */\n` + readFileSync(join(root, 'src/styles', file), 'utf8')).join('\n');
@@ -249,9 +322,10 @@ export function buildSite() {
   writeFileSync(join(output, 'style.css'), '/* Generated by npm run build. Edit src/styles/. */\n' + stylesheet);
   for (const [file, content] of scripts) writeFileSync(join(output, file), content);
   for (const [file, html] of pages) writeFileSync(join(output, file), html);
+  writeFileSync(join(output, 'llms.txt'), llmsText(readFileSync(join(root, 'src/llms.txt'), 'utf8'), { ...contactTokens, areaListText: areas.map(a => a.trim()).join(', ') }, pageMeta));
   writeFileSync(join(output, 'robots.txt'), 'User-agent: *\nAllow: /\n' + (siteUrl ? '\nSitemap: ' + new URL('sitemap.xml', siteUrl).href + '\n' : ''));
   if (siteUrl) {
-    const locations = [...pages.keys()].map(file => new URL(file === 'index.html' ? '' : file, siteUrl).href);
+    const locations = [...pageMeta.keys()].map(file => new URL(file === 'index.html' ? '' : file, siteUrl).href);
     writeFileSync(join(output, 'sitemap.xml'), '<?xml version="1.0" encoding="UTF-8"?>\n<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">\n' + locations.map(url => `  <url><loc>${escape(url)}</loc></url>`).join('\n') + '\n</urlset>\n');
   }
   // Fail without a manifest if inputs changed while being read/copied. Build from a stable checkout.

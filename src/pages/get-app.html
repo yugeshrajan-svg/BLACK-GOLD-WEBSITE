@@ -1,0 +1,71 @@
+<!--
+page: getapp
+title: Get the Black Gold Seller App — Sell Used Oil in Chennai
+description: Install the free Black Gold seller app from Google Play and sell used engine, hydraulic and transformer oil in Chennai. Paid at pickup by UPI or cash.
+robots: noindex
+closingEyebrow: Prefer to talk?
+closingTitle: We help you get started.
+closingDescription: Leave your number and Black Gold calls you back to help you install the app and book your first pickup.
+closingLink: #callback
+closingLinkLabel: Ask for a call
+-->
+<!-- The landing page for adverts: install first, or leave a number for a call back. Kept out of search results (robots: noindex); the Seller app page covers the app for search. -->
+<section class="page-hero getapp-hero" id="top" aria-labelledby="page-title">
+  <canvas class="page-oil" data-oil-ambient aria-hidden="true"></canvas>
+  <div class="page-oil-shade" aria-hidden="true"></div>
+  <div class="page-hero-inner">
+    <div class="page-hero-copy">
+      <p class="eyebrow">Used oil buyers in Chennai</p>
+      <h1 id="page-title">Sell your used oil. <em>Get paid on pickup.</em></h1>
+      <ul class="points points--hero">
+        <li>Engine, hydraulic and transformer oil, from 50 litres</li>
+        <li>Measured at your shop, paid by UPI or cash</li>
+        <li>Check the rate and book pickups in the free app</li>
+      </ul>
+      <div class="getapp-install">
+        {{#if googlePlay}}<a class="store-link getapp-play" data-app-download="googlePlay" {{googlePlayAttrs}}>
+          <svg class="store-icon-play" viewBox="0 0 30 32" aria-hidden="true"><path fill="#00b7ff" d="M2.6 1.3 17.2 16 2.6 30.7C2.2 30.3 2 29.7 2 29V3c0-.7.2-1.3.6-1.7Z"/><path fill="#00d26a" d="M2.6 1.3c.6-.6 1.6-.7 2.6-.1L22.4 11l-5.2 5Z"/><path fill="#ffc800" d="m22.4 11 5.2 3c1.4.8 1.4 3.2 0 4l-5.2 3-5.2-5Z"/><path fill="#ff3a44" d="m17.2 16 5.2 5L5.2 30.8c-1 .6-2 .5-2.6-.1Z"/></svg>
+          <span><small>Free on</small><strong>Google Play</strong></span>
+          <span class="store-link-arrow" aria-hidden="true">↗</span>
+        </a>{{/if}}
+        {{#unless googlePlay}}<button class="button button--gold" data-app>Get the seller app <span class="arrow" aria-hidden="true">↗</span></button>{{/unless}}
+        <p class="getapp-note">Android 8.0+ <span aria-hidden="true">·</span> English &amp; Tamil <span aria-hidden="true">·</span> Register with your business name and phone</p>
+      </div>
+    </div>
+    <div class="page-hero-visual">
+      <section class="callback-card" id="callback" aria-labelledby="callback-title">
+        <p class="eyebrow">Prefer a call?</p>
+        <h2 id="callback-title">We call you <em>and help you start.</em></h2>
+        {{#if leads}}<form id="callback-form" novalidate>
+          <div class="hp-field" aria-hidden="true"><label>Leave this empty <input name="website" tabindex="-1" autocomplete="off"></label></div>
+          <label class="field"><span>Business name</span><input name="business" required maxlength="100" autocomplete="organization" placeholder="Your workshop or company"><span class="field-error">Add your business name.</span></label>
+          <label class="field"><span>Phone number</span><input name="phone" type="tel" inputmode="tel" required maxlength="16" autocomplete="tel" placeholder="e.g. 98765 43210"><span class="field-error">Enter a 10-digit phone number so Black Gold can call you back.</span></label>
+          <label class="field area-field"><span>Your area</span><select name="area" required><option value="" disabled selected>Choose your area</option>{{areaOptions}}<option value="Other">Other area (type it)</option></select><span class="field-error">Choose your area, or pick Other area and type it.</span></label>
+          <label class="field area-other" hidden><span>Type your area</span><input name="areaOther" maxlength="100" autocomplete="address-level2" placeholder="e.g. Kolathur"><span class="field-error">Type your area.</span></label>
+          <p class="form-note">By sending, you agree that Black Gold may call or WhatsApp you (<a href="https://myblackgold.app/privacy">privacy policy</a>).</p>
+          <button class="button button--outline" type="submit">Call me back <span class="arrow" aria-hidden="true">↗</span></button>
+        </form>
+        <div id="callback-result" hidden>
+          <div class="result-head"><span class="result-tick" aria-hidden="true">✓</span><h3 tabindex="-1" data-lead-heading>Thanks.</h3></div>
+          <p class="lead-status" role="status" aria-live="polite" data-lead-status></p>
+          <p class="callback-contact">Or reach us now: <a class="enquiry-contact" href="{{contactTel}}">{{contactDisplay}}</a> <span aria-hidden="true">·</span> <a class="enquiry-contact" href="{{contactWhatsApp}}" target="_blank" rel="noopener">WhatsApp</a></p>
+          <button class="text-link" type="button" id="callback-edit">Edit details <span aria-hidden="true">←</span></button>
+        </div>{{/if}}
+        {{#unless leads}}<p class="callback-contact">Call <a class="enquiry-contact" href="{{contactTel}}">{{contactDisplay}}</a> or <a class="enquiry-contact" href="{{contactWhatsApp}}" target="_blank" rel="noopener">chat on WhatsApp</a>, and we help you install the app and book your first pickup.</p>{{/unless}}
+      </section>
+    </div>
+  </div>
+</section>
+
+<section class="section getapp-how" aria-labelledby="getapp-how-title">
+  <div class="section-head">
+    <p class="eyebrow">How it works</p>
+    <h2 id="getapp-how-title">From your shop <em>to paid.</em></h2>
+  </div>
+  <ol class="industry-steps getapp-steps">
+    <li><strong>Install and register</strong><span>Your business name, phone and shop location. Black Gold checks your address proof once.</span></li>
+    <li><strong>Tap “Sell oil”</strong><span>Choose the oil and quantity. You see the current rate and your amount straight away.</span></li>
+    <li><strong>We collect and pay</strong><span>The driver measures your oil at your shop and you are paid at pickup, by UPI or cash.</span></li>
+  </ol>
+</section>
+<script src="oil-surface.js"></script>

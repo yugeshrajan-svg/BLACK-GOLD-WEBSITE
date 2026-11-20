@@ -12,7 +12,7 @@ closingDescription: Prepare an enquiry with your business details so you can sha
   <div class="page-hero-inner">
     <div class="page-hero-copy">
       <p class="eyebrow">FAQs</p>
-      <h1 id="page-title">Good questions. <em>Straight answers.</em></h1>
+      <h1 id="page-title">Selling used oil? <em>Straight answers.</em></h1>
       <ul class="points points--hero">
         <li>Ask in your own words</li>
         <li>Instant answers from our FAQs</li>
@@ -91,7 +91,7 @@ closingDescription: Prepare an enquiry with your business details so you can sha
     </details>
     <details id="faq-booking" data-keywords="book booking schedule appointment website online form submit whatsapp enquiry confirm">
       <summary>Does this website book my pickup?<span class="faq-icon" aria-hidden="true"></span></summary>
-      <div class="faq-body"><p>The website creates an enquiry summary that you can download, copy, or send yourself on WhatsApp or by email to <a class="enquiry-contact" href="{{contactMailto}}">{{contactEmail}}</a>. Nothing is sent automatically. A pickup is confirmed separately with Black Gold.</p></div>
+      <div class="faq-body">{{#if leads}}<p>No. The website sends your enquiry to Black Gold and we call you back to confirm the rate and a pickup time. You can also send it yourself on WhatsApp or by email to <a class="enquiry-contact" href="{{contactMailto}}">{{contactEmail}}</a>. A pickup is booked only when Black Gold confirms it with you.</p>{{/if}}{{#unless leads}}<p>The website creates an enquiry summary that you can download, copy, or send yourself on WhatsApp or by email to <a class="enquiry-contact" href="{{contactMailto}}">{{contactEmail}}</a>. Nothing is sent automatically. A pickup is confirmed separately with Black Gold.</p>{{/unless}}</div>
     </details>
     <details id="faq-pickup-code" data-keywords="code otp pin digit four security driver share">
       <summary>When should I share my pickup code?<span class="faq-icon" aria-hidden="true"></span></summary>

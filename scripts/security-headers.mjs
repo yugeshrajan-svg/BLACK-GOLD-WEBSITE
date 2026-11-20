@@ -5,23 +5,42 @@ import { join, resolve } from 'node:path';
 import { fileURLToPath } from 'node:url';
 import { parseArgs } from 'node:util';
 
+// Where the built pages send data, read from their own <meta> tags (src/config/site.json):
+// the enquiry endpoint, and Meta's Pixel hosts when a Pixel ID is set.
+function marketingSources(pages) {
+  const connect = new Set();
+  let pixel = false;
+  for (const html of pages) {
+    const leads = /<meta name="bg-leads" content="([^"]+)">/.exec(html)?.[1];
+    if (leads) connect.add(/^https:\/\//.test(leads) ? new URL(leads).origin : "'self'");
+    if (/<meta name="bg-meta-pixel" content="\d+">/.test(html)) pixel = true;
+  }
+  return { connect: [...connect].sort(), pixel };
+}
+
 export function securityHeaders(directory, { reportOnly = true, https = false } = {}) {
   const hashes = new Set();
+  const pages = [];
   for (const file of readdirSync(directory).filter(name => name.endsWith('.html'))) {
     const html = readFileSync(join(directory, file), 'utf8');
+    pages.push(html);
     for (const [, attributes, script] of html.matchAll(/<script\b([^>]*)>([\s\S]*?)<\/script>/gi)) {
       if (!/\bsrc\s*=/i.test(attributes) && script.trim()) {
         hashes.add("'sha256-" + createHash('sha256').update(script).digest('base64') + "'");
       }
     }
   }
+  const { connect, pixel } = marketingSources(pages);
+  // Meta Pixel: its script, its beacon image and its fetch/beacon calls.
+  const meta = pixel ? { script: ['https://connect.facebook.net'], img: ['https://www.facebook.com'], connect: ['https://www.facebook.com', 'https://connect.facebook.net'] } : { script: [], img: [], connect: [] };
+  const connectSources = [...connect, ...meta.connect];
   const policy = [
     "default-src 'self'", "base-uri 'none'", "object-src 'none'",
     "frame-ancestors 'none'", "form-action 'none'",
-    "script-src 'self' " + [...hashes].sort().join(' '),
+    "script-src 'self' " + [...meta.script, ...[...hashes].sort()].join(' '),
     // SVG colour attributes and JS animation styles are part of the current site.
-    "style-src 'self' 'unsafe-inline'", "img-src 'self' data:",
-    "font-src 'self'", "connect-src 'none'"
+    "style-src 'self' 'unsafe-inline'", ["img-src 'self' data:", ...meta.img].join(' '),
+    "font-src 'self'", 'connect-src ' + (connectSources.length ? connectSources.join(' ') : "'none'")
   ].join('; ');
   const headers = {
     'X-Content-Type-Options': 'nosniff',

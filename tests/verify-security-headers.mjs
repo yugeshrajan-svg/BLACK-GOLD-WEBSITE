@@ -24,7 +24,18 @@ try {
   const fragment=caddyFragment(strict);
   assert.ok(fragment.includes('-X-Powered-By'));
   assert.ok(fragment.includes('Content-Security-Policy "'));
+  assert.ok(h['Content-Security-Policy-Report-Only'].includes("connect-src 'none'"),'No enquiry endpoint: the page sends nothing');
+  writeFileSync(join(directory,'index.html'),'<meta name="bg-leads" content="/leads"><script src="app.js"></script>');
+  const leads=securityHeaders(directory)['Content-Security-Policy-Report-Only'];
+  assert.ok(leads.includes("connect-src 'self'"),'A same-site enquiry endpoint is allowed');
+  assert.ok(!leads.includes('facebook'),'No Meta hosts without a Pixel ID');
+  writeFileSync(join(directory,'index.html'),'<meta name="bg-leads" content="https://api.example.test/leads"><meta name="bg-meta-pixel" content="123456789012345"><script src="app.js"></script>');
+  const pixel=securityHeaders(directory)['Content-Security-Policy-Report-Only'];
+  assert.ok(pixel.includes('connect-src https://api.example.test https://www.facebook.com https://connect.facebook.net'),'Pixel and API hosts may be contacted');
+  assert.ok(pixel.includes("script-src 'self' https://connect.facebook.net"),'The Pixel script may load');
+  assert.ok(pixel.includes("img-src 'self' data: https://www.facebook.com"),'The Pixel beacon image may load');
+  assert.ok(pixel.includes("form-action 'none'"),'Forms still never post natively');
   writeFileSync(join(directory,'index.html'),'<script>changed()</script>');
   assert.notEqual(securityHeaders(directory)['Content-Security-Policy-Report-Only'],h['Content-Security-Policy-Report-Only'],'Inline script changes require new hashes');
-  console.log('PASS: Security policy hashes, report-only/enforcement, HTTPS-only HSTS, and Caddy fragment.');
+  console.log('PASS: Security policy hashes, enquiry and Meta Pixel sources, report-only/enforcement, HTTPS-only HSTS, and Caddy fragment.');
 } finally {rmSync(directory,{recursive:true,force:true});}

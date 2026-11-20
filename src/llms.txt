@@ -1,0 +1,24 @@
+# Black Gold
+
+> Black Gold buys used and waste oil from car service centres, bike service centres and factories in Chennai, Tamil Nadu, India. It collects used engine, hydraulic and transformer oil from 50 litres, measures it at the customer's premises, and pays at pickup by UPI or cash with a digital receipt. Sellers use the Black Gold seller app for Android.
+
+Black Gold (also called Black Gold Refining) is a used oil collection business in Chennai. Waste oil is valuable and harmful if dumped; Black Gold makes selling it simple and traceable.
+
+## Key facts
+
+- What Black Gold buys: used and waste engine oil, used and waste hydraulic oil, and used and waste transformer oil. Used and waste oil only, in these three types.
+- Industrial waste: factories can also enquire about collection of waste cutting oil, used coolant, used cleaners, and oily washing water or sludge.
+- Who can sell: registered businesses only, such as car and bike service centres and industrial units. Business details and address proof are checked before the first pickup.
+- Minimum pickup: 50 litres. Oil can be sold in litres or barrels.
+- Price: Black Gold sets a price per litre for each oil type. The current rate is shown in the seller app; the website does not show live rates.
+- Measurement: the driver measures the oil at the seller's premises, checks its quality and records a photo. Payment is for the quantity collected.
+- Pickup code: the seller gives the driver a four-digit code only after the oil is measured and loaded.
+- Payment: at pickup, by UPI or cash. The receipt records the payment and GST details.
+- Where: businesses in Chennai, including {{areaListText}}.
+- Seller app: Black Gold seller app for Android, in English and Tamil. Register, list oil, track the pickup vehicle, and keep receipts.
+
+## Contact
+
+- Phone and WhatsApp: {{contactDisplay}}
+- Email: {{contactEmail}}
+- Office: {{contactOfficeAddress}}, Tamil Nadu, India

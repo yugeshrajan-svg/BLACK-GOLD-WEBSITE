@@ -51,6 +51,7 @@ BLACK-GOLD-WEBSITE/
 | About page | `src/pages/about.html` |
 | Oils and eligible businesses | `src/pages/collect.html` |
 | Industrial waste page and its enquiry form (industry only) | `src/pages/industry.html`, `src/styles/industry.css` |
+| Ad landing page: Google Play first, then a "Prefer a call?" form saved as a call-back lead. Kept out of search (`robots: noindex` in its page header) | `src/pages/get-app.html`, `src/styles/get-app.css` |
 | Seller app guide | `src/pages/seller-app.html` |
 | FAQ answers | `src/pages/faq.html` |
 | Menu, footer, enquiry and app dialogs | `src/layout.html` |
@@ -58,6 +59,8 @@ BLACK-GOLD-WEBSITE/
 | Pickup area choices | `src/config/areas.json` |
 | Google Play and APK links | `src/config/app-downloads.json` |
 | Final website URL, search verification codes and business profile links ([SEO guide](docs/SEO.md)) | `src/config/site.json` |
+| Where enquiries are saved (`leadsEndpoint`, `/leads`; empty = drafts only) and the Meta Pixel ID (`metaPixelId`; empty = off) | `src/config/site.json`, `src/scripts/tracking.js` |
+| Summary for AI assistants (`llms.txt`); the FAQ's structured data is built from `faq.html` | `src/llms.txt` |
 | Colours, spacing, page styles | `src/styles/` |
 | Black-and-gold theme: colour tokens, then the overrides for light surfaces | `src/styles/base.css` (tokens), `src/styles/theme.css` (loaded last) |
 | Home hero: the oil pour over the oil poster | `src/scripts/oil-surface.js` (WebGL pour, drawn at the screen's own resolution up to 4K), `public/assets/oil-poster*.webp` (still frames shown before it starts, when motion is off or without WebGL; see the update guide) |

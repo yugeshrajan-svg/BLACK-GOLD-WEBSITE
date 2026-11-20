@@ -1187,6 +1187,74 @@
     });
   });
 
+  /* ---------- Website enquiries saved for the office (leadsEndpoint in src/config/site.json) ---------- */
+
+  var leadsTag = $('meta[name="bg-leads"]');
+  var leadsUrl = leadsTag ? leadsTag.getAttribute('content') : '';
+  var leadEventIds = {};
+
+  // One ID per form per visit: sending again after "Edit details" updates the same lead, so
+  // Meta must count it once (the Pixel and the server both report it with this ID).
+  function leadEventId(kind) {
+    if (!leadEventIds[kind]) {
+      var id = '';
+      var c = window.crypto;
+      if (c && c.getRandomValues) {
+        var bytes = new Uint8Array(12);
+        c.getRandomValues(bytes);
+        for (var i = 0; i < bytes.length; i++) id += ('0' + bytes[i].toString(16)).slice(-2);
+      } else {
+        id = Math.random().toString(16).slice(2) + Date.now().toString(16);
+      }
+      leadEventIds[kind] = 'lead-' + id;
+    }
+    return leadEventIds[kind];
+  }
+
+  var ENQUIRY_COPY = {
+    sending: 'Sending your enquiry…',
+    sent: 'Enquiry sent to Black Gold.',
+    sentStatus: function (phone) { return 'We will call you on ' + phone + ' to confirm the rate and a pickup time.'; },
+    failed: 'Your enquiry is ready.',
+    failedStatus: 'We couldn’t send it from here. Please send it on WhatsApp or by email below.'
+  };
+
+  // Sends the enquiry to Black Gold and says how it went in the result panel. Without an
+  // endpoint the summary and its WhatsApp and email buttons are the whole flow, as before.
+  function sendLead(lead, panel, copy) {
+    copy = copy || ENQUIRY_COPY;
+    var heading = $('[data-lead-heading]', panel);
+    var status = $('[data-lead-status]', panel);
+    if (!leadsUrl || !status || typeof fetch !== 'function') return;
+    var tracking = window.BlackGoldTracking;
+    var eventId = leadEventId(lead.kind);
+    var body = {};
+    var extra = tracking ? tracking.attribution() : {};
+    Object.keys(extra).forEach(function (key) { body[key] = extra[key]; });
+    Object.keys(lead).forEach(function (key) { if (lead[key] !== undefined && lead[key] !== '') body[key] = lead[key]; });
+    body.eventId = eventId;
+    body.pageUrl = location.href.split('#')[0].slice(0, 500);
+
+    heading.textContent = copy.sending;
+    status.textContent = '';
+    status.classList.remove('lead-status--error');
+    fetch(leadsUrl, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(body), credentials: 'omit' })
+      .then(function (res) {
+        if (res.ok) return;
+        return res.json().then(function (data) { return data && data.message; }, function () { return null; })
+          .then(function (message) { throw new Error(typeof message === 'string' ? message : ''); });
+      })
+      .then(function () {
+        heading.textContent = copy.sent;
+        status.textContent = copy.sentStatus('+91 ' + lead.phone.slice(0, 5) + ' ' + lead.phone.slice(5));
+        if (tracking) tracking.track('Lead', { lead_type: lead.kind.toLowerCase() }, eventId);
+      }, function (err) {
+        heading.textContent = copy.failed;
+        status.textContent = (err && err.message) || copy.failedStatus;
+        status.classList.add('lead-status--error');
+      });
+  }
+
   /* ---------- Pickup enquiry ---------- */
 
   var summary = '';
@@ -1282,6 +1350,20 @@
     $('.copy-status', pickup).textContent = '';
   }
 
+  function pickupLead() {
+    var f = new FormData(form);
+    return {
+      kind: 'PICKUP',
+      businessName: f.get('business').trim(),
+      phone: phoneDigits(f.get('phone')),
+      area: f.get('area') === 'Other' ? f.get('areaOther').trim() : f.get('area'),
+      items: [f.get('oil')],
+      quantity: Number(f.get('quantity')),
+      unit: f.get('unit'),
+      website: f.get('website') || undefined
+    };
+  }
+
   form.addEventListener('submit', function (e) {
     e.preventDefault();
     if (!validate()) return;
@@ -1289,6 +1371,7 @@
     form.hidden = true;
     result.hidden = false;
     $('h3', result).focus();
+    sendLead(pickupLead(), result);
   });
 
   $('#edit-enquiry').addEventListener('click', function () {
@@ -1457,6 +1540,19 @@
       industryForm.hidden = true;
       industryResult.hidden = false;
       $('h3', industryResult).focus();
+      var f = new FormData(industryForm);
+      sendLead({
+        kind: 'INDUSTRIAL',
+        businessName: f.get('company').trim(),
+        phone: phoneDigits(f.get('phone')),
+        area: f.get('area') === 'Other' ? f.get('areaOther').trim() : f.get('area'),
+        items: chosenWastes(),
+        quantity: Number(f.get('quantity')),
+        unit: f.get('unit'),
+        frequency: f.get('frequency'),
+        details: (f.get('details') || '').trim(),
+        website: f.get('website') || undefined
+      }, industryResult);
     });
 
     $('#industry-edit').addEventListener('click', function () {
@@ -1468,6 +1564,91 @@
       copyText(industrySummary, $('.industry-copy-status'), industryResult, 'Copy is unavailable here — select the text above and copy it.');
     });
   })();
+
+  /* ---------- Ad landing page (get-app.html): "Prefer a call?" ---------- */
+
+  var callbackForm = $('#callback-form');
+  if (callbackForm) (function () {
+    var callbackResult = $('#callback-result');
+    var callbackArea = $('select[name="area"]', callbackForm);
+    var callbackOther = $('.area-other', callbackForm);
+    var CALLBACK_COPY = {
+      sending: 'Sending…',
+      sent: 'Thanks. We’ll call you.',
+      sentStatus: function (phone) { return 'Black Gold will call you on ' + phone + ' to help you install the app and book your first pickup.'; },
+      failed: 'We couldn’t send it.',
+      failedStatus: 'Please call or WhatsApp us instead, using the links below.'
+    };
+
+    callbackArea.addEventListener('change', function () {
+      if (callbackArea.value) {
+        callbackArea.closest('.field').classList.remove('invalid');
+        callbackArea.removeAttribute('aria-invalid');
+      }
+      callbackOther.hidden = callbackArea.value !== 'Other';
+      if (callbackOther.hidden) {
+        callbackOther.classList.remove('invalid');
+        $('input', callbackOther).removeAttribute('aria-invalid');
+      } else {
+        $('input', callbackOther).focus();
+      }
+    });
+    $$('.field input', callbackForm).forEach(function (input) {
+      input.addEventListener('input', function () {
+        var field = input.closest('.field');
+        if (field.classList.contains('invalid') && input.value.trim()) {
+          field.classList.remove('invalid');
+          input.removeAttribute('aria-invalid');
+        }
+      });
+    });
+
+    function validateCallback() {
+      var firstBad = null;
+      $$('.field', callbackForm).forEach(function (field) {
+        if (field.hidden) return;
+        var input = $('input, select', field);
+        var ok = input.value.trim().length > 0;
+        if (ok && input.type === 'tel') ok = phoneDigits(input.value) !== null;
+        field.classList.toggle('invalid', !ok);
+        input.setAttribute('aria-invalid', String(!ok));
+        if (!ok && !firstBad) firstBad = input;
+      });
+      if (firstBad) firstBad.focus();
+      return !firstBad;
+    }
+
+    callbackForm.addEventListener('submit', function (e) {
+      e.preventDefault();
+      if (!validateCallback()) return;
+      var f = new FormData(callbackForm);
+      callbackForm.hidden = true;
+      callbackResult.hidden = false;
+      $('h3', callbackResult).focus();
+      sendLead({
+        kind: 'CALLBACK',
+        businessName: f.get('business').trim(),
+        phone: phoneDigits(f.get('phone')),
+        area: f.get('area') === 'Other' ? f.get('areaOther').trim() : f.get('area'),
+        website: f.get('website') || undefined
+      }, callbackResult, CALLBACK_COPY);
+    });
+
+    $('#callback-edit').addEventListener('click', function () {
+      callbackResult.hidden = true;
+      callbackForm.hidden = false;
+      $('input[name="business"]', callbackForm).focus();
+    });
+  })();
+
+  // Adverts and QR codes can link straight to an enquiry: ?enquiry=pickup opens the pickup
+  // form on any page; ?enquiry=industry on the industry page goes to its form.
+  var wantedEnquiry = new URL(location.href).searchParams.get('enquiry');
+  if (wantedEnquiry === 'pickup') openDialog(pickup);
+  if (wantedEnquiry === 'industry' && industryForm) {
+    var industryPanel = industryForm.closest('.industry-form-panel') || industryForm;
+    if (industryPanel.scrollIntoView) industryPanel.scrollIntoView({ block: 'start' });
+  }
 
   $('#year').textContent = new Date().getFullYear();
 })();

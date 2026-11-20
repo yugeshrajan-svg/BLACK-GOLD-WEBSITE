@@ -2,5 +2,7 @@
   "url": "https://myblackgold.app",
   "googleSiteVerification": "",
   "bingSiteVerification": "",
-  "sameAs": []
+  "sameAs": [],
+  "leadsEndpoint": "/leads",
+  "metaPixelId": ""
 }

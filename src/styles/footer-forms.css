@@ -132,3 +132,8 @@ pre { margin: 20px 0; padding: 22px; white-space: pre-wrap; font: 500 14px/1.85 
 .result-actions { display: flex; flex-wrap: wrap; gap: 10px; margin-top: 16px; }
 .result-actions .button { min-height: 44px; padding: 0 18px; }
 .copy-status { min-height: 1.5em; margin: 12px 0 6px; font-size: 13px; color: var(--gold-hi); }
+/* Saved-enquiry status (site.json leadsEndpoint): what happened to the enquiry, above the WhatsApp/email options. */
+#enquiry-result > .lead-status, #industry-result > .lead-status, #callback-result > .lead-status { min-height: 1.5em; margin-top: 12px; font-size: 15px; font-weight: 600; line-height: 1.55; color: var(--text); }
+#enquiry-result > .lead-status--error, #industry-result > .lead-status--error, #callback-result > .lead-status--error { color: #f0907a; }
+/* Spam trap: off screen and out of the tab order; people never see it, form-filling bots do. */
+.hp-field { position: absolute; left: -10000px; width: 1px; height: 1px; overflow: hidden; }

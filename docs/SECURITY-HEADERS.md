@@ -12,7 +12,7 @@ npm run build
 node scripts/serve.mjs --port 4300 --csp-enforce
 ```
 
-The policy hashes the exact inline scripts/JSON-LD in the generated HTML; it allows self-hosted scripts/fonts/images, the site's inline animation styles, and no AJAX connections or native form posts. Draft creation must remain local and WhatsApp/email navigation must remain a deliberate visitor action. Hashes must be regenerated after rebuilding content.
+The policy hashes the exact inline scripts/JSON-LD in the generated HTML; it allows self-hosted scripts/fonts/images, the site's inline animation styles, and no native form posts. Connections follow `src/config/site.json`, read from the built pages: with `leadsEndpoint` set, `connect-src` allows that endpoint (`'self'` for `/leads`); with `metaPixelId` set, it also allows Meta's Pixel hosts (`connect.facebook.net` script, `www.facebook.com` beacon). With both empty it stays `connect-src 'none'`. WhatsApp/email drafts remain a deliberate visitor action. Hashes must be regenerated after rebuilding content.
 
 ## Candidate Caddy fragment
 

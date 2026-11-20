@@ -1,0 +1,25 @@
+/* ---------- Get the app: the landing page for adverts (get-app.html) ---------- */
+
+.getapp-install { display: grid; gap: 12px; width: min(100%, 360px); margin-top: 28px; }
+/* Installing is the main action, so Google Play gets the gold button (scoped to beat theme.css). */
+.getapp-install .getapp-play { min-height: 72px; border-color: transparent; background: var(--gold-grad); color: var(--on-gold); box-shadow: var(--gold-edge); }
+.getapp-install .getapp-play[href]:hover { border-color: transparent; background: var(--gold-grad-hover); }
+.getapp-install .getapp-play small { color: #3a2a0c; }
+.getapp-install .getapp-play strong { font-size: 20px; }
+.getapp-install .getapp-play .store-link-arrow { color: var(--on-gold); }
+.getapp-note { font-size: 13px; line-height: 1.5; color: var(--muted); }
+
+.callback-card {
+  width: min(100%, 460px); padding: clamp(22px, 2.6vw, 34px);
+  scroll-margin-top: calc(var(--header-h) + 16px);
+  border: 1px solid var(--line-gold); border-radius: var(--radius-panel);
+  background: linear-gradient(160deg, rgba(224, 180, 83, .1), transparent 60%), var(--bg-3);
+  box-shadow: 0 30px 70px -50px #000;
+}
+.callback-card h2 { margin: 12px 0 0; font-size: clamp(24px, 2.4vw, 32px); line-height: 1.2; }
+.callback-card form { margin-top: 20px; }
+.callback-contact { margin-top: 14px; font-size: 15px; line-height: 1.6; color: var(--text); }
+#callback-result .result-head { margin-top: 20px; }
+#callback-result .text-link { margin-top: 16px; }
+
+.getapp-how .industry-steps { max-width: 760px; }

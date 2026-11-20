@@ -10,6 +10,7 @@ const expected = readdirSync('src/pages').filter(file => file.endsWith('.html'))
 assert.deepEqual(pages.sort(), expected.sort(), 'Only current source pages should be published');
 const ids = new Map();
 const html = new Map();
+const noindex = page => /<meta name="robots" content="noindex">/.test(html.get(page));
 
 for (const page of pages) {
   const content = readFileSync(join(root, page), 'utf8');
@@ -44,12 +45,35 @@ pages.forEach((page, i) => {
   assert.ok(descriptions[i].length >= 70 && descriptions[i].length <= 160, `${page}: description is ${descriptions[i].length} characters; keep it between 70 and 160`);
 });
 assert.match(titles[pages.indexOf('index.html')], /Used .*Oil Buyers in Chennai/, 'The home page title names what we buy and where');
+const siteConfigForUrls = JSON.parse(readFileSync('src/config/site.json', 'utf8'));
+const siteBaseUrl = page => siteConfigForUrls.url.trim() ? new URL(page === 'index.html' ? '' : page, siteConfigForUrls.url.trim().replace(/\/+$/, '') + '/').href : page;
 const structured = page => [...html.get(page).matchAll(/<script type="application\/ld\+json">([\s\S]*?)<\/script>/g)].map(match => JSON.parse(match[1]));
 const business = structured('index.html').find(item => item['@type'] === 'RecyclingCenter');
 assert.ok(business?.['@id'] && business.address?.streetAddress && business.telephone, 'The home page describes the business, its address and phone');
 assert.ok(business.areaServed.some(area => area.name === 'Chennai'), 'The business serves Chennai');
 const industryService = structured('industry.html').find(item => item['@type'] === 'Service');
 assert.equal(industryService?.provider['@id'], business['@id'], 'The industrial service points to the same business');
+// Search engines and AI assistants: every FAQ question is in the FAQ page's structured data,
+// and llms.txt sums up the business and links every page.
+const faqData = structured('faq.html').find(item => item['@type'] === 'FAQPage');
+const faqQuestions = [...html.get('faq.html').matchAll(/<details id="faq-[^"]+"[^>]*>\s*<summary>([^<]+)</g)].map(m => m[1].replaceAll('&amp;', '&').trim());
+assert.ok(faqQuestions.length >= 10, 'The FAQ page lists its questions');
+assert.deepEqual(faqData?.mainEntity.map(q => q.name), faqQuestions, 'The FAQ structured data matches the questions on the page');
+assert.ok(faqData.mainEntity.every(q => q.acceptedAnswer.text.length > 20 && !/[<>{}]/.test(q.acceptedAnswer.text)), 'FAQ answers are plain text');
+const llms = readFileSync(join(root, 'llms.txt'), 'utf8');
+assert.match(llms, /^# Black Gold\n\n> /, 'llms.txt starts with the name and a one-line summary');
+assert.ok(!/\{\{|\}\}/.test(llms), 'llms.txt has no unresolved template values');
+assert.ok(llms.includes(JSON.parse(readFileSync('src/config/contact.json', 'utf8')).display), 'llms.txt gives the phone number');
+for (const area of JSON.parse(readFileSync('src/config/areas.json', 'utf8'))) assert.ok(llms.includes(area), `llms.txt names ${area}`);
+for (const page of pages) {
+  const linked = llms.includes('](' + siteBaseUrl(page) + ')');
+  assert.equal(linked, !noindex(page), noindex(page) ? `llms.txt must not list the unindexed ${page}` : `llms.txt links ${page}`);
+}
+// The ad landing page: Google Play first, a call-back form for everyone else, out of search.
+const getApp = html.get('get-app.html');
+assert.ok(getApp && noindex('get-app.html'), 'get-app.html exists and is kept out of search results');
+assert.ok(getApp.indexOf('data-app-download="googlePlay"') < getApp.indexOf('id="callback"'), 'Google Play comes before the call-back form');
+assert.ok(pages.filter(page => page !== 'get-app.html').every(page => !noindex(page)), 'Every other page is indexed');
 
 let localReferences = 0;
 function checkReference(from, value) {
@@ -74,13 +98,13 @@ assert.match(robots, /User-agent: \*/);
 if (siteBase) {
   assert.ok(robots.includes('Sitemap: ' + new URL('sitemap.xml', siteBase).href));
   const sitemap = readFileSync(join(root, 'sitemap.xml'), 'utf8');
-  assert.equal([...sitemap.matchAll(/<loc>/g)].length, pages.length, 'The sitemap must cover every page');
+  assert.equal([...sitemap.matchAll(/<loc>/g)].length, pages.filter(page => !noindex(page)).length, 'The sitemap must cover every indexed page');
   for (const page of pages) {
     const canonical = escapeAttribute(new URL(page === 'index.html' ? '' : page, siteBase).href);
     assert.ok(html.get(page).includes('<link rel="canonical" href="' + canonical + '">'), `${page}: wrong canonical URL`);
     assert.ok(html.get(page).includes('<meta property="og:url" content="' + canonical + '">'), `${page}: wrong sharing URL`);
     assert.ok(html.get(page).includes('<meta property="og:image" content="' + escapeAttribute(new URL('og-image.jpg', siteBase).href) + '">'), `${page}: wrong absolute sharing image`);
-    assert.ok(sitemap.includes('<loc>' + canonical + '</loc>'), `${page}: missing sitemap URL`);
+    assert.equal(sitemap.includes('<loc>' + canonical + '</loc>'), !noindex(page), `${page}: ${noindex(page) ? 'unindexed page listed in' : 'missing'} sitemap URL`);
   }
 } else assert.equal(existsSync(join(root, 'sitemap.xml')), false, 'Do not generate a sitemap with a guessed domain');
 for (const [page, content] of html) {
@@ -118,4 +142,4 @@ verifyPublic();
 if (downloads.apk.startsWith('assets/')) {
   assert.ok(readFileSync(join(root, downloads.apk)).subarray(0, 4).equals(Buffer.from([80, 75, 3, 4])), 'APK must remain a binary ZIP/APK file');
 }
-console.log(`PASS: ${pages.length} pages; ${localReferences} local references; page anchors, ARIA targets, metadata, downloads and copied assets.`);
+console.log(`PASS: ${pages.length} pages; ${localReferences} local references; page anchors, ARIA targets, metadata, FAQ structured data, llms.txt, downloads and copied assets.`);

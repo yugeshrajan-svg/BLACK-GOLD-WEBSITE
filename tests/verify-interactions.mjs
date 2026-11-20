@@ -133,7 +133,8 @@ function parse(html, root, doc) {
   }
 }
 
-function load(file, reduced = false, browserLanguage = 'en', oilFactory) {
+function load(file, reduced = false, browserLanguage = 'en', oilFactory, extras = {}) {
+  const { preScripts = [], ...globals } = extras;
   const doc = new Element('#document'); doc.ownerDocument = doc;
   parse(readFileSync('dist/' + file,'utf8'),doc,doc);
   doc.documentElement = doc.querySelector('html'); doc.body = doc.querySelector('body');
@@ -174,9 +175,11 @@ function load(file, reduced = false, browserLanguage = 'en', oilFactory) {
     URL, Blob, Date, console,
     requestAnimationFrame:fn=>{frames.set(++seq,fn);return seq;}, cancelAnimationFrame:id=>frames.delete(id),
     setTimeout:fn=>{timers.set(++seq,fn);return seq;}, clearTimeout:id=>timers.delete(id),
-    FormData:class extends Map { constructor(form) { super(); for (const n of form.querySelectorAll('input, select')) if (n.attrs.name && (n.type !== 'radio' || n.checked)) this.set(n.attrs.name,n.value); } }
+    FormData:class extends Map { constructor(form) { super(); for (const n of form.querySelectorAll('input, select')) if (n.attrs.name && (n.type !== 'radio' || n.checked)) this.set(n.attrs.name,n.value); } },
+    ...globals
   };
   const context = vm.createContext(sandbox);
+  for (const script of preScripts) vm.runInContext(readFileSync(script,'utf8'),context,{filename:script});
   vm.runInContext(readFileSync('dist/app.js','utf8'),context,{filename:'app.js'});
   const q = s => doc.querySelector(s), qa = s => doc.querySelectorAll(s);
   return {doc,q,qa,
@@ -788,6 +791,141 @@ assert.doesNotMatch(industry.q('#industry-text').textContent,/Details:/,'Empty o
 for (const file of ['index.html','collect.html','faq.html']) {
   assert.ok(load(file).q('a[href^="industry.html"]'),file+' links to the industry page');
 }
+
+// Saved enquiries: with leadsEndpoint set in src/config/site.json, the forms also send the
+// enquiry to Black Gold (the WhatsApp/email summary stays as a second way to send it).
+const siteConfig = JSON.parse(readFileSync('src/config/site.json','utf8'));
+const settle = () => new Promise(resolve => setTimeout(resolve, 0));
+const reply = (ok, body) => () => Promise.resolve({ ok, json: () => Promise.resolve(body) });
+function fillPickup(page) {
+  page.q('input[name="business"]').value = 'Saved workshop';
+  page.q('input[name="phone"]').value = '+91 98765 43210';
+  chooseArea(page,'Guindy');
+  page.q('input[name="quantity"]').value = '120';
+}
+if (siteConfig.leadsEndpoint) {
+  const sent = [];
+  const recordFetch = (url, init) => { sent.push({ url, init, body: JSON.parse(init.body) }); return reply(true, { ok: true })(); };
+  const saved = load('index.html', false, 'en', undefined, { fetch: recordFetch });
+  assert.equal(saved.q('#pickup-form button[type="submit"]').textContent.trim().startsWith('Send enquiry'),true,'The button says the enquiry is sent');
+  fillPickup(saved);
+  saved.q('#pickup-form').fire('submit');
+  assert.equal(saved.q('[data-lead-heading]').textContent,'Sending your enquiry…');
+  await settle();
+  assert.equal(sent.length,1,'One enquiry is sent');
+  assert.equal(sent[0].url,siteConfig.leadsEndpoint);
+  assert.equal(sent[0].init.method,'POST');
+  assert.equal(sent[0].init.credentials,'omit','No cookies go with the enquiry');
+  const { eventId, pageUrl, ...lead } = sent[0].body;
+  assert.deepEqual(lead,{ kind:'PICKUP', businessName:'Saved workshop', phone:'9876543210', area:'Guindy', items:['Used engine oil'], quantity:120, unit:'Litres' },'The enquiry carries the form, not the empty spam trap');
+  assert.match(eventId,/^lead-[0-9a-f]+$/);
+  assert.equal(pageUrl,'https://example.test/index.html');
+  assert.equal(saved.q('[data-lead-heading]').textContent,'Enquiry sent to Black Gold.');
+  assert.match(saved.q('[data-lead-status]').textContent,/call you on \+91 98765 43210/);
+  assert.match(saved.q('#enquiry-text').textContent,/Saved workshop/,'The WhatsApp/email summary is still there');
+  saved.click('#edit-enquiry');
+  saved.q('input[name="quantity"]').value = '150';
+  saved.q('#pickup-form').fire('submit');
+  await settle();
+  assert.equal(sent.length,2);
+  assert.equal(sent[1].body.quantity,150);
+  assert.equal(sent[1].body.eventId,eventId,'An edited enquiry keeps its event ID, so Meta counts it once');
+
+  const busy = load('index.html', false, 'en', undefined, { fetch: reply(false, { message: 'Too many enquiries from here. Please call or WhatsApp Black Gold instead.' }) });
+  fillPickup(busy);
+  busy.q('#pickup-form').fire('submit');
+  await settle();
+  assert.equal(busy.q('[data-lead-heading]').textContent,'Your enquiry is ready.','A failed send falls back to the summary');
+  assert.equal(busy.q('[data-lead-status]').textContent,'Too many enquiries from here. Please call or WhatsApp Black Gold instead.','The server explains why');
+  assert.ok(busy.q('[data-lead-status]').classList.contains('lead-status--error'));
+
+  const offline = load('index.html', false, 'en', undefined, { fetch: () => Promise.reject(new TypeError('Failed to fetch')) });
+  fillPickup(offline);
+  offline.q('#pickup-form').fire('submit');
+  await settle();
+  assert.match(offline.q('[data-lead-status]').textContent,/Failed to fetch|WhatsApp or by email/);
+
+  const bot = [];
+  const trap = load('index.html', false, 'en', undefined, { fetch: (url, init) => { bot.push(JSON.parse(init.body)); return reply(true, {})(); } });
+  fillPickup(trap);
+  trap.q('.hp-field input').value = 'http://spam.example';
+  trap.q('#pickup-form').fire('submit');
+  await settle();
+  assert.equal(bot[0].website,'http://spam.example','A filled spam trap is passed on for the server to discard');
+
+  const factory = [];
+  const plant = load('industry.html', false, 'en', undefined, { fetch: (url, init) => { factory.push(JSON.parse(init.body)); return reply(true, {})(); } });
+  plant.q('[data-industry-option="coolant"]').checked = true;
+  plant.q('input[name="company"]').value = 'Saved Forgings';
+  plant.q('input[name="phone"]').value = '98765 43210';
+  plant.q('#industry-form select[name="area"]').value = 'Ambattur';
+  plant.q('#industry-form select[name="area"]').fire('change');
+  plant.q('input[name="quantity"]').value = '400';
+  plant.q('#industry-form').fire('submit');
+  await settle();
+  assert.deepEqual({ ...factory[0], eventId: undefined, pageUrl: undefined },{ kind:'INDUSTRIAL', businessName:'Saved Forgings', phone:'9876543210', area:'Ambattur', items:['Used coolant'], quantity:400, unit:'Litres', frequency:'One-time pickup', eventId: undefined, pageUrl: undefined });
+  assert.equal(plant.q('#industry-result [data-lead-heading]').textContent,'Enquiry sent to Black Gold.');
+}
+
+// The ad landing page: Google Play first (its link carries the ad campaign to Play Console),
+// and "Prefer a call?" for everyone else, saved as a call-back lead.
+if (siteConfig.leadsEndpoint) {
+  const calls = [];
+  const adLink = 'https://example.test/get-app.html?utm_source=facebook&utm_medium=paid_social&utm_campaign=app-garages&fbclid=IwAR1';
+  const landing = load('get-app.html', false, 'en', undefined, {
+    preScripts: ['dist/tracking.js'], URLSearchParams, location: { href: adLink },
+    fetch: (url, init) => { calls.push(JSON.parse(init.body)); return reply(true, { ok: true })(); }
+  });
+  const play = landing.q('.getapp-play');
+  assert.ok(play, 'The landing page leads with a Google Play button');
+  play.fire('click');
+  const playUrl = new URL(play.getAttribute('href'));
+  assert.equal(playUrl.searchParams.get('id'), 'com.blackgold.seller', 'Still the Black Gold listing');
+  assert.equal(playUrl.searchParams.get('referrer'), 'utm_source=facebook&utm_medium=paid_social&utm_campaign=app-garages', 'Play is told which campaign sent the visitor');
+  play.fire('click');
+  assert.equal(new URL(play.getAttribute('href')).searchParams.getAll('referrer').length, 1, 'A second tap does not stack referrers');
+
+  landing.q('#callback-form').fire('submit');
+  assert.equal(landing.qa('#callback-form .field.invalid').length, 3, 'Business, phone and area are needed for a call back');
+  assert.equal(calls.length, 0, 'Nothing is sent until the form is complete');
+  landing.q('#callback-form input[name="business"]').value = 'Porur Car Care';
+  landing.q('#callback-form input[name="phone"]').value = '98765 01234';
+  landing.q('#callback-form select[name="area"]').value = 'Porur';
+  landing.q('#callback-form select[name="area"]').fire('change');
+  landing.q('#callback-form').fire('submit');
+  await settle();
+  assert.equal(calls.length, 1);
+  const { eventId: callbackEvent, pageUrl: callbackPage, landingPage, at, ...callback } = calls[0];
+  assert.deepEqual(callback, { utmSource: 'facebook', utmMedium: 'paid_social', utmCampaign: 'app-garages', fbclid: 'IwAR1', kind: 'CALLBACK', businessName: 'Porur Car Care', phone: '9876501234', area: 'Porur' }, 'The call-back carries the ad that brought them');
+  assert.equal(landingPage, adLink);
+  assert.match(callbackEvent, /^lead-/);
+  assert.equal(landing.q('#callback-form').hidden, true);
+  assert.equal(landing.q('#callback-result [data-lead-heading]').textContent, 'Thanks. We’ll call you.');
+  assert.match(landing.q('#callback-result [data-lead-status]').textContent, /\+91 98765 01234 to help you install the app/);
+  landing.click('#callback-edit');
+  assert.equal(landing.q('#callback-form').hidden, false, 'Edit details brings the form back');
+
+  const down = load('get-app.html', false, 'en', undefined, { fetch: reply(false, { message: 'Too many enquiries from here. Please call or WhatsApp Black Gold instead.' }) });
+  down.q('#callback-form input[name="business"]').value = 'Porur Car Care';
+  down.q('#callback-form input[name="phone"]').value = '9876501234';
+  down.q('#callback-form select[name="area"]').value = 'Porur';
+  down.q('#callback-form').fire('submit');
+  await settle();
+  assert.equal(down.q('#callback-result [data-lead-heading]').textContent, 'We couldn’t send it.');
+  assert.ok(down.q('#callback-result a[href^="tel:"]') && down.q('#callback-result a[href^="https://wa.me/"]'), 'A failed call-back offers phone and WhatsApp');
+}
+
+// Without fetch (or without leadsEndpoint) the forms keep working as drafts only.
+const noFetch = load('index.html');
+fillPickup(noFetch);
+noFetch.q('#pickup-form').fire('submit');
+assert.equal(noFetch.q('#enquiry-result').hidden,false);
+assert.equal(noFetch.q('[data-lead-heading]').textContent,'Your enquiry is ready.');
+
+// Adverts and QR codes can open the pickup form directly.
+const deepLink = load('index.html', false, 'en', undefined, { location: { href: 'https://example.test/index.html?utm_source=facebook&enquiry=pickup' } });
+assert.equal(deepLink.q('#pickup-dialog').open,true,'?enquiry=pickup opens the pickup form');
+assert.notEqual(load('index.html').q('#pickup-dialog').open,true,'Without it the form stays closed');
 
 // Crossing into desktop navigation must release the mobile menu's scroll and focus locks.
 const navigation = load('index.html');
